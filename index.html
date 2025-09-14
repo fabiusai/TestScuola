@@ -16,6 +16,7 @@
         :root {
             --primary-color: #3b82f6; /* Blu sobrio */
             --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff; /* Azzurro chiaro per etichetta */
             --accent-color: #f59e0b; /* Ambra per accenti */
             --accent-light: #fffbeb;
             --text-primary: #111827;
@@ -273,12 +274,12 @@
         
         /* NUOVA ETICHETTA TIPO MODULO */
         .module-type-label {
-            background-color: var(--accent-light);
-            color: var(--accent-color);
-            padding: 0.2rem 0.6rem;
-            font-size: 0.7rem;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            border-radius: 4px;
+            border-radius: 6px;
             text-transform: capitalize;
             white-space: nowrap;
         }
@@ -740,31 +741,9 @@
             const card = document.createElement('div');
             card.className = 'module-card';
             card.dataset.moduleId = module.id;
-            
-            // MODIFICA: Aggiunta etichetta tipo modulo
-            let contentHTML = `
-                <div class="module-header">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
-                            <div contenteditable="true" class="editable editable-title" onblur="updateModuleData('${module.id}', 'title', this.innerText)">${module.title}</div>
-                            <span class="module-type-label">${module.type.replace('-', ' ')}</span>
-                        </div>
-                        <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
-                    </div>
-                    <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')">
-                        <i data-lucide="trash-2" class="w-5 h-5"></i>
-                    </button>
-                </div>
-                <div class="module-content">
-                    <div class="rows-container" data-module-id="${module.id}">
-                        ${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}
-                    </div>
-                    <button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')">
-                       <span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span>
-                    </button>
-                </div>
-            `;
-            
+            const isCollapsed = !!module.isCollapsed;
+
+            // --- Build Footer First ---
             let footerHTML = '';
             if (module.type === 'analizza') {
                 footerHTML += `
@@ -803,11 +782,37 @@
                 `;
             }
 
-            if(footerHTML){
-                contentHTML += `<div class="module-footer">${footerHTML}</div>`;
-            }
-
-            card.innerHTML = contentHTML;
+            // --- Combine Header and Collapsible Content ---
+            card.innerHTML = `
+                <div class="module-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+                            <div contenteditable="true" class="editable editable-title" onblur="updateModuleData('${module.id}', 'title', this.innerText)">${module.title}</div>
+                            <span class="module-type-label">${module.type.replace('-', ' ')}</span>
+                        </div>
+                        <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
+                            <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i>
+                        </button>
+                        <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="module-collapsible-area ${isCollapsed ? 'hidden' : ''}">
+                    <div class="module-content">
+                        <div class="rows-container" data-module-id="${module.id}">
+                            ${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}
+                        </div>
+                        <button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')">
+                           <span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span>
+                        </button>
+                    </div>
+                    ${footerHTML ? `<div class="module-footer">${footerHTML}</div>` : ''}
+                </div>
+            `;
             return card;
         };
 
@@ -915,7 +920,7 @@
 
          const getModuleDefaults = (type) => {
             moduleCounter++;
-            const base = { id: `mod_${Date.now()}`, rows: [] };
+            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false };
             switch (type) {
                 case 'vero-falso': return { ...base, type, title: `Modulo ${moduleCounter}: Vero o Falso`, instructions: 'Indica se ogni affermazione è vera o falsa.' };
                 case 'sottolinea': return { ...base, type, title: `Modulo ${moduleCounter}: Sottolinea`, instructions: 'Sottolinea le parole richieste in ogni frase.' };
@@ -979,6 +984,15 @@
             } 
         };
 
+        window.toggleModuleCollapse = (moduleId) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                module.isCollapsed = !module.isCollapsed;
+                saveData();
+                render();
+            }
+        };
+
         window.updateModuleData = (moduleId, key, value) => { 
             const module = modules.find(m => m.id === moduleId); 
             if (module) { 
@@ -1028,6 +1042,11 @@
             if (data) { 
                 const d = JSON.parse(data); 
                 modules = d.modules || []; 
+                modules.forEach(module => {
+                    if (typeof module.isCollapsed === 'undefined') {
+                        module.isCollapsed = false;
+                    }
+                });
                 moduleCounter = d.moduleCounter || 0; 
                 testTitle = d.testTitle || 'Verifica';
                 document.getElementById('test-title-input').value = testTitle;
