@@ -633,6 +633,15 @@
                     <label for="test-title-input" class="form-label">Titolo del Test</label>
                     <input type="text" id="test-title-input" class="form-input" placeholder="Es. Verifica di Storia">
                 </div>
+                 <!-- MODIFICA: Aggiunti controlli globali apri/chiudi -->
+                <div class="btn-grid">
+                    <button id="collapse-all-btn" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span>
+                    </button>
+                    <button id="expand-all-btn" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span>
+                    </button>
+                </div>
             </div>
 
             <div class="sidebar-section">
@@ -676,7 +685,6 @@
                         <span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span>
                     </button>
                     
-                    <!-- MODIFICA: Rimosso pulsante Word e griglia -->
                     <button id="export-pdf" class="btn btn-secondary btn-full">
                         <span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span>
                     </button>
@@ -897,23 +905,32 @@
                     </div>
                 `;
             } else {
+                // MODIFICA: Aggiorna i numeri dei moduli prima di renderizzare
+                modules.forEach((module, index) => {
+                    const titleWithoutNumber = module.title.replace(/^Modulo \d+:\s*/, '');
+                    module.title = `Modulo ${index + 1}: ${titleWithoutNumber}`;
+                });
+
                 modules.forEach(module => {
                     const moduleEl = createModuleHTML(module);
                     documentContainer.appendChild(moduleEl);
                     const rowsContainer = moduleEl.querySelector('.rows-container');
-                    new Sortable(rowsContainer, {
-                        animation: 150, 
-                        handle: '.drag-handle', 
-                        ghostClass: 'sortable-ghost',
-                        onEnd: (evt) => {
-                            const currentModule = modules.find(m => m.id === module.id);
-                            const row = currentModule.rows.splice(evt.oldIndex, 1)[0];
-                            currentModule.rows.splice(evt.newIndex, 0, row);
-                            saveData();
-                            render();
-                        }
-                    });
+                    if (rowsContainer) { // Assicurati che il contenitore esista
+                        new Sortable(rowsContainer, {
+                            animation: 150, 
+                            handle: '.drag-handle', 
+                            ghostClass: 'sortable-ghost',
+                            onEnd: (evt) => {
+                                const currentModule = modules.find(m => m.id === module.id);
+                                const row = currentModule.rows.splice(evt.oldIndex, 1)[0];
+                                currentModule.rows.splice(evt.newIndex, 0, row);
+                                saveData();
+                                render();
+                            }
+                        });
+                    }
                 });
+                saveData(); // Salva i titoli rinumerati
             }
             lucide.createIcons();
         };
@@ -954,7 +971,7 @@
             onEnd: (evt) => {
                 const item = modules.splice(evt.oldIndex, 1)[0];
                 modules.splice(evt.newIndex, 0, item);
-                saveData();
+                render(); // MODIFICA: Chiama render per aggiornare i numeri
             }
         });
 
@@ -970,7 +987,6 @@
         window.deleteModule = (moduleId) => { 
             if (confirm('Sei sicuro di voler eliminare questo modulo?')) { 
                 modules = modules.filter(m => m.id !== moduleId); 
-                saveData(); 
                 render(); 
             } 
         };
@@ -998,7 +1014,7 @@
             if (module) { 
                 module[key] = value; 
                 saveData(); 
-                if (key === 'spaceSize') render(); // Rerender if spaceSize changes to update height classes
+                if (key === 'spaceSize') render(); 
             } 
         };
 
@@ -1020,13 +1036,12 @@
                 const newModule = getModuleDefaults(type);
                 if (newModule) {
                     modules.push(newModule);
-                    saveData();
-                    render();
+                    render(); // Chiama render per numerare correttamente
                     setTimeout(() => {
-                        document.querySelector(`[data-module-id="${newModule.id}"]`).scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center' 
-                        });
+                        const newModuleEl = document.querySelector(`[data-module-id="${newModule.id}"]`);
+                        if (newModuleEl) {
+                           newModuleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
                     }, 100);
                 }
             }
@@ -1047,7 +1062,7 @@
                         module.isCollapsed = false;
                     }
                 });
-                moduleCounter = d.moduleCounter || 0; 
+                moduleCounter = d.moduleCounter || modules.length; 
                 testTitle = d.testTitle || 'Verifica';
                 document.getElementById('test-title-input').value = testTitle;
             } 
@@ -1084,7 +1099,6 @@
             const testTitleInput = document.getElementById('test-title-input');
             const saveDataBtn = document.getElementById('save-data');
             const clearDataBtn = document.getElementById('clear-data');
-            // MODIFICA: Rimosso exportWordBtn
             const exportPdfBtn = document.getElementById('export-pdf');
             const exportExcelBtn = document.getElementById('export-excel');
             const importExcelInput = document.getElementById('import-excel-input');
@@ -1092,8 +1106,23 @@
             const previewModal = document.getElementById('preview-modal');
             const closeModalBtn = document.getElementById('close-modal-btn');
             const previewContent = document.getElementById('preview-content');
+            // MODIFICA: Aggiunti pulsanti apri/chiudi tutti
+            const collapseAllBtn = document.getElementById('collapse-all-btn');
+            const expandAllBtn = document.getElementById('expand-all-btn');
             
             testTitleInput.addEventListener('input', saveData);
+
+            collapseAllBtn.addEventListener('click', () => {
+                modules.forEach(m => m.isCollapsed = true);
+                saveData();
+                render();
+            });
+
+            expandAllBtn.addEventListener('click', () => {
+                modules.forEach(m => m.isCollapsed = false);
+                saveData();
+                render();
+            });
 
             previewBtn.addEventListener('click', () => {
                 const printHTML = generatePrintHTML();
@@ -1134,8 +1163,6 @@
                     updateButtonState(e.currentTarget, 'Cancellato!');
                 }
             });
-            
-            // MODIFICA: Rimosso event listener per exportWordBtn
 
             exportPdfBtn.addEventListener('click', (e) => {
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
@@ -1145,7 +1172,7 @@
                 printContainer.classList.remove('hidden');
                 
                 const opt = { 
-                    margin: [2, 1.5, 2.5, 1.5], // top, left, bottom, right in cm
+                    margin: [2, 1.5, 2.5, 1.5],
                     filename: `${currentTitle.replace(/ /g, '_')}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 }, 
                     html2canvas: { scale: 2 }, 
@@ -1261,14 +1288,14 @@
             });
         };
         
-        // MODIFICA: Semplificata funzione generatePrintHTML
         const generatePrintHTML = () => {
             const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
             
+            // MODIFICA: Rimosso padding dal container e aggiunto a body
             let html = `
-            <div id="page-container" style="padding: 1rem;">
+            <div id="page-container">
                 <style>
-                    body { font-family: Arial, sans-serif; font-size: 12pt; color: #000; }
+                    body { font-family: Arial, sans-serif; font-size: 12pt; color: #000; margin: 0; padding: 0; }
                     div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
 
                     #page-container { max-width: 800px; margin: auto; }
@@ -1423,7 +1450,7 @@
                 html += '</div>';
             });
 
-            html += '</div>'; // close page-container
+            html += '</div>';
             return html;
         };
 
@@ -1435,3 +1462,4 @@
 </script>
 </body>
 </html>
+
