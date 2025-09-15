@@ -1448,25 +1448,25 @@
                             rowContentHTML = `<div>${cleanedText}</div>`;
                             break;
                         case 'completa-due-parti':
-                            rowContentHTML = `
-                                <div style="flex: 1;">${cleanedText}</div>
-                                <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>
-                                <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>`;
-                            break;
-                        case 'coniuga-verbi':
-                            rowContentHTML = `
-                                <div style="width: 25%; font-weight: 600;">${row.verb}</div>
-                                <div style="width: 50%;">${row.conjugation}</div>
-                                <div style="width: 25%;"><div class="student-answer-box"></div></div>`;
-                            break;
-                    }
-                    html += `<div class="print-row-content">${rowContentHTML}</div></div>`;
-                });
-                html += '</div>';
-            });
+                     const phDueParti = 'Elemento da analizzare...';
+                     rowContent = `
+                        <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div class="student-space"></div>
+                        <div class="student-space"></div>
+                    `;
+                    break;
+                case 'coniuga-verbi':
+                     const phVerb = 'Verbo';
+                     const phConj = 'Modo e tempo';
+                     rowContent = `
+                        <div contenteditable="true" class="editable-content" style="width: 25%;" onfocus="if(this.innerText.trim() === '${phVerb}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phVerb}'; } updateRowData('${module.id}', '${row.id}', 'verb', this.innerText)">${row.verb}</div>
+                        <div contenteditable="true" class="editable-content" style="width: 50%;" onfocus="if(this.innerText.trim() === '${phConj}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phConj}'; } updateRowData('${module.id}', '${row.id}', 'conjugation', this.innerText)">${row.conjugation}</div>
+                        <div class="student-space" style="width: 25%;"></div>
+                    `;
+                    break;
+            }
 
-            html += '</div>';
-            return html;
+            return `
         };
 
 
@@ -1477,6 +1477,7 @@
 </script>
 </body>
 </html>
+
 
 
 
