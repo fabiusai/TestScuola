@@ -879,8 +879,8 @@
                      const phDueParti = 'Elemento da analizzare...';
                      rowContent = `
                         <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class.student-space"></div>
-                        <div class.student-space"></div>
+                        <div class="student-space"></div>
+                        <div class="student-space"></div>
                     `;
                     break;
                 case 'coniuga-verbi':
@@ -889,7 +889,7 @@
                      rowContent = `
                         <div contenteditable="true" class="editable-content" style="width: 25%;" onfocus="if(this.innerText.trim() === '${phVerb}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phVerb}'; } updateRowData('${module.id}', '${row.id}', 'verb', this.innerText)">${row.verb}</div>
                         <div contenteditable="true" class="editable-content" style="width: 50%;" onfocus="if(this.innerText.trim() === '${phConj}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phConj}'; } updateRowData('${module.id}', '${row.id}', 'conjugation', this.innerText)">${row.conjugation}</div>
-                        <div class.student-space" style="width: 25%;"></div>
+                        <div class="student-space" style="width: 25%;"></div>
                     `;
                     break;
             }
@@ -950,14 +950,14 @@
             moduleCounter++;
             const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false };
             switch (type) {
-                case 'vero-falso': return { ...base, type, title: `Modulo ${moduleCounter}: Vero o Falso`, instructions: 'Indica se ogni affermazione è vera o falsa.' };
-                case 'sottolinea': return { ...base, type, title: `Modulo ${moduleCounter}: Sottolinea`, instructions: 'Sottolinea le parole richieste in ogni frase.' };
-                case 'esplicita': return { ...base, type, title: `Modulo ${moduleCounter}: Esplicita`, instructions: 'Spiega il significato delle parti in grassetto.' };
-                case 'analizza': return { ...base, type, title: `Modulo ${moduleCounter}: Analizza il Testo`, instructions: 'Scrivi un\'analisi per ciascuna frase.', spaceSize: 'medium' };
-                case 'scegli-funzione': return { ...base, type, title: `Modulo ${moduleCounter}: Scegli la Funzione`, instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
-                case 'completa-frasi': return { ...base, type, title: `Modulo ${moduleCounter}: Completa le frasi`, instructions: 'Riempi gli spazi vuoti con le parole corrette.' };
-                case 'completa-due-parti': return { ...base, type, title: `Modulo ${moduleCounter}: Completa le due parti`, instructions: 'Completa le informazioni per ogni elemento.', header1: 'Titolo 1', header2: 'Titolo 2' };
-                case 'coniuga-verbi': return { ...base, type, title: `Modulo ${moduleCounter}: Coniuga i Verbi`, instructions: 'Coniuga il verbo nel modo e tempo richiesto.' };
+                case 'vero-falso': return { ...base, type, title: `Vero o Falso`, instructions: 'Indica se ogni affermazione è vera o falsa.' };
+                case 'sottolinea': return { ...base, type, title: `Sottolinea`, instructions: 'Sottolinea le parole richieste in ogni frase.' };
+                case 'esplicita': return { ...base, type, title: `Esplicita`, instructions: 'Spiega il significato delle parti in grassetto.' };
+                case 'analizza': return { ...base, type, title: `Analizza il Testo`, instructions: 'Scrivi un\'analisi per ciascuna frase.', spaceSize: 'medium' };
+                case 'scegli-funzione': return { ...base, type, title: `Scegli la Funzione`, instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
+                case 'completa-frasi': return { ...base, type, title: `Completa le frasi`, instructions: 'Riempi gli spazi vuoti con le parole corrette.' };
+                case 'completa-due-parti': return { ...base, type, title: `Completa le due parti`, instructions: 'Completa le informazioni per ogni elemento.', header1: 'Titolo 1', header2: 'Titolo 2' };
+                case 'coniuga-verbi': return { ...base, type, title: `Coniuga i Verbi`, instructions: 'Coniuga il verbo nel modo e tempo richiesto.' };
                 default: return null;
             }
         };
@@ -965,7 +965,6 @@
         const getRowDefaults = (type) => {
             const base = { id: `row_${Date.now()}_${Math.random()}` };
             switch(type) {
-                // MODIFICA: Rimosso "1. " dal testo di default
                 case 'vero-falso': case 'sottolinea': case 'analizza': return { ...base, text: 'Nuova frase...' };
                 case 'esplicita': return { ...base, text: 'Nuova frase con una parte in <b>grassetto</b>.' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -998,7 +997,8 @@
 
         window.deleteModule = (moduleId) => { 
             if (confirm('Sei sicuro di voler eliminare questo modulo?')) { 
-                modules = modules.filter(m => m.id !== moduleId); 
+                modules = modules.filter(m => m.id !== moduleId);
+                moduleCounter = modules.length > 0 ? Math.max(...modules.map((m, i) => i + 1)) : 0;
                 render(); 
             } 
         };
@@ -1024,7 +1024,11 @@
         window.updateModuleData = (moduleId, key, value) => { 
             const module = modules.find(m => m.id === moduleId); 
             if (module) { 
-                module[key] = value; 
+                if (key === 'title') {
+                     // Non aggiornare la parte "Modulo X:"
+                } else {
+                    module[key] = value;
+                }
                 saveData(); 
                 if (key === 'spaceSize') render(); 
             } 
@@ -1303,7 +1307,6 @@
         const generatePrintHTML = () => {
             const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
             
-            // MODIFICA: Rimosso padding dal container e aggiunto a body
             let html = `
             <div id="page-container">
                 <style>
@@ -1410,7 +1413,6 @@
                 }
                 
                 module.rows.forEach((row, rowIndex) => {
-                    // MODIFICA: Pulizia del testo migliorata per gestire anche l'anteprima
                     const cleanedText = row.text ? String(row.text).replace(/^\s*(&nbsp;)*\d+[\.\)]\s*(&nbsp;)*/, '') : '';
 
                     html += `<div class="print-row">`;
@@ -1448,27 +1450,26 @@
                             rowContentHTML = `<div>${cleanedText}</div>`;
                             break;
                         case 'completa-due-parti':
-                     const phDueParti = 'Elemento da analizzare...';
-                     rowContent = `
-                        <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class="student-space"></div>
-                        <div class="student-space"></div>
-                    `;
-                    break;
-                case 'coniuga-verbi':
-                     const phVerb = 'Verbo';
-                     const phConj = 'Modo e tempo';
-                     rowContent = `
-                        <div contenteditable="true" class="editable-content" style="width: 25%;" onfocus="if(this.innerText.trim() === '${phVerb}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phVerb}'; } updateRowData('${module.id}', '${row.id}', 'verb', this.innerText)">${row.verb}</div>
-                        <div contenteditable="true" class="editable-content" style="width: 50%;" onfocus="if(this.innerText.trim() === '${phConj}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phConj}'; } updateRowData('${module.id}', '${row.id}', 'conjugation', this.innerText)">${row.conjugation}</div>
-                        <div class="student-space" style="width: 25%;"></div>
-                    `;
-                    break;
-            }
+                            rowContentHTML = `
+                                <div style="flex: 1;">${cleanedText}</div>
+                                <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>
+                                <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>`;
+                            break;
+                        case 'coniuga-verbi':
+                            rowContentHTML = `
+                                <div style="width: 25%; font-weight: 600;">${row.verb}</div>
+                                <div style="width: 50%;">${row.conjugation}</div>
+                                <div style="width: 25%;"><div class="student-answer-box"></div></div>`;
+                            break;
+                    }
+                    html += `<div class="print-row-content">${rowContentHTML}</div></div>`;
+                });
+                html += '</div>';
+            });
 
-            return `
+            html += '</div>'; // close page-container
+            return html;
         };
-
 
         loadData(); 
         render(); 
@@ -1477,8 +1478,4 @@
 </script>
 </body>
 </html>
-
-
-
-
 
