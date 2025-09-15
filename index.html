@@ -835,7 +835,7 @@
             switch (module.type) {
                 case 'vero-falso':
                     rowContent = `
-                        <div contenteditable="true" class="editable-content" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === 'Nuova frase...') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Nuova frase...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
                         <div class="vero-falso-options">
                             <span>Vero □</span>
                             <span>Falso □</span>
@@ -844,41 +844,52 @@
                     break;
                 case 'sottolinea':
                 case 'esplicita':
+                     const phEsplicita = 'Nuova frase con una parte in <b>grassetto</b>.';
+                     const phSottolinea = 'Nuova frase...';
+                     const isEsplicita = module.type === 'esplicita';
+                     const placeholder = isEsplicita ? phEsplicita : phSottolinea;
+                     
                      rowContent = `
-                        <div contenteditable="true" class="editable-content" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>
+                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerHTML.trim() === '${placeholder}') { this.innerHTML = '' }" onblur="if(this.innerHTML.trim() === '') { this.innerHTML = '${placeholder}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>
                         <div class="student-space"></div>
                     `;
                     break;
                 case 'analizza':
+                     const phAnalizza = 'Nuova frase...';
                      const heightClass = module.spaceSize === 'large' ? 'min-h-[100px]' : module.spaceSize === 'medium' ? 'min-h-[60px]' : 'min-h-[40px]';
                      rowContent = `
-                        <div contenteditable="true" class="editable-content" style="width: 50%;" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div contenteditable="true" class="editable-content" style="width: 50%;" onfocus="if(this.innerText.trim() === '${phAnalizza}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phAnalizza}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
                         <div class="student-space ${heightClass}"></div>
                     `;
                     break;
                 case 'scegli-funzione':
+                     const phFunzione = 'Testo della domanda.';
                      rowContent = `
-                        <div contenteditable="true" class="editable-content" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === '${phFunzione}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phFunzione}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
                         <div class="function-options">
                             ${module.options.map(opt => `<span>[${opt}]</span>`).join('')}
                         </div>
                     `;
                     break;
                  case 'completa-frasi':
-                    rowContent = `<div contenteditable="true" class="editable-content" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>`;
+                    const phCompleta = 'Completa questa frase con uno spazio <span class="underline-input">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.';
+                    rowContent = `<div contenteditable="true" class="editable-content" onfocus="if(this.innerHTML.trim() === '${phCompleta}') { this.innerHTML = '' }" onblur="if(this.innerHTML.trim() === '') { this.innerHTML = '${phCompleta}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>`;
                     break;
                 case 'completa-due-parti':
+                     const phDueParti = 'Elemento da analizzare...';
                      rowContent = `
-                        <div contenteditable="true" class="editable-content" style="flex: 1;" onblur="updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class="student-space"></div>
-                        <div class="student-space"></div>
+                        <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div class.student-space"></div>
+                        <div class.student-space"></div>
                     `;
                     break;
                 case 'coniuga-verbi':
+                     const phVerb = 'Verbo';
+                     const phConj = 'Modo e tempo';
                      rowContent = `
-                        <div contenteditable="true" class="editable-content" style="width: 25%;" onblur="updateRowData('${module.id}', '${row.id}', 'verb', this.innerText)">${row.verb}</div>
-                        <div contenteditable="true" class="editable-content" style="width: 50%;" onblur="updateRowData('${module.id}', '${row.id}', 'conjugation', this.innerText)">${row.conjugation}</div>
-                        <div class="student-space" style="width: 25%;"></div>
+                        <div contenteditable="true" class="editable-content" style="width: 25%;" onfocus="if(this.innerText.trim() === '${phVerb}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phVerb}'; } updateRowData('${module.id}', '${row.id}', 'verb', this.innerText)">${row.verb}</div>
+                        <div contenteditable="true" class="editable-content" style="width: 50%;" onfocus="if(this.innerText.trim() === '${phConj}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phConj}'; } updateRowData('${module.id}', '${row.id}', 'conjugation', this.innerText)">${row.conjugation}</div>
+                        <div class.student-space" style="width: 25%;"></div>
                     `;
                     break;
             }
@@ -954,6 +965,7 @@
         const getRowDefaults = (type) => {
             const base = { id: `row_${Date.now()}_${Math.random()}` };
             switch(type) {
+                // MODIFICA: Rimosso "1. " dal testo di default
                 case 'vero-falso': case 'sottolinea': case 'analizza': return { ...base, text: 'Nuova frase...' };
                 case 'esplicita': return { ...base, text: 'Nuova frase con una parte in <b>grassetto</b>.' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -1398,6 +1410,9 @@
                 }
                 
                 module.rows.forEach((row, rowIndex) => {
+                    // MODIFICA: Pulizia del testo migliorata per gestire anche l'anteprima
+                    const cleanedText = row.text ? String(row.text).replace(/^\s*(&nbsp;)*\d+[\.\)]\s*(&nbsp;)*/, '') : '';
+
                     html += `<div class="print-row">`;
                     html += `<div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>`;
                     
@@ -1405,36 +1420,36 @@
                     switch (module.type) {
                         case 'vero-falso':
                             rowContentHTML = `
-                                <div>${row.text}</div>
+                                <div>${cleanedText}</div>
                                 <div style="width: 150px; text-align: right; white-space: nowrap; padding-left: 15px;">Vero ☐ Falso ☐</div>`;
                             break;
                         case 'sottolinea':
                             rowContentHTML = `
-                                <div>${row.text}</div>
+                                <div>${cleanedText}</div>
                                 <div style="width: 30%; padding-left: 15px;"><div class="student-answer-box"></div></div>`;
                             break;
                         case 'esplicita':
                             rowContentHTML = `
-                                <div>${row.text.replace(/<b>/g, '<strong>').replace(/<\/b>/g, '</strong>')}</div>
+                                <div>${cleanedText.replace(/<b>/g, '<strong>').replace(/<\/b>/g, '</strong>')}</div>
                                 <div style="width: 33%; padding-left: 15px;"><div class="student-answer-box" style="min-height: 5.4em;"></div></div>`;
                             break;
                         case 'analizza':
                             const h = module.spaceSize === 'large' ? '100px' : module.spaceSize === 'medium' ? '60px' : '40px';
                             rowContentHTML = `
-                                <div>${row.text}</div>
+                                <div>${cleanedText}</div>
                                 <div style="width: 50%; padding-left: 15px;"><div class="student-answer-box" style="min-height: ${h};"></div></div>`;
                             break;
                         case 'scegli-funzione':
                             rowContentHTML = `
-                                <div>${row.text}</div>
+                                <div>${cleanedText}</div>
                                 <div style="white-space:nowrap; text-align: right; padding-left: 15px;">${module.options.map(o => `[${o}]`).join(' ')}</div>`;
                             break;
                         case 'completa-frasi':
-                            rowContentHTML = `<div>${row.text}</div>`;
+                            rowContentHTML = `<div>${cleanedText}</div>`;
                             break;
                         case 'completa-due-parti':
                             rowContentHTML = `
-                                <div style="flex: 1;">${row.text}</div>
+                                <div style="flex: 1;">${cleanedText}</div>
                                 <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>
                                 <div style="flex: 1; margin: 0 5px;"><div class="student-answer-box"></div></div>`;
                             break;
@@ -1462,4 +1477,7 @@
 </script>
 </body>
 </html>
+
+
+
 
