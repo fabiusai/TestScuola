@@ -1268,18 +1268,41 @@
 
                     modules.forEach(module => {
                         const ws_data = [];
-                        ws_data.push(['ModuleID', module.id],['ModuleType', module.type],['Title', module.title],['Instructions', module.instructions]);
-                        if(module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
-                        if(module.options) ws_data.push(['Options', module.options.join(',')]);
-                        if(module.header1) ws_data.push(['Header1', module.header1]);
-                        if(module.header2) ws_data.push(['Header2', module.header2]);
-                        if(module.header3) ws_data.push(['Header3', module.header3]);
-                        ws_data.push([]);
+                        // Dati generali del modulo
+                        ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions]);
+                        if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
+                        if (module.options) ws_data.push(['Options', module.options.join(',')]);
+                        if (module.header1) ws_data.push(['Header1', module.header1]);
+                        if (module.header2) ws_data.push(['Header2', module.header2]);
+                        if (module.header3) ws_data.push(['Header3', module.header3]);
+                        
+                        ws_data.push([]); // Riga vuota di separazione
+
+                        // Dati specifici delle righe, con intestazioni corrette
                         if (module.rows.length > 0) {
-                            const headers = Object.keys(module.rows[0]);
-                            ws_data.push(headers);
-                            module.rows.forEach(row => ws_data.push(headers.map(h => row[h])));
+                            let headers = [];
+                            let rowArrays = [];
+
+                            switch (module.type) {
+                                case 'vero-falso':
+                                case 'scegli-funzione':
+                                case 'tre-parti':
+                                case 'libero':
+                                    headers = ['id', 'text'];
+                                    rowArrays = module.rows.map(row => [row.id, row.text]);
+                                    break;
+                                case 'trasforma':
+                                    headers = ['id', 'part1', 'part2'];
+                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2]);
+                                    break;
+                            }
+
+                            if (headers.length > 0) {
+                                ws_data.push(headers);
+                                ws_data.push(...rowArrays);
+                            }
                         }
+                        
                         const ws = XLSX.utils.aoa_to_sheet(ws_data);
                         const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, "");
                         XLSX.utils.book_append_sheet(wb, ws, sheetName);
@@ -1369,10 +1392,14 @@
                     #page-container { max-width: 800px; margin: auto; }
                     .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; page-break-after: avoid; }
                     
-                    .module-print-card { margin-bottom: 25px; border-top: 1px solid #999; padding-top: 15px;}
+                    .module-print-card { 
+                        margin-bottom: 25px; 
+                        border-top: 1px solid #999; 
+                        padding-top: 15px;
+                    }
                     
-                    .title { font-size: 18pt; font-weight: bold; margin: 0; }
-                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; }
+                    .title { font-size: 18pt; font-weight: bold; margin: 0; page-break-after: avoid; }
+                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; page-break-after: avoid; }
                     
                     .print-row {
                         display: flex;
