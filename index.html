@@ -611,13 +611,7 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 210mm;
-                font-size: 12pt;
-                line-height: 1.5;
-            }
-            .module-print-card {
-                page-break-inside: avoid;
-                margin-bottom: 20px;
+                width: 100%;
             }
         }
 
@@ -1123,7 +1117,7 @@
                 questionFontSize = d.questionFontSize || '12pt';
                 document.getElementById('test-title-input').value = testTitle;
                 document.getElementById('font-size-select').value = questionFontSize;
-            } 
+            }
         };
         
         const updateButtonState = (btn, text, duration = 2000) => {
@@ -1151,6 +1145,39 @@
                 btn.disabled = false;
                 lucide.createIcons();
             };
+        };
+
+        const generatePrintRowHTML = (row, rowIndex, module) => {
+            const cleanedText = row.text ? String(row.text) : '';
+            let rowContentHTML = '';
+
+            switch (module.type) {
+                case 'vero-falso':
+                    rowContentHTML = `<div>${cleanedText}</div><div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`;
+                    break;
+                case 'scegli-funzione':
+                    rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`;
+                    break;
+                case 'tre-parti':
+                    rowContentHTML = `<div style="flex: 1;">${cleanedText}</div><div style="flex: 1;"><div class="student-answer-box"></div></div><div style="flex: 1;"><div class="student-answer-box"></div></div>`;
+                    break;
+                case 'trasforma':
+                    rowContentHTML = `<div style="flex: 0 0 20%;">${row.part1}</div><div style="flex: 1;">${row.part2}</div><div style="flex: 0 0 40%;"><div class="student-answer-box"></div></div>`;
+                    break;
+                case 'libero':
+                    let answerBox = '';
+                    if (module.answerSpace && module.answerSpace !== 'none') {
+                        const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px';
+                        answerBox = `<div style="flex: 0 0 50%;"><div class="student-answer-box" style="min-height: ${h};"></div></div>`;
+                    }
+                    rowContentHTML = `<div>${cleanedText}</div>${answerBox}`;
+                    break;
+            }
+
+            return `<div class="print-row">
+                        <div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>
+                        <div class="print-row-content">${rowContentHTML}</div>
+                    </div>`;
         };
         
         const setupToolButtons = () => {
@@ -1388,76 +1415,23 @@
                 <style>
                     body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
                     div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
-
+                    .keep-together { page-break-inside: avoid; }
                     #page-container { max-width: 800px; margin: auto; }
-                    .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; page-break-after: avoid; }
-                    
-                    .module-print-card { 
-                        margin-bottom: 25px; 
-                        border-top: 1px solid #999; 
-                        padding-top: 15px;
-                    }
-                    
-                    .title { font-size: 18pt; font-weight: bold; margin: 0; page-break-after: avoid; }
-                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; page-break-after: avoid; }
-                    
-                    .print-row {
-                        display: flex;
-                        align-items: flex-start;
-                        padding-top: 5px;
-                        padding-bottom: 15px;
-                        line-height: 1.8;
-                        page-break-inside: avoid !important;
-                    }
-                    .print-row-number {
-                        width: 40px;
-                        padding-right: 10px;
-                    }
-                    .print-row-content {
-                        flex: 1;
-                        display: flex;
-                        gap: 15px;
-                        width: 100%;
-                    }
-                    .print-row-content > div:first-child {
-                        flex: 1;
-                    }
-
-                    .row-number-box { 
-                        background-color: #000; color: #fff; font-weight: bold;
-                        border-radius: 4px; padding: 2px 0;
-                        min-width: 24px; height: 24px;
-                        display: inline-flex; align-items: center; justify-content: center;
-                        line-height: 1;
-                    }
+                    .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; }
+                    .module-print-card { margin-bottom: 25px; border-top: 1px solid #999; padding-top: 15px; }
+                    .title { font-size: 18pt; font-weight: bold; margin: 0; }
+                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; }
+                    .print-row { display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; page-break-inside: avoid !important; }
+                    .print-row-number { width: 40px; padding-right: 10px; }
+                    .print-row-content { flex: 1; display: flex; gap: 15px; width: 100%; }
+                    .print-row-content > div:first-child { flex: 1; }
+                    .row-number-box { background-color: #000; color: #fff; font-weight: bold; border-radius: 4px; padding: 2px 0; min-width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
                     b, strong { font-weight: bold; }
-                    .underline-input { border-bottom: 1px solid #000; min-width: 100px; display: inline-block; }
                     .student-answer-box { border: 1px dashed #999; border-radius: 4px; height: 100%; min-height: 1.8em; }
-
-                    .student-info-box {
-                        border: 1.5px solid #555;
-                        border-radius: 10px;
-                        padding: 15px 20px;
-                        margin-bottom: 30px;
-                        display: flex;
-                        gap: 25px;
-                        align-items: flex-end;
-                    }
-                    .info-item {
-                        display: flex;
-                        flex-direction: column;
-                        flex-grow: 1;
-                    }
-                    .info-item label {
-                        font-weight: bold;
-                        font-size: 11pt;
-                        color: #333;
-                        margin-bottom: 2px;
-                    }
-                    .info-item .line {
-                        border-bottom: 1px solid #333;
-                        height: 25px;
-                    }
+                    .student-info-box { border: 1.5px solid #555; border-radius: 10px; padding: 15px 20px; margin-bottom: 30px; display: flex; gap: 25px; align-items: flex-end; }
+                    .info-item { display: flex; flex-direction: column; flex-grow: 1; }
+                    .info-item label { font-weight: bold; font-size: 11pt; color: #333; margin-bottom: 2px; }
+                    .info-item .line { border-bottom: 1px solid #333; height: 25px; }
                 </style>
                 <div class="student-info-box">
                     <div class="info-item" style="flex-grow: 2.5;">
@@ -1479,6 +1453,9 @@
 
             modules.forEach((module, index) => {
                 html += `<div class="module-print-card">`;
+                
+                // Blocco da tenere unito
+                html += `<div class="keep-together">`;
                 html += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
                 html += `<p class="instructions">${module.instructions}</p>`;
 
@@ -1493,47 +1470,20 @@
                             </div>`;
                 }
                 
-                module.rows.forEach((row, rowIndex) => {
-                    const cleanedText = row.text ? String(row.text) : '';
+                // Inserisce la prima riga nel blocco "keep-together"
+                if (module.rows.length > 0) {
+                    html += generatePrintRowHTML(module.rows[0], 0, module);
+                }
 
-                    html += `<div class="print-row">`;
-                    html += `<div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>`;
-                    
-                    let rowContentHTML = '';
-                    switch (module.type) {
-                        case 'vero-falso':
-                            rowContentHTML = `
-                                <div>${cleanedText}</div>
-                                <div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`;
-                            break;
-                        case 'scegli-funzione':
-                            rowContentHTML = `
-                                <div>${cleanedText}</div>
-                                <div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`;
-                            break;
-                        case 'tre-parti':
-                            rowContentHTML = `
-                                <div style="flex: 1;">${cleanedText}</div>
-                                <div style="flex: 1;"><div class="student-answer-box"></div></div>
-                                <div style="flex: 1;"><div class="student-answer-box"></div></div>`;
-                            break;
-                        case 'trasforma':
-                            rowContentHTML = `
-                                <div style="flex: 0 0 20%;">${row.part1}</div>
-                                <div style="flex: 1;">${row.part2}</div>
-                                <div style="flex: 0 0 40%;"><div class="student-answer-box"></div></div>`;
-                            break;
-                        case 'libero':
-                            let answerBox = '';
-                            if (module.answerSpace && module.answerSpace !== 'none') {
-                                const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px';
-                                answerBox = `<div style="flex: 0 0 50%;"><div class="student-answer-box" style="min-height: ${h};"></div></div>`;
-                            }
-                            rowContentHTML = `<div>${cleanedText}</div>${answerBox}`;
-                            break;
+                html += `</div>`; // Chiusura del blocco
+
+                // Inserisce le righe rimanenti
+                if (module.rows.length > 1) {
+                    for (let i = 1; i < module.rows.length; i++) {
+                        html += generatePrintRowHTML(module.rows[i], i, module);
                     }
-                    html += `<div class="print-row-content">${rowContentHTML}</div></div>`;
-                });
+                }
+
                 html += '</div>';
             });
 
