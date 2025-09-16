@@ -1415,13 +1415,31 @@
                 <style>
                     body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
                     div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
-                    .keep-together { page-break-inside: avoid; }
+                    
+                    /* --- INIZIO MODIFICHE CSS PER PAGINAZIONE INTELLIGENTE --- */
+                    .module-print-card { 
+                        page-break-inside: avoid; /* Suggerisce di non spezzare un modulo se entra in una pagina */
+                        padding-top: 15px; 
+                        margin-bottom: 25px; 
+                        border-top: 1px solid #999; 
+                    }
+                    .module-print-header { 
+                        page-break-after: avoid; /* Regola chiave: evita la rottura della pagina DOPO l'intestazione del modulo */
+                    }
+                    .print-row { 
+                        page-break-inside: avoid; /* Regola chiave: evita che una SINGOLA domanda venga spezzata */
+                        display: flex; 
+                        align-items: flex-start; 
+                        padding-top: 5px; 
+                        padding-bottom: 15px; 
+                        line-height: 1.8; 
+                    }
+                    /* --- FINE MODIFICHE CSS --- */
+
                     #page-container { max-width: 800px; margin: auto; }
                     .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; }
-                    .module-print-card { margin-bottom: 25px; border-top: 1px solid #999; padding-top: 15px; }
                     .title { font-size: 18pt; font-weight: bold; margin: 0; }
                     .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; }
-                    .print-row { display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; page-break-inside: avoid !important; }
                     .print-row-number { width: 40px; padding-right: 10px; }
                     .print-row-content { flex: 1; display: flex; gap: 15px; width: 100%; }
                     .print-row-content > div:first-child { flex: 1; }
@@ -1452,10 +1470,12 @@
             `;
 
             modules.forEach((module, index) => {
+                // Il .module-print-card ora ha una regola per evitare la rottura interna.
                 html += `<div class="module-print-card">`;
                 
-                // Blocco da tenere unito
-                html += `<div class="keep-together">`;
+                // L'intestazione del modulo è ora in un suo blocco con una regola per evitare una pausa DOPO di esso.
+                // Questo risolve il problema dei titoli orfani.
+                html += `<div class="module-print-header">`;
                 html += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
                 html += `<p class="instructions">${module.instructions}</p>`;
 
@@ -1469,21 +1489,13 @@
                                 </div>
                             </div>`;
                 }
-                
-                // Inserisce la prima riga nel blocco "keep-together"
-                if (module.rows.length > 0) {
-                    html += generatePrintRowHTML(module.rows[0], 0, module);
-                }
+                html += `</div>`; // Chiusura di module-print-header
 
-                html += `</div>`; // Chiusura del blocco
-
-                // Inserisce le righe rimanenti
-                if (module.rows.length > 1) {
-                    for (let i = 1; i < module.rows.length; i++) {
-                        html += generatePrintRowHTML(module.rows[i], i, module);
-                    }
-                }
-
+                // Le righe vengono generate normalmente. La classe .print-row impedisce che vengano spezzate internamente.
+                module.rows.forEach((row, i) => {
+                    html += generatePrintRowHTML(row, i, module);
+                });
+               
                 html += '</div>';
             });
 
