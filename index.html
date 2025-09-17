@@ -883,7 +883,6 @@
                 <i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i>
                 <span class="row-number">${index + 1}.</span>
             `;
-            // NUOVO: Pulsanti di controllo per la riga, incluso il page break
             const rowControls = `
                 <div class="flex flex-col items-center ml-auto">
                     <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questa riga" onclick="toggleRowPageBreak('${module.id}', '${row.id}')">
@@ -1012,7 +1011,7 @@
         };
         
         const getRowDefaults = (type) => {
-            const base = { id: `row_${Date.now()}_${Math.random()}`, forcePageBreak: false }; // NUOVO: Aggiunto forcePageBreak
+            const base = { id: `row_${Date.now()}_${Math.random()}`, forcePageBreak: false };
             switch(type) {
                 case 'vero-falso': return { ...base, text: 'Nuova frase...' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -1068,18 +1067,16 @@
                 render();
             }
         };
-        
-        // CORRETTO: togglePageBreak ora chiama render() per garantire consistenza
+
         window.togglePageBreak = (moduleId) => {
             const module = modules.find(m => m.id === moduleId);
             if (module) {
                 module.forcePageBreak = !module.forcePageBreak;
                 saveData();
-                render(); // Ridisegna l'interfaccia per riflettere il cambiamento
+                render();
             }
         };
         
-        // NUOVO: Funzione per il toggle sulla singola riga
         window.toggleRowPageBreak = (moduleId, rowId) => {
             const module = modules.find(m => m.id === moduleId);
             if (module) {
@@ -1144,7 +1141,6 @@
                 modules.forEach(module => {
                     if (typeof module.isCollapsed === 'undefined') module.isCollapsed = false;
                     if (typeof module.forcePageBreak === 'undefined') module.forcePageBreak = false;
-                    // NUOVO: Assicura che la proprietà esista anche sulle righe caricate
                     module.rows.forEach(row => {
                          if (typeof row.forcePageBreak === 'undefined') row.forcePageBreak = false;
                     });
@@ -1211,7 +1207,6 @@
                     break;
             }
             
-            // NUOVO: Aggiunta classe per interruzione pagina sulla riga
             const pageBreakClass = row.forcePageBreak ? 'force-page-break' : '';
 
             return `<div class="print-row ${pageBreakClass}">
@@ -1354,7 +1349,6 @@
                                 case 'scegli-funzione':
                                 case 'tre-parti':
                                 case 'libero':
-                                    // NUOVO: Aggiunto header forcePageBreak
                                     headers = ['id', 'text', 'forcePageBreak'];
                                     rowArrays = module.rows.map(row => [row.id, row.text, row.forcePageBreak ? 'TRUE' : 'FALSE']);
                                     break;
@@ -1421,7 +1415,6 @@
                         moduleData.rows = [];
                         if (headerRowIndex !== -1 && headerRowIndex < json.length) {
                             const headers = json[headerRowIndex];
-                            // NUOVO: Cerca l'indice della colonna forcePageBreak
                             const fpbIndex = headers.indexOf('forcePageBreak');
 
                             for (let i = headerRowIndex + 1; i < json.length; i++) {
@@ -1429,7 +1422,6 @@
                                 headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
                                 if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`;
                                 
-                                // NUOVO: Legge il valore booleano
                                 if(fpbIndex !== -1){
                                     const fpbValue = json[i][fpbIndex];
                                     rowData.forcePageBreak = (fpbValue === 'TRUE' || fpbValue === true);
@@ -1476,14 +1468,15 @@
                         padding-top: 15px; 
                         margin-bottom: 25px; 
                         border-top: 1px solid #999;
-                        page-break-inside: avoid;
-                        break-inside: avoid;
+                        /* RIMOSSO: page-break-inside: avoid; */
                     }
                     .module-print-header { 
+                        /* MANTIENI: Evita che il titolo resti da solo a fondo pagina */
                         page-break-after: avoid;
                         break-after: avoid;
                     }
-                    .print-row { 
+                    .print-row {
+                        /* MANTIENI: Regola FONDAMENTALE per non spezzare mai una domanda */
                         page-break-inside: avoid !important;
                         break-inside: avoid !important;
                         display: flex; 
