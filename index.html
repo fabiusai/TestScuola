@@ -852,6 +852,9 @@
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}', this)">
+                            <i data-lucide="file-input" class="w-5 h-5 ${module.forcePageBreak ? 'text-blue-600' : ''}"></i>
+                        </button>
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
                             <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i>
                         </button>
@@ -989,7 +992,7 @@
 
          const getModuleDefaults = (type) => {
             moduleCounter++;
-            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false };
+            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false, forcePageBreak: false };
             switch (type) {
                 case 'vero-falso': return { ...base, type, title: 'Vero o Falso', instructions: 'Indica se ogni affermazione è vera o falsa.' };
                 case 'scegli-funzione': return { ...base, type, title: 'Scegli la Funzione', instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
@@ -1058,6 +1061,15 @@
             }
         };
 
+        window.togglePageBreak = (moduleId, element) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                module.forcePageBreak = !module.forcePageBreak;
+                element.querySelector('i').classList.toggle('text-blue-600', module.forcePageBreak);
+                saveData();
+            }
+        };
+
         window.updateModuleData = (moduleId, key, value) => { 
             const module = modules.find(m => m.id === moduleId); 
             if (module) { 
@@ -1110,6 +1122,9 @@
                 modules.forEach(module => {
                     if (typeof module.isCollapsed === 'undefined') {
                         module.isCollapsed = false;
+                    }
+                    if (typeof module.forcePageBreak === 'undefined') {
+                        module.forcePageBreak = false;
                     }
                 });
                 moduleCounter = d.moduleCounter || modules.length; 
@@ -1297,6 +1312,7 @@
                         const ws_data = [];
                         // Dati generali del modulo
                         ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions]);
+                        if (typeof module.forcePageBreak !== 'undefined') ws_data.push(['ForcePageBreak', module.forcePageBreak ? 'TRUE' : 'FALSE']);
                         if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
                         if (module.options) ws_data.push(['Options', module.options.join(',')]);
                         if (module.header1) ws_data.push(['Header1', module.header1]);
@@ -1369,7 +1385,8 @@
                             if (row.length === 0) { headerRowIndex = i + 1; break; }
                             if(row[0] === 'ModuleType') moduleData.type = row[1]; 
                             if(row[0] === 'Title') moduleData.title = row[1]; 
-                            if(row[0] === 'Instructions') moduleData.instructions = row[1]; 
+                            if(row[0] === 'Instructions') moduleData.instructions = row[1];
+                            if(row[0] === 'ForcePageBreak') moduleData.forcePageBreak = (row[1] === 'TRUE' || row[1] === true);
                             if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; 
                             if(row[0] === 'Options') moduleData.options = row[1].split(','); 
                             if(row[0] === 'Header1') moduleData.header1 = row[1]; 
@@ -1416,25 +1433,30 @@
                     body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
                     div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
                     
-                    /* --- INIZIO MODIFICHE CSS PER PAGINAZIONE INTELLIGENTE --- */
                     .module-print-card { 
-                        page-break-inside: avoid; /* Suggerisce di non spezzare un modulo se entra in una pagina */
                         padding-top: 15px; 
                         margin-bottom: 25px; 
-                        border-top: 1px solid #999; 
+                        border-top: 1px solid #999;
+                        page-break-inside: avoid;
+                        break-inside: avoid;
                     }
                     .module-print-header { 
-                        page-break-after: avoid; /* Regola chiave: evita la rottura della pagina DOPO l'intestazione del modulo */
+                        page-break-after: avoid;
+                        break-after: avoid;
                     }
                     .print-row { 
-                        page-break-inside: avoid; /* Regola chiave: evita che una SINGOLA domanda venga spezzata */
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
                         display: flex; 
                         align-items: flex-start; 
                         padding-top: 5px; 
                         padding-bottom: 15px; 
                         line-height: 1.8; 
                     }
-                    /* --- FINE MODIFICHE CSS --- */
+                    .force-page-break {
+                        page-break-before: always;
+                        break-before: page;
+                    }
 
                     #page-container { max-width: 800px; margin: auto; }
                     .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; }
@@ -1470,11 +1492,9 @@
             `;
 
             modules.forEach((module, index) => {
-                // Il .module-print-card ora ha una regola per evitare la rottura interna.
-                html += `<div class="module-print-card">`;
+                const pageBreakClass = (module.forcePageBreak && index > 0) ? 'force-page-break' : '';
+                html += `<div class="module-print-card ${pageBreakClass}">`;
                 
-                // L'intestazione del modulo è ora in un suo blocco con una regola per evitare una pausa DOPO di esso.
-                // Questo risolve il problema dei titoli orfani.
                 html += `<div class="module-print-header">`;
                 html += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
                 html += `<p class="instructions">${module.instructions}</p>`;
@@ -1489,9 +1509,8 @@
                                 </div>
                             </div>`;
                 }
-                html += `</div>`; // Chiusura di module-print-header
+                html += `</div>`; 
 
-                // Le righe vengono generate normalmente. La classe .print-row impedisce che vengano spezzate internamente.
                 module.rows.forEach((row, i) => {
                     html += generatePrintRowHTML(row, i, module);
                 });
