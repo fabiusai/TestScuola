@@ -852,7 +852,7 @@
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}', this)">
+                        <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}')">
                             <i data-lucide="file-input" class="w-5 h-5 ${module.forcePageBreak ? 'text-blue-600' : ''}"></i>
                         </button>
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
@@ -883,7 +883,15 @@
                 <i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i>
                 <span class="row-number">${index + 1}.</span>
             `;
-            const deleteButton = `<button class="text-red-400 hover:text-red-600 ml-auto" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+            // NUOVO: Pulsanti di controllo per la riga, incluso il page break
+            const rowControls = `
+                <div class="flex flex-col items-center ml-auto">
+                    <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questa riga" onclick="toggleRowPageBreak('${module.id}', '${row.id}')">
+                        <i data-lucide="file-input" class="w-4 h-4 ${row.forcePageBreak ? 'text-blue-600' : ''}"></i>
+                    </button>
+                    <button class="text-red-400 hover:text-red-600" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+            `;
 
             let rowContent = '';
             switch (module.type) {
@@ -948,7 +956,7 @@
                 <div class="row-item" data-row-id="${row.id}">
                     ${commonControls}
                     <div class="row-content-wrapper">${rowContent}</div>
-                    ${deleteButton}
+                    ${rowControls}
                 </div>
             `;
         };
@@ -1004,7 +1012,7 @@
         };
         
         const getRowDefaults = (type) => {
-            const base = { id: `row_${Date.now()}_${Math.random()}` };
+            const base = { id: `row_${Date.now()}_${Math.random()}`, forcePageBreak: false }; // NUOVO: Aggiunto forcePageBreak
             switch(type) {
                 case 'vero-falso': return { ...base, text: 'Nuova frase...' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -1060,13 +1068,27 @@
                 render();
             }
         };
-
-        window.togglePageBreak = (moduleId, element) => {
+        
+        // CORRETTO: togglePageBreak ora chiama render() per garantire consistenza
+        window.togglePageBreak = (moduleId) => {
             const module = modules.find(m => m.id === moduleId);
             if (module) {
                 module.forcePageBreak = !module.forcePageBreak;
-                element.querySelector('i').classList.toggle('text-blue-600', module.forcePageBreak);
                 saveData();
+                render(); // Ridisegna l'interfaccia per riflettere il cambiamento
+            }
+        };
+        
+        // NUOVO: Funzione per il toggle sulla singola riga
+        window.toggleRowPageBreak = (moduleId, rowId) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                const row = module.rows.find(r => r.id === rowId);
+                if(row) {
+                    row.forcePageBreak = !row.forcePageBreak;
+                    saveData();
+                    render();
+                }
             }
         };
 
@@ -1120,12 +1142,12 @@
                 const d = JSON.parse(data); 
                 modules = d.modules || []; 
                 modules.forEach(module => {
-                    if (typeof module.isCollapsed === 'undefined') {
-                        module.isCollapsed = false;
-                    }
-                    if (typeof module.forcePageBreak === 'undefined') {
-                        module.forcePageBreak = false;
-                    }
+                    if (typeof module.isCollapsed === 'undefined') module.isCollapsed = false;
+                    if (typeof module.forcePageBreak === 'undefined') module.forcePageBreak = false;
+                    // NUOVO: Assicura che la proprietà esista anche sulle righe caricate
+                    module.rows.forEach(row => {
+                         if (typeof row.forcePageBreak === 'undefined') row.forcePageBreak = false;
+                    });
                 });
                 moduleCounter = d.moduleCounter || modules.length; 
                 testTitle = d.testTitle || 'Verifica';
@@ -1188,8 +1210,11 @@
                     rowContentHTML = `<div>${cleanedText}</div>${answerBox}`;
                     break;
             }
+            
+            // NUOVO: Aggiunta classe per interruzione pagina sulla riga
+            const pageBreakClass = row.forcePageBreak ? 'force-page-break' : '';
 
-            return `<div class="print-row">
+            return `<div class="print-row ${pageBreakClass}">
                         <div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>
                         <div class="print-row-content">${rowContentHTML}</div>
                     </div>`;
@@ -1310,7 +1335,6 @@
 
                     modules.forEach(module => {
                         const ws_data = [];
-                        // Dati generali del modulo
                         ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions]);
                         if (typeof module.forcePageBreak !== 'undefined') ws_data.push(['ForcePageBreak', module.forcePageBreak ? 'TRUE' : 'FALSE']);
                         if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
@@ -1319,9 +1343,8 @@
                         if (module.header2) ws_data.push(['Header2', module.header2]);
                         if (module.header3) ws_data.push(['Header3', module.header3]);
                         
-                        ws_data.push([]); // Riga vuota di separazione
+                        ws_data.push([]); 
 
-                        // Dati specifici delle righe, con intestazioni corrette
                         if (module.rows.length > 0) {
                             let headers = [];
                             let rowArrays = [];
@@ -1331,12 +1354,13 @@
                                 case 'scegli-funzione':
                                 case 'tre-parti':
                                 case 'libero':
-                                    headers = ['id', 'text'];
-                                    rowArrays = module.rows.map(row => [row.id, row.text]);
+                                    // NUOVO: Aggiunto header forcePageBreak
+                                    headers = ['id', 'text', 'forcePageBreak'];
+                                    rowArrays = module.rows.map(row => [row.id, row.text, row.forcePageBreak ? 'TRUE' : 'FALSE']);
                                     break;
                                 case 'trasforma':
-                                    headers = ['id', 'part1', 'part2'];
-                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2]);
+                                    headers = ['id', 'part1', 'part2', 'forcePageBreak'];
+                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.forcePageBreak ? 'TRUE' : 'FALSE']);
                                     break;
                             }
 
@@ -1397,10 +1421,20 @@
                         moduleData.rows = [];
                         if (headerRowIndex !== -1 && headerRowIndex < json.length) {
                             const headers = json[headerRowIndex];
+                            // NUOVO: Cerca l'indice della colonna forcePageBreak
+                            const fpbIndex = headers.indexOf('forcePageBreak');
+
                             for (let i = headerRowIndex + 1; i < json.length; i++) {
                                 const rowData = {};
                                 headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
                                 if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`;
+                                
+                                // NUOVO: Legge il valore booleano
+                                if(fpbIndex !== -1){
+                                    const fpbValue = json[i][fpbIndex];
+                                    rowData.forcePageBreak = (fpbValue === 'TRUE' || fpbValue === true);
+                                }
+
                                 moduleData.rows.push(rowData);
                             }
                         }
@@ -1433,6 +1467,11 @@
                     body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
                     div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
                     
+                    #page-container > .module-print-card:first-child {
+                        padding-top: 0;
+                        border-top: none;
+                    }
+
                     .module-print-card { 
                         padding-top: 15px; 
                         margin-bottom: 25px; 
@@ -1456,6 +1495,8 @@
                     .force-page-break {
                         page-break-before: always;
                         break-before: page;
+                        padding-top: 0 !important;
+                        border-top: none !important;
                     }
 
                     #page-container { max-width: 800px; margin: auto; }
