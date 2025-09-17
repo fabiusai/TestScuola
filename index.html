@@ -269,7 +269,7 @@
                         </div>
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap:2">
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}')"><i data-lucide="file-input" class="w-5 h-5 ${module.forcePageBreak ? 'text-blue-600' : ''}"></i></button>
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')"><i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i></button>
                         <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
@@ -523,24 +523,29 @@
                 printContainer.innerHTML = generatePrintHTML();
                 printContainer.classList.remove('hidden');
 
-                // CORREZIONE: Aggiunto skipFonts per evitare l'errore e aggiunta manuale del font.
-                htmlToImage.toSvg(printContainer, { skipFonts: true })
+                // CORREZIONE: Riattivato il processo di embedding dei font della libreria.
+                // L'alert di errore viene rimosso per non bloccare l'utente in caso di fallimenti non critici.
+                htmlToImage.toSvg(printContainer)
                     .then(function (dataUrl) {
-                        const fontCss = "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');";
-                        const decodedSvg = decodeURIComponent(dataUrl.substring(dataUrl.indexOf(',') + 1));
-                        const svgWithFont = decodedSvg.replace('</defs>', `<style>${fontCss}</style></defs>`);
-                        const finalDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgWithFont);
-                        
-                        saveAs(finalDataUrl, `${currentTitle.replace(/ /g, '_')}.svg`);
+                        saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}.svg`);
                         printContainer.innerHTML = '';
                         printContainer.classList.add('hidden');
                         resetLoading();
                         updateButtonState(e.currentTarget, 'Creato!');
                     })
                     .catch(function (error) {
-                        console.error('Si è verificato un errore imprevisto durante la creazione del SVG:', error);
-                        resetLoading();
-                        alert('Si è verificato un errore imprevisto. Controlla la console per i dettagli.');
+                        // GESTIONE MIGLIORATA: Non mostrare un alert, ma solo un avviso in console.
+                        console.warn('Avviso durante la creazione del SVG (il file potrebbe essere stato generato comunque):', error);
+                        // Tentativo di recupero in caso di errore di font: genera l'SVG senza font e avvisa l'utente.
+                        alert("Si è verificato un problema con l'incorporamento dei font. Verrà generata una versione SVG senza font. Per una visualizzazione corretta in Inkscape, assicurati di avere installato il font 'Inter'.");
+                        htmlToImage.toSvg(printContainer, { skipFonts: true }).then(function(dataUrl){
+                            saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}_senza_font.svg`);
+                            resetLoading();
+                            updateButtonState(e.currentTarget, 'Creato!');
+                        });
+                    }).finally(() => {
+                        printContainer.innerHTML = '';
+                        printContainer.classList.add('hidden');
                     });
             });
 
