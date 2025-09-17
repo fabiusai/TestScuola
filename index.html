@@ -165,6 +165,9 @@
                     <button id="collapse-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span></button>
                     <button id="expand-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span></button>
                 </div>
+                <div class="form-group">
+                     <button id="reset-breaks-btn" class="btn btn-secondary btn-small btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="eraser" class="w-4 h-4 mr-1"></i>Resetta Paginazione</span></button>
+                </div>
             </div>
 
             <div class="sidebar-section">
@@ -269,7 +272,7 @@
                         </div>
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
-                    <div class="flex items-center gap:2">
+                    <div class="flex items-center gap-2">
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}')"><i data-lucide="file-input" class="w-5 h-5 ${module.forcePageBreak ? 'text-blue-600' : ''}"></i></button>
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')"><i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i></button>
                         <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
@@ -409,6 +412,7 @@
         };
         
         const updateButtonState = (btn, text, duration = 2000) => {
+            if (!btn) return;
             const originalContent = btn.querySelector('.btn-text').innerHTML;
             btn.querySelector('.btn-text').innerHTML = `<i data-lucide="check" class="w-4 h-4 mr-2"></i> ${text}`;
             lucide.createIcons();
@@ -424,9 +428,20 @@
             btn.disabled = true;
             return () => { btnText.innerHTML = originalHTML; btn.classList.remove('loading'); btn.disabled = false; lucide.createIcons(); };
         };
+        
+        // MODIFICATO: La funzione ora accetta un formato di esportazione
+        const generatePrintRowHTML = (row, rowIndex, module, exportFormat = 'pdf') => {
+            const cleanedText = row.text ? String(row.text) : '';
+            let rowContentHTML = '';
+            
+            // Logica per cambiare il numero in base al formato
+            let numberHTML = '';
+            if (exportFormat === 'word') {
+                numberHTML = `<div class="print-row-number" style="font-family: Arial, sans-serif; font-weight: bold; color: black;">${rowIndex + 1}.</div>`;
+            } else {
+                numberHTML = `<div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>`;
+            }
 
-        const generatePrintRowHTML = (row, rowIndex, module) => {
-            const cleanedText = row.text ? String(row.text) : ''; let rowContentHTML = '';
             switch (module.type) {
                 case 'vero-falso': rowContentHTML = `<div>${cleanedText}</div><div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`; break;
                 case 'scegli-funzione': rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`; break;
@@ -438,9 +453,42 @@
                     rowContentHTML = `<div>${cleanedText}</div>${answerBox}`; break;
             }
             const pageBreakClass = row.forcePageBreak ? 'force-page-break' : '';
-            return `<div class="print-row ${pageBreakClass}"><div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div><div class="print-row-content">${rowContentHTML}</div></div>`;
+            return `<div class="print-row ${pageBreakClass}">${numberHTML}<div class="print-row-content">${rowContentHTML}</div></div>`;
         };
         
+        async function getFontEmbedCss() {
+            try {
+                const fontUrl = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
+                const cssResponse = await fetch(fontUrl);
+                if (!cssResponse.ok) return null;
+                const css = await cssResponse.text();
+                
+                const resourceUrls = css.match(/url\(https?:\/\/[^)]+\)/g) || [];
+                const fontPromises = resourceUrls.map(async (url) => {
+                    const fontUrl = url.replace(/url\((['"])?(.*?)\1\)/, '$2');
+                    const fontResponse = await fetch(fontUrl);
+                    if (!fontResponse.ok) return null;
+                    const font_blob = await fontResponse.blob();
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve({ url: fontUrl, base64: reader.result });
+                        reader.onerror = reject;
+                        reader.readAsDataURL(font_blob);
+                    });
+                });
+
+                const fonts = (await Promise.all(fontPromises)).filter(f => f);
+                let finalCss = css;
+                fonts.forEach(font => {
+                    finalCss = finalCss.replace(font.url, font.base64);
+                });
+                return finalCss;
+            } catch (error) {
+                console.warn("Impossibile scaricare e incorporare il font.", error);
+                return null;
+            }
+        }
+
         const setupToolButtons = () => {
             const testTitleInput = document.getElementById('test-title-input');
             const fontSizeSelect = document.getElementById('font-size-select');
@@ -457,6 +505,7 @@
             const previewContent = document.getElementById('preview-content');
             const collapseAllBtn = document.getElementById('collapse-all-btn');
             const expandAllBtn = document.getElementById('expand-all-btn');
+            const resetBreaksBtn = document.getElementById('reset-breaks-btn');
             
             testTitleInput.addEventListener('input', saveData);
             fontSizeSelect.addEventListener('change', saveData);
@@ -474,6 +523,18 @@
             
             closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden'));
             previewModal.addEventListener('click', (e) => { if(e.target === previewModal) previewModal.classList.add('hidden'); });
+
+            resetBreaksBtn.addEventListener('click', (e) => {
+                if (confirm('Sei sicuro di voler rimuovere tutte le interruzioni di pagina manuali?')) {
+                    modules.forEach(module => {
+                        module.forcePageBreak = false;
+                        (module.rows || []).forEach(row => { row.forcePageBreak = false; });
+                    });
+                    saveData();
+                    render();
+                    updateButtonState(e.currentTarget, 'Resettato!');
+                }
+            });
             
             clearDataBtn.addEventListener('click', (e) => {
                 if (confirm('Sei sicuro di voler cancellare tutto il progetto?')) {
@@ -488,7 +549,7 @@
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
                 const resetLoading = setButtonLoading(e.currentTarget, 'Genero PDF...');
                 const printContainer = document.getElementById('print-area');
-                printContainer.innerHTML = generatePrintHTML();
+                printContainer.innerHTML = generatePrintHTML('pdf');
                 printContainer.classList.remove('hidden');
                 
                 html2pdf().from(printContainer).set({ 
@@ -510,43 +571,39 @@
             exportWordBtn.addEventListener('click', (e) => {
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
                 const resetLoading = setButtonLoading(e.currentTarget, 'Genero Word...');
-                const content = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${generatePrintHTML()}</body></html>`;
+                const content = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${generatePrintHTML('word')}</body></html>`;
                 const converted = htmlDocx.asBlob(content);
                 saveAs(converted, `${currentTitle.replace(/ /g, '_')}.docx`);
                 resetLoading(); updateButtonState(e.currentTarget, 'Creato!');
             });
             
-            exportSvgBtn.addEventListener('click', (e) => {
+            exportSvgBtn.addEventListener('click', async (e) => {
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
                 const resetLoading = setButtonLoading(e.currentTarget, 'Genero SVG...');
                 const printContainer = document.getElementById('print-area');
-                printContainer.innerHTML = generatePrintHTML();
+                printContainer.innerHTML = generatePrintHTML('svg');
                 printContainer.classList.remove('hidden');
 
-                // CORREZIONE: Riattivato il processo di embedding dei font della libreria.
-                // L'alert di errore viene rimosso per non bloccare l'utente in caso di fallimenti non critici.
-                htmlToImage.toSvg(printContainer)
-                    .then(function (dataUrl) {
-                        saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}.svg`);
-                        printContainer.innerHTML = '';
-                        printContainer.classList.add('hidden');
-                        resetLoading();
-                        updateButtonState(e.currentTarget, 'Creato!');
-                    })
-                    .catch(function (error) {
-                        // GESTIONE MIGLIORATA: Non mostrare un alert, ma solo un avviso in console.
-                        console.warn('Avviso durante la creazione del SVG (il file potrebbe essere stato generato comunque):', error);
-                        // Tentativo di recupero in caso di errore di font: genera l'SVG senza font e avvisa l'utente.
-                        alert("Si è verificato un problema con l'incorporamento dei font. Verrà generata una versione SVG senza font. Per una visualizzazione corretta in Inkscape, assicurati di avere installato il font 'Inter'.");
-                        htmlToImage.toSvg(printContainer, { skipFonts: true }).then(function(dataUrl){
-                            saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}_senza_font.svg`);
-                            resetLoading();
-                            updateButtonState(e.currentTarget, 'Creato!');
-                        });
-                    }).finally(() => {
-                        printContainer.innerHTML = '';
-                        printContainer.classList.add('hidden');
-                    });
+                try {
+                    const fontEmbedCss = await getFontEmbedCss();
+                    const options = { backgroundColor: '#ffffff' };
+                    if (fontEmbedCss) {
+                        options.fontEmbedCss = fontEmbedCss;
+                    } else {
+                        alert("AVVISO: Non è stato possibile incorporare il font 'Inter'. Per una corretta visualizzazione in editor come Inkscape, assicurati di averlo installato sul tuo computer.");
+                    }
+                    
+                    const dataUrl = await htmlToImage.toSvg(printContainer, options);
+                    saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}.svg`);
+                } catch (error) {
+                    console.error('Errore definitivo durante la creazione del SVG:', error);
+                    alert('Si è verificato un errore imprevisto durante la creazione del SVG. Controlla la console per i dettagli.');
+                } finally {
+                    printContainer.innerHTML = '';
+                    printContainer.classList.add('hidden');
+                    resetLoading();
+                    updateButtonState(e.currentTarget, 'Creato!');
+                }
             });
 
             exportExcelBtn.addEventListener('click', (e) => {
@@ -628,7 +685,8 @@
             });
         };
         
-        const generatePrintHTML = () => {
+        // MODIFICATO: La funzione ora accetta un formato di esportazione
+        const generatePrintHTML = (exportFormat = 'pdf') => {
             const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
             const selectedFontSize = document.getElementById('font-size-select').value;
             let html = `
@@ -638,8 +696,13 @@
                     div, p, span, h1, h2 { font-family: 'Inter', Arial, sans-serif !important; }
                     #page-container > .module-print-card:first-child { padding-top: 0; border-top: none; }
                     .module-print-card { padding-top: 15px; margin-bottom: 25px; border-top: 1px solid #999; }
-                    .module-print-header { page-break-after: avoid; break-after: avoid; }
-                    .print-row { page-break-inside: avoid !important; break-inside: avoid !important; display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; }
+                    .module-print-header { page-break-after: avoid; }
+                    .print-row { 
+                        /* MODIFICATO: Rimossa la regola !important per dare più flessibilità al motore PDF */
+                        page-break-inside: avoid;
+                        break-inside: avoid;
+                        display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; 
+                    }
                     .force-page-break { page-break-before: always; break-before: page; padding-top: 0 !important; border-top: none !important; }
                     #page-container { max-width: 800px; margin: auto; }
                     .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; }
@@ -665,7 +728,7 @@
                      html += `<div class="print-row" style="padding-bottom: 10px;"><div class="print-row-number"></div><div class="print-row-content"><div style="flex: 1; font-weight: bold; text-align:center;">${module.header1}</div><div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header2}</div><div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header3}</div></div></div>`;
                 }
                 html += `</div>`; 
-                (module.rows || []).forEach((row, i) => { html += generatePrintRowHTML(row, i, module); });
+                (module.rows || []).forEach((row, i) => { html += generatePrintRowHTML(row, i, module, exportFormat); });
                 html += '</div>';
             });
             html += '</div>';
