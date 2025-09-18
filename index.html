@@ -9,18 +9,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --primary-color: #3b82f6;
+            --primary-color: #3b82f6; /* Blu sobrio */
             --primary-dark: #1d4ed8;
-            --primary-light: #eff6ff;
-            --accent-color: #f59e0b;
+            --primary-light: #eff6ff; /* Azzurro chiaro per etichetta */
+            --accent-color: #f59e0b; /* Ambra per accenti */
             --accent-light: #fffbeb;
             --text-primary: #111827;
             --text-secondary: #4b5563;
@@ -32,100 +29,623 @@
             --danger-light: #fef2f2;
         }
 
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-light); color: var(--text-primary); line-height: 1.5; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: var(--white); color: var(--text-primary); padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
-        .header-content { display: flex; align-items: center; gap: 1rem; padding: 0 2rem; }
-        .logo-icon { background: var(--primary-color); color: var(--white); width: 3rem; height: 3rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; }
-        .header-title { font-size: 1.75rem; font-weight: 600; margin: 0; }
-        .header-subtitle { font-size: 0.9rem; opacity: 0.9; margin: 0; font-weight: 400; color: var(--text-secondary); }
-        .main-layout { display: flex; min-height: calc(100vh - 100px); }
-        .sidebar { width: 320px; background: var(--white); border-right: 1px solid var(--border-color); padding: 2rem; overflow-y: auto; }
-        .sidebar-section { margin-bottom: 2rem; }
-        .sidebar-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color); }
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 500; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s ease; text-decoration: none; white-space: nowrap; position: relative; overflow: hidden; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: var(--primary-color); color: white; border-color: var(--primary-color); }
-        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-1px); }
-        .btn-secondary { background: var(--white); color: var(--text-secondary); border-color: var(--border-color); }
-        .btn-secondary:hover:not(:disabled) { background: var(--bg-medium); border-color: #d1d5db; color: var(--text-primary); }
-        .btn-accent { background: var(--accent-color); color: var(--white); border-color: var(--accent-color); font-weight: 600; }
-        .btn-accent:hover:not(:disabled) { background: #d97706; transform: translateY(-1px); }
-        .btn-danger { background: var(--danger-light); color: var(--danger-color); border-color: #fca5a5; }
-        .btn-danger:hover:not(:disabled) { background: #fee2e2; }
-        .btn-small { padding: 0.5rem 0.75rem; font-size: 0.8rem; }
-        .btn-full { width: 100%; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
-        .content-area { flex: 1; padding: 2rem; background: var(--bg-light); overflow-y: auto; }
-        .content-container { max-width: 900px; margin: 0 auto; }
-        .empty-state { text-align: center; padding: 4rem 2rem; background: var(--white); border: 2px dashed var(--border-color); border-radius: 12px; margin: 2rem 0; }
-        .empty-icon { width: 4rem; height: 4rem; margin: 0 auto 1rem; color: var(--text-secondary); }
-        .empty-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
-        .empty-text { color: var(--text-secondary); font-size: 0.9rem; }
-        .module-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; transition: all 0.2s ease; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05); }
-        .module-card:hover { border-color: #d1d5db; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
-        .module-header { background: var(--bg-medium); padding: 1.5rem; border-bottom: 1px solid var(--border-color); cursor: grab; display: flex; justify-content: space-between; align-items: flex-start; }
-        .module-header:active { cursor: grabbing; }
-        .module-type-label { background-color: var(--primary-light); color: var(--primary-color); padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 600; border-radius: 6px; text-transform: capitalize; white-space: nowrap; }
-        .module-number-label { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
-        .module-content { padding: 1.5rem; }
-        .module-footer { background: var(--bg-light); padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); }
-        .editable { width: 100%; padding: 0.5rem; border: none; border-bottom: 2px solid transparent; background: transparent; outline: none; transition: border-color 0.2s ease; }
-        .editable:focus { border-bottom-color: var(--accent-color); }
-        .editable-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
-        .editable-instructions { font-size: 0.9rem; color: var(--text-secondary); font-style: italic; }
-        .rows-container { margin-bottom: 1.5rem; }
-        .row-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--white); margin-bottom: 0.75rem; transition: all 0.2s ease; }
-        .row-item:hover { border-color: #d1d5db; background: var(--bg-light); }
-        .row-number { color: var(--primary-color); font-weight: 600; min-width: 2rem; text-align: center; padding-top: 0.75rem; }
-        .drag-handle { color: var(--text-secondary); cursor: move; padding-top: 0.75rem; }
-        .drag-handle:hover { color: var(--primary-color); }
-        .row-content-wrapper { flex: 1; display: flex; gap: 1rem; align-items: center; }
-        .editable-content { flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--white); outline: none; transition: all 0.2s ease; }
-        .editable-content:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-        .student-space { background: var(--bg-medium); border: 2px dashed var(--border-color); border-radius: 6px; min-height: 2.5rem; flex: 1; transition: all 0.2s ease; }
-        .student-space:hover { background: #e5e7eb; }
-        .form-group { margin-bottom: 1rem; }
-        .form-label { display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 0.9rem; }
-        .form-input, .form-select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--white); color: var(--text-primary); font-size: 0.9rem; transition: all 0.2s ease; }
-        .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-        .vero-falso-options { display: flex; gap: 1rem; color: var(--text-secondary); font-size: 0.9rem; align-items: center; background: var(--bg-medium); padding: 0.5rem 1rem; border-radius: 6px; }
-        .function-options { display: flex; gap: 0.5rem; align-items: center; background: var(--bg-medium); padding: 0.5rem 1rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; }
-        .editable-wrapper { display: flex; flex-direction: column; flex: 1; }
-        .format-toolbar { background: var(--bg-medium); border: 1px solid var(--border-color); border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px; display: flex; gap: 4px; }
-        .format-btn { background: var(--white); border: 1px solid var(--border-color); border-radius: 4px; width: 28px; height: 28px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .format-btn:hover { background: var(--primary-light); border-color: var(--primary-color); }
-        .editable-content.with-toolbar { border-top-left-radius: 0; border-top-right-radius: 0; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-        .modal-content { background: var(--white); border-radius: 12px; width: 100%; max-width: 900px; height: 90vh; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
-        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); }
-        .modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
-        .modal-body { flex: 1; padding: 1rem; overflow-y: auto; background: var(--bg-light); }
-        .import-export-section { background: var(--bg-medium); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
-        .import-export-title { font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 1rem; font-size: 0.9rem; }
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            color: var(--text-primary);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+
+        .logo-icon {
+            background: var(--primary-color);
+            color: var(--white);
+            width: 3rem;
+            height: 3rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .header-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin: 0;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        /* Layout principale */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 100px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* Bottoni */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--bg-medium);
+            border-color: #d1d5db;
+            color: var(--text-primary);
+        }
+
+        .btn-accent {
+            background: var(--accent-color);
+            color: var(--white);
+            border-color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .btn-accent:hover:not(:disabled) {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger-light);
+            color: var(--danger-color);
+            border-color: #fca5a5;
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: #fee2e2;
+        }
+
+        .btn-small {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Area principale */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            background: var(--bg-light);
+            overflow-y: auto;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Messaggio vuoto */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--white);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .empty-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Card moduli */
+        .module-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+        }
+
+        .module-card:hover {
+            border-color: #d1d5db;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .module-header {
+            background: var(--bg-medium);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: grab;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .module-header:active {
+            cursor: grabbing;
+        }
+        
+        .module-type-label {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            text-transform: capitalize;
+            white-space: nowrap;
+        }
+
+        .module-number-label {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .module-content {
+            padding: 1.5rem;
+        }
+
+        .module-footer {
+            background: var(--bg-light);
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Campi editabili */
+        .editable {
+            width: 100%;
+            padding: 0.5rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .editable:focus {
+            border-bottom-color: var(--accent-color);
+        }
+
+        .editable-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .editable-instructions {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Righe */
+        .rows-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .row-item {
+            display: flex;
+            align-items: flex-start; 
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--white);
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .row-item:hover {
+            border-color: #d1d5db;
+            background: var(--bg-light);
+        }
+
+        .row-number {
+            color: var(--primary-color);
+            font-weight: 600;
+            min-width: 2rem;
+            text-align: center;
+            padding-top: 0.75rem;
+        }
+
+        .drag-handle {
+            color: var(--text-secondary);
+            cursor: move;
+            padding-top: 0.75rem;
+        }
+
+        .drag-handle:hover {
+            color: var(--primary-color);
+        }
+        .row-content-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .editable-content {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--white);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .editable-content:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .student-space {
+            background: var(--bg-medium);
+            border: 2px dashed var(--border-color);
+            border-radius: 6px;
+            min-height: 2.5rem; /* 40px */
+            flex: 1;
+            transition: all 0.2s ease;
+        }
+
+        .student-space:hover {
+            background: #e5e7eb;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Sezioni specifiche */
+        .vero-falso-options {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            align-items: center;
+            background: var(--bg-medium);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        .function-options {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            background: var(--bg-medium);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .editable-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .format-toolbar {
+            background: var(--bg-medium);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            padding: 4px;
+            display: flex;
+            gap: 4px;
+        }
+        .format-btn {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .format-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+        .editable-content.with-toolbar {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        .underline-input {
+            border-bottom: 1px solid #333;
+            min-width: 100px;
+            display: inline-block;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(17, 24, 39, 0.6);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-light);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 1rem; 
+            overflow-y: auto;
+            background: var(--bg-light);
+        }
+
+        /* Import/Export section */
+        .import-export-section {
+            background: var(--bg-medium);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .import-export-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
         @media (max-width: 1024px) {
-            .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .header-content { padding: 0 1rem; }
-            .content-area { padding: 1rem; }
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .content-area {
+                padding: 1rem;
+            }
         }
+
         @media (max-width: 640px) {
-            .btn-grid { grid-template-columns: 1fr; }
-            .header-title { font-size: 1.25rem; }
-            .sidebar { padding: 1rem; }
+            .btn-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-title {
+                font-size: 1.25rem;
+            }
+            
+            .sidebar {
+                padding: 1rem;
+            }
         }
-        .sortable-ghost { background: var(--accent-light); opacity: 0.5; border-color: var(--accent-color); }
+
+        /* Sorting */
+        .sortable-ghost {
+            background: var(--accent-light);
+            opacity: 0.5;
+            border-color: var(--accent-color);
+        }
+
+        /* Print styles */
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
-            #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
         }
-        .btn.loading { pointer-events: none; }
-        .btn.loading .btn-text { opacity: 0; }
-        .btn.loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 1rem; height: 1rem; margin: -0.5rem 0 0 -0.5rem; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hidden { display: none !important; }
+
+        /* Animation per feedback bottoni */
+        .btn.loading {
+            pointer-events: none;
+        }
+
+        .btn.loading .btn-text {
+            opacity: 0;
+        }
+        
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1rem;
+            height: 1rem;
+            margin: -0.5rem 0 0 -0.5rem;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -162,37 +682,54 @@
                     </select>
                 </div>
                 <div class="btn-grid">
-                    <button id="collapse-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span></button>
-                    <button id="expand-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span></button>
-                </div>
-                <div class="form-group">
-                     <button id="reset-breaks-btn" class="btn btn-secondary btn-small btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="eraser" class="w-4 h-4 mr-1"></i>Resetta Paginazione</span></button>
+                    <button id="collapse-all-btn" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span>
+                    </button>
+                    <button id="expand-all-btn" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span>
+                    </button>
                 </div>
             </div>
 
             <div class="sidebar-section">
                 <h2 class="sidebar-title">Tipologie di Modulo</h2>
                 <div class="btn-grid" id="add-module-buttons">
-                    <button data-type="vero-falso" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Vero/Falso</span></button>
-                    <button data-type="scegli-funzione" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="list" class="w-4 h-4 mr-1"></i>Funzione</span></button>
-                    <button data-type="tre-parti" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="columns" class="w-4 h-4 mr-1"></i>3 Parti</span></button>
-                    <button data-type="trasforma" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 mr-1"></i>Trasforma</span></button>
-                    <button data-type="libero" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="edit" class="w-4 h-4 mr-1"></i>Libero</span></button>
+                    <button data-type="vero-falso" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Vero/Falso</span>
+                    </button>
+                    <button data-type="scegli-funzione" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="list" class="w-4 h-4 mr-1"></i>Funzione</span>
+                    </button>
+                    <button data-type="tre-parti" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="columns" class="w-4 h-4 mr-1"></i>3 Parti</span>
+                    </button>
+                    <button data-type="trasforma" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 mr-1"></i>Trasforma</span>
+                    </button>
+                    <button data-type="libero" class="btn btn-secondary btn-small">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="edit" class="w-4 h-4 mr-1"></i>Libero</span>
+                    </button>
                 </div>
             </div>
 
             <div class="sidebar-section">
                 <h2 class="sidebar-title">Strumenti di Lavoro</h2>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <button id="preview-btn" class="btn btn-accent btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 mr-2"></i>Anteprima Test</span></button>
-                    <button id="save-data" class="btn btn-primary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span></button>
+                    <button id="preview-btn" class="btn btn-accent btn-full">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 mr-2"></i>Anteprima Test</span>
+                    </button>
                     
-                    <h3 class="import-export-title" style="margin-top: 1rem; margin-bottom: 0.5rem; text-align: left; font-size: 0.9rem;">Esporta come:</h3>
-                    <button id="export-word" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 mr-2"></i>Word (.docx) - Modificabile</span></button>
-                    <button id="export-pdf" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="file-type-2" class="w-4 h-4 mr-2"></i>PDF - Stampa rapida</span></button>
-                    <button id="export-svg" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="image" class="w-4 h-4 mr-2"></i>SVG - Qualità massima</span></button>
+                    <button id="save-data" class="btn btn-primary btn-full">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span>
+                    </button>
                     
-                    <button id="clear-data" class="btn btn-danger btn-full" style="margin-top: 1rem;"><span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span></button>
+                    <button id="export-pdf" class="btn btn-secondary btn-full">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span>
+                    </button>
+                    
+                    <button id="clear-data" class="btn btn-danger btn-full">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span>
+                    </button>
                 </div>
             </div>
 
@@ -200,8 +737,13 @@
                 <div class="import-export-section">
                     <h3 class="import-export-title">Gestione Dati</h3>
                     <div class="btn-grid">
-                        <button id="export-excel" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-1"></i>Esporta Excel</span></button>
-                        <label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer"><span class="btn-text flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 mr-1"></i>Importa Excel</span><input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls"></label>
+                        <button id="export-excel" class="btn btn-secondary btn-small">
+                            <span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-1"></i>Esporta Excel</span>
+                        </button>
+                        <label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer">
+                            <span class="btn-text flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 mr-1"></i>Importa Excel</span>
+                            <input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls">
+                        </label>
                     </div>
                 </div>
             </div>
@@ -209,7 +751,8 @@
 
         <main class="content-area">
             <div class="content-container">
-                <div id="document-container"></div>
+                <div id="document-container">
+                    </div>
             </div>
         </main>
     </div>
@@ -219,10 +762,16 @@
     <div id="preview-modal" class="hidden modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title"><i data-lucide="file-check-2" class="w-5 h-5"></i> Anteprima di Stampa</h3>
-                <button id="close-modal-btn" class="text-gray-400 hover:text-red-600 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <h3 class="modal-title">
+                    <i data-lucide="file-check-2" class="w-5 h-5"></i>
+                    Anteprima di Stampa
+                </h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-red-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-            <div id="preview-content" class="modal-body"></div>
+            <div id="preview-content" class="modal-body">
+                </div>
         </div>
     </div>
 
@@ -251,13 +800,43 @@
 
             let footerHTML = '';
             if (module.type === 'scegli-funzione') {
-                footerHTML += `<div class="form-group"><label for="options-${module.id}" class="form-label">Opzioni disponibili (separate da virgola)</label><input type="text" id="options-${module.id}" class="form-input" value="${module.options.join(',')}" onchange="updateModuleData('${module.id}', 'options', this.value.split(',').map(s => s.trim()))" placeholder="CO, AU, PV"></div>`;
+                footerHTML += `
+                    <div class="form-group">
+                        <label for="options-${module.id}" class="form-label">Opzioni disponibili (separate da virgola)</label>
+                        <input type="text" id="options-${module.id}" class="form-input" value="${module.options.join(',')}" onchange="updateModuleData('${module.id}', 'options', this.value.split(',').map(s => s.trim()))" placeholder="CO, AU, PV">
+                    </div>
+                `;
             }
             if (module.type === 'tre-parti') {
-                footerHTML += `<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="header1-${module.id}" class="form-label">Titolo Prima Colonna</label><input type="text" id="header1-${module.id}" class="form-input" value="${module.header1}" onchange="updateModuleData('${module.id}', 'header1', this.value)"></div><div class="form-group"><label for="header2-${module.id}" class="form-label">Titolo Seconda Colonna</label><input type="text" id="header2-${module.id}" class="form-input" value="${module.header2}" onchange="updateModuleData('${module.id}', 'header2', this.value)"></div><div class="form-group"><label for="header3-${module.id}" class="form-label">Titolo Terza Colonna</label><input type="text" id="header3-${module.id}" class="form-input" value="${module.header3}" onchange="updateModuleData('${module.id}', 'header3', this.value)"></div></div>`;
+                footerHTML += `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="header1-${module.id}" class="form-label">Titolo Prima Colonna</label>
+                            <input type="text" id="header1-${module.id}" class="form-input" value="${module.header1}" onchange="updateModuleData('${module.id}', 'header1', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label for="header2-${module.id}" class="form-label">Titolo Seconda Colonna</label>
+                            <input type="text" id="header2-${module.id}" class="form-input" value="${module.header2}" onchange="updateModuleData('${module.id}', 'header2', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label for="header3-${module.id}" class="form-label">Titolo Terza Colonna</label>
+                            <input type="text" id="header3-${module.id}" class="form-input" value="${module.header3}" onchange="updateModuleData('${module.id}', 'header3', this.value)">
+                        </div>
+                    </div>
+                `;
             }
             if (module.type === 'libero') {
-                footerHTML += `<div class="form-group"><label for="answer-space-${module.id}" class="form-label">Dimensione spazio di risposta</label><select id="answer-space-${module.id}" class="form-select" onchange="updateModuleData('${module.id}', 'answerSpace', this.value)"><option value="none" ${module.answerSpace === 'none' ? 'selected' : ''}>Nessun campo</option><option value="small" ${module.answerSpace === 'small' ? 'selected' : ''}>Piccolo</option><option value="medium" ${module.answerSpace === 'medium' ? 'selected' : ''}>Medio</option><option value="large" ${module.answerSpace === 'large' ? 'selected' : ''}>Grande</option></select></div>`;
+                footerHTML += `
+                    <div class="form-group">
+                        <label for="answer-space-${module.id}" class="form-label">Dimensione spazio di risposta</label>
+                        <select id="answer-space-${module.id}" class="form-select" onchange="updateModuleData('${module.id}', 'answerSpace', this.value)">
+                            <option value="none" ${module.answerSpace === 'none' ? 'selected' : ''}>Nessun campo</option>
+                            <option value="small" ${module.answerSpace === 'small' ? 'selected' : ''}>Piccolo</option>
+                            <option value="medium" ${module.answerSpace === 'medium' ? 'selected' : ''}>Medio</option>
+                            <option value="large" ${module.answerSpace === 'large' ? 'selected' : ''}>Grande</option>
+                        </select>
+                    </div>
+                `;
             }
 
             card.innerHTML = `
@@ -273,47 +852,116 @@
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questo modulo" onclick="togglePageBreak('${module.id}')"><i data-lucide="file-input" class="w-5 h-5 ${module.forcePageBreak ? 'text-blue-600' : ''}"></i></button>
-                        <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')"><i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i></button>
-                        <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                        <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
+                            <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i>
+                        </button>
+                        <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="module-collapsible-area ${isCollapsed ? 'hidden' : ''}">
                     <div class="module-content">
-                        <div class="rows-container" data-module-id="${module.id}">${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}</div>
-                        <button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')"><span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span></button>
+                        <div class="rows-container" data-module-id="${module.id}">
+                            ${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}
+                        </div>
+                        <button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')">
+                           <span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span>
+                        </button>
                     </div>
                     ${footerHTML ? `<div class="module-footer">${footerHTML}</div>` : ''}
-                </div>`;
+                </div>
+            `;
             return card;
         };
 
         const createRowHTML = (module, row, index) => {
-            const commonControls = `<i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i><span class="row-number">${index + 1}.</span>`;
-            const rowControls = `<div class="flex flex-col items-center ml-auto"><button class="text-gray-400 hover:text-blue-500 transition-colors" title="Forza nuova pagina prima di questa riga" onclick="toggleRowPageBreak('${module.id}', '${row.id}')"><i data-lucide="file-input" class="w-4 h-4 ${row.forcePageBreak ? 'text-blue-600' : ''}"></i></button><button class="text-red-400 hover:text-red-600" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button></div>`;
+            const commonControls = `
+                <i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i>
+                <span class="row-number">${index + 1}.</span>
+            `;
+            const deleteButton = `<button class="text-red-400 hover:text-red-600 ml-auto" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+
             let rowContent = '';
             switch (module.type) {
                 case 'vero-falso':
-                    rowContent = `<div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === 'Nuova frase...') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Nuova frase...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div><div class="vero-falso-options"><span>Vero □</span><span>Falso □</span></div>`; break;
+                    rowContent = `
+                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === 'Nuova frase...') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Nuova frase...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div class="vero-falso-options">
+                            <span>Vero □</span>
+                            <span>Falso □</span>
+                        </div>
+                    `;
+                    break;
                 case 'scegli-funzione':
-                    rowContent = `<div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === 'Testo della domanda.') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Testo della domanda.'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div><div class="function-options">${module.options.map(opt => `<span>[${opt}]</span>`).join('')}</div>`; break;
+                     const phFunzione = 'Testo della domanda.';
+                     rowContent = `
+                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === '${phFunzione}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phFunzione}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div class="function-options">
+                            ${module.options.map(opt => `<span>[${opt}]</span>`).join('')}
+                        </div>
+                    `;
+                    break;
                 case 'tre-parti':
-                    rowContent = `<div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === 'Elemento da analizzare...') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Elemento da analizzare...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div><div class="student-space"></div><div class="student-space"></div>`; break;
+                     const phDueParti = 'Elemento da analizzare...';
+                     rowContent = `
+                        <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
+                        <div class="student-space"></div>
+                        <div class="student-space"></div>
+                    `;
+                    break;
                 case 'trasforma':
-                    rowContent = `<div contenteditable="true" class="editable-content" style="width: 20%;" onfocus="if(this.innerText.trim() === 'Elemento') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Elemento'; } updateRowData('${module.id}', '${row.id}', 'part1', this.innerText)">${row.part1}</div><div contenteditable="true" class="editable-content" style="width: 40%;" onfocus="if(this.innerText.trim() === 'Trasformazione') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Trasformazione'; } updateRowData('${module.id}', '${row.id}', 'part2', this.innerText)">${row.part2}</div><div class="student-space" style="width: 40%;"></div>`; break;
+                     const phPart1 = 'Elemento';
+                     const phPart2 = 'Trasformazione';
+                     rowContent = `
+                        <div contenteditable="true" class="editable-content" style="width: 20%;" onfocus="if(this.innerText.trim() === '${phPart1}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phPart1}'; } updateRowData('${module.id}', '${row.id}', 'part1', this.innerText)">${row.part1}</div>
+                        <div contenteditable="true" class="editable-content" style="width: 40%;" onfocus="if(this.innerText.trim() === '${phPart2}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phPart2}'; } updateRowData('${module.id}', '${row.id}', 'part2', this.innerText)">${row.part2}</div>
+                        <div class="student-space" style="width: 40%;"></div>
+                    `;
+                    break;
                 case 'libero':
-                    const heightClass = module.answerSpace === 'large' ? 'min-h-[120px]' : module.answerSpace === 'medium' ? 'min-h-[80px]' : 'min-h-[40px]';
-                    const answerSpaceHTML = (module.answerSpace && module.answerSpace !== 'none') ? `<div class="student-space ${heightClass}" style="flex: 0 0 50%;"></div>` : '';
-                    const rowId = `libero-input-${row.id}`;
-                    rowContent = `<div class="editable-wrapper"><div class="format-toolbar"><button type="button" class="format-btn" title="Grassetto (Ctrl+B)" onclick="formatText('${rowId}', 'bold')">B</button></div><div id="${rowId}" contenteditable="true" class="editable-content with-toolbar" onfocus="if(this.innerHTML.trim() === 'Scrivi qui la tua domanda...') { this.innerHTML = '' }" onblur="if(this.innerHTML.trim() === '') { this.innerHTML = 'Scrivi qui la tua domanda...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div></div>${answerSpaceHTML}`; break;
+                    const phLibero = 'Scrivi qui la tua domanda...';
+                    let answerSpaceHTML = '';
+                    if (module.answerSpace && module.answerSpace !== 'none') {
+                        const heightClass = module.answerSpace === 'large' ? 'min-h-[120px]' : module.answerSpace === 'medium' ? 'min-h-[80px]' : 'min-h-[40px]';
+                        answerSpaceHTML = `<div class="student-space ${heightClass}" style="flex: 0 0 50%;"></div>`;
+                    }
+                     const rowId = `libero-input-${row.id}`;
+                     rowContent = `
+                        <div class="editable-wrapper">
+                             <div class="format-toolbar">
+                                <button type="button" class="format-btn" title="Grassetto (Ctrl+B)" onclick="formatText('${rowId}', 'bold')">B</button>
+                            </div>
+                            <div id="${rowId}" contenteditable="true" class="editable-content with-toolbar" 
+                                 onfocus="if(this.innerHTML.trim() === '${phLibero}') { this.innerHTML = '' }" 
+                                 onblur="if(this.innerHTML.trim() === '') { this.innerHTML = '${phLibero}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>
+                        </div>
+                        ${answerSpaceHTML}
+                    `;
+                    break;
             }
-            return `<div class="row-item" data-row-id="${row.id}">${commonControls}<div class="row-content-wrapper">${rowContent}</div>${rowControls}</div>`;
+
+            return `
+                <div class="row-item" data-row-id="${row.id}">
+                    ${commonControls}
+                    <div class="row-content-wrapper">${rowContent}</div>
+                    ${deleteButton}
+                </div>
+            `;
         };
 
         const render = () => {
             documentContainer.innerHTML = '';
             if(modules.length === 0){
-                documentContainer.innerHTML = `<div class="empty-state"><div class="empty-icon"><i data-lucide="file-plus" style="width: 100%; height: 100%;"></i></div><h3 class="empty-title">Inizia a creare il tuo test</h3><p class="empty-text">Seleziona una tipologia di modulo dal pannello di sinistra per iniziare</p></div>`;
+                documentContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i data-lucide="file-plus" style="width: 100%; height: 100%;"></i>
+                        </div>
+                        <h3 class="empty-title">Inizia a creare il tuo test</h3>
+                        <p class="empty-text">Seleziona una tipologia di modulo dal pannello di sinistra per iniziare</p>
+                    </div>
+                `;
             } else {
                 modules.forEach((module, index) => {
                     const moduleEl = createModuleHTML(module, index);
@@ -321,12 +969,15 @@
                     const rowsContainer = moduleEl.querySelector('.rows-container');
                     if (rowsContainer) {
                         new Sortable(rowsContainer, {
-                            animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost',
+                            animation: 150, 
+                            handle: '.drag-handle', 
+                            ghostClass: 'sortable-ghost',
                             onEnd: (evt) => {
                                 const currentModule = modules.find(m => m.id === module.id);
                                 const row = currentModule.rows.splice(evt.oldIndex, 1)[0];
                                 currentModule.rows.splice(evt.newIndex, 0, row);
-                                saveData(); render();
+                                saveData();
+                                render();
                             }
                         });
                     }
@@ -336,8 +987,9 @@
             lucide.createIcons();
         };
 
-        const getModuleDefaults = (type) => {
-            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false, forcePageBreak: false };
+         const getModuleDefaults = (type) => {
+            moduleCounter++;
+            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false };
             switch (type) {
                 case 'vero-falso': return { ...base, type, title: 'Vero o Falso', instructions: 'Indica se ogni affermazione è vera o falsa.' };
                 case 'scegli-funzione': return { ...base, type, title: 'Scegli la Funzione', instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
@@ -349,7 +1001,7 @@
         };
         
         const getRowDefaults = (type) => {
-            const base = { id: `row_${Date.now()}_${Math.random()}`, forcePageBreak: false };
+            const base = { id: `row_${Date.now()}_${Math.random()}` };
             switch(type) {
                 case 'vero-falso': return { ...base, text: 'Nuova frase...' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -360,16 +1012,71 @@
             }
         };
         
-        new Sortable(documentContainer, { animation: 150, handle: '.module-header', ghostClass: 'sortable-ghost', onEnd: (evt) => { const item = modules.splice(evt.oldIndex, 1)[0]; modules.splice(evt.newIndex, 0, item); render(); } });
+        new Sortable(documentContainer, { 
+            animation: 150, 
+            handle: '.module-header', 
+            ghostClass: 'sortable-ghost',
+            onEnd: (evt) => {
+                const item = modules.splice(evt.oldIndex, 1)[0];
+                modules.splice(evt.newIndex, 0, item);
+                render();
+            }
+        });
 
-        window.addRow = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows.push(getRowDefaults(module.type)); saveData(); render(); } };
-        window.deleteModule = (moduleId) => { if (confirm('Sei sicuro di voler eliminare questo modulo?')) { modules = modules.filter(m => m.id !== moduleId); render(); } };
-        window.deleteRow = (moduleId, rowId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows = module.rows.filter(r => r.id !== rowId); saveData(); render(); } };
-        window.toggleModuleCollapse = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.isCollapsed = !module.isCollapsed; saveData(); render(); } };
-        window.togglePageBreak = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.forcePageBreak = !module.forcePageBreak; saveData(); render(); } };
-        window.toggleRowPageBreak = (moduleId, rowId) => { const module = modules.find(m => m.id === moduleId); if (module) { const row = module.rows.find(r => r.id === rowId); if(row) { row.forcePageBreak = !row.forcePageBreak; saveData(); render(); } } };
-        window.updateModuleData = (moduleId, key, value) => { const module = modules.find(m => m.id === moduleId); if (module) { module[key] = value; saveData(); if (key === 'answerSpace') render(); } };
-        window.updateRowData = (moduleId, rowId, key, value) => { const module = modules.find(m => m.id === moduleId); if (module) { const row = module.rows.find(r => r.id === rowId); if (row) { row[key] = value; saveData(); } } };
+        window.addRow = (moduleId) => { 
+            const module = modules.find(m => m.id === moduleId); 
+            if (module) { 
+                module.rows.push(getRowDefaults(module.type)); 
+                saveData(); 
+                render(); 
+            } 
+        };
+
+        window.deleteModule = (moduleId) => { 
+            if (confirm('Sei sicuro di voler eliminare questo modulo?')) { 
+                modules = modules.filter(m => m.id !== moduleId);
+                moduleCounter = modules.length > 0 ? Math.max(...modules.map((m, i) => i + 1)) : 0;
+                render(); 
+            } 
+        };
+
+        window.deleteRow = (moduleId, rowId) => { 
+            const module = modules.find(m => m.id === moduleId); 
+            if (module) { 
+                module.rows = module.rows.filter(r => r.id !== rowId); 
+                saveData(); 
+                render(); 
+            } 
+        };
+
+        window.toggleModuleCollapse = (moduleId) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                module.isCollapsed = !module.isCollapsed;
+                saveData();
+                render();
+            }
+        };
+
+        window.updateModuleData = (moduleId, key, value) => { 
+            const module = modules.find(m => m.id === moduleId); 
+            if (module) { 
+                module[key] = value;
+                saveData(); 
+                if (key === 'answerSpace') render(); 
+            } 
+        };
+
+        window.updateRowData = (moduleId, rowId, key, value) => { 
+            const module = modules.find(m => m.id === moduleId); 
+            if (module) { 
+                const row = module.rows.find(r => r.id === rowId); 
+                if (row) { 
+                    row[key] = value; 
+                    saveData(); 
+                } 
+            } 
+        };
 
         addModuleButtons.addEventListener('click', (e) => {
             const button = e.target.closest('button');
@@ -381,7 +1088,9 @@
                     render();
                     setTimeout(() => {
                         const newModuleEl = document.querySelector(`[data-module-id="${newModule.id}"]`);
-                        if (newModuleEl) { newModuleEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                        if (newModuleEl) {
+                           newModuleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
                     }, 100);
                 }
             }
@@ -399,9 +1108,9 @@
                 const d = JSON.parse(data); 
                 modules = d.modules || []; 
                 modules.forEach(module => {
-                    module.isCollapsed = module.isCollapsed || false;
-                    module.forcePageBreak = module.forcePageBreak || false;
-                    (module.rows || []).forEach(row => { row.forcePageBreak = row.forcePageBreak || false; });
+                    if (typeof module.isCollapsed === 'undefined') {
+                        module.isCollapsed = false;
+                    }
                 });
                 moduleCounter = d.moduleCounter || modules.length; 
                 testTitle = d.testTitle || 'Verifica';
@@ -412,12 +1121,15 @@
         };
         
         const updateButtonState = (btn, text, duration = 2000) => {
-            if (!btn) return;
             const originalContent = btn.querySelector('.btn-text').innerHTML;
             btn.querySelector('.btn-text').innerHTML = `<i data-lucide="check" class="w-4 h-4 mr-2"></i> ${text}`;
             lucide.createIcons();
             btn.disabled = true;
-            setTimeout(() => { btn.querySelector('.btn-text').innerHTML = originalContent; btn.disabled = false; lucide.createIcons(); }, duration);
+            setTimeout(() => {
+                btn.querySelector('.btn-text').innerHTML = originalContent;
+                btn.disabled = false;
+                lucide.createIcons();
+            }, duration);
         };
 
         const setButtonLoading = (btn, loadingText) => {
@@ -426,77 +1138,54 @@
             btnText.innerHTML = loadingText;
             btn.classList.add('loading');
             btn.disabled = true;
-            return () => { btnText.innerHTML = originalHTML; btn.classList.remove('loading'); btn.disabled = false; lucide.createIcons(); };
+            
+            return () => {
+                btnText.innerHTML = originalHTML;
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                lucide.createIcons();
+            };
         };
-        
-        // MODIFICATO: La funzione ora accetta un formato di esportazione
-        const generatePrintRowHTML = (row, rowIndex, module, exportFormat = 'pdf') => {
+
+        const generatePrintRowHTML = (row, rowIndex, module) => {
             const cleanedText = row.text ? String(row.text) : '';
             let rowContentHTML = '';
-            
-            // Logica per cambiare il numero in base al formato
-            let numberHTML = '';
-            if (exportFormat === 'word') {
-                numberHTML = `<div class="print-row-number" style="font-family: Arial, sans-serif; font-weight: bold; color: black;">${rowIndex + 1}.</div>`;
-            } else {
-                numberHTML = `<div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>`;
-            }
 
             switch (module.type) {
-                case 'vero-falso': rowContentHTML = `<div>${cleanedText}</div><div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`; break;
-                case 'scegli-funzione': rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`; break;
-                case 'tre-parti': rowContentHTML = `<div style="flex: 1;">${cleanedText}</div><div style="flex: 1;"><div class="student-answer-box"></div></div><div style="flex: 1;"><div class="student-answer-box"></div></div>`; break;
-                case 'trasforma': rowContentHTML = `<div style="flex: 0 0 20%;">${row.part1}</div><div style="flex: 1;">${row.part2}</div><div style="flex: 0 0 40%;"><div class="student-answer-box"></div></div>`; break;
+                case 'vero-falso':
+                    rowContentHTML = `<div>${cleanedText}</div><div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`;
+                    break;
+                case 'scegli-funzione':
+                    rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`;
+                    break;
+                case 'tre-parti':
+                    rowContentHTML = `<div style="flex: 1;">${cleanedText}</div><div style="flex: 1;"><div class="student-answer-box"></div></div><div style="flex: 1;"><div class="student-answer-box"></div></div>`;
+                    break;
+                case 'trasforma':
+                    rowContentHTML = `<div style="flex: 0 0 20%;">${row.part1}</div><div style="flex: 1;">${row.part2}</div><div style="flex: 0 0 40%;"><div class="student-answer-box"></div></div>`;
+                    break;
                 case 'libero':
-                    const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px';
-                    const answerBox = (module.answerSpace && module.answerSpace !== 'none') ? `<div style="flex: 0 0 50%;"><div class="student-answer-box" style="min-height: ${h};"></div></div>` : '';
-                    rowContentHTML = `<div>${cleanedText}</div>${answerBox}`; break;
+                    let answerBox = '';
+                    if (module.answerSpace && module.answerSpace !== 'none') {
+                        const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px';
+                        answerBox = `<div style="flex: 0 0 50%;"><div class="student-answer-box" style="min-height: ${h};"></div></div>`;
+                    }
+                    rowContentHTML = `<div>${cleanedText}</div>${answerBox}`;
+                    break;
             }
-            const pageBreakClass = row.forcePageBreak ? 'force-page-break' : '';
-            return `<div class="print-row ${pageBreakClass}">${numberHTML}<div class="print-row-content">${rowContentHTML}</div></div>`;
+
+            return `<div class="print-row">
+                        <div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>
+                        <div class="print-row-content">${rowContentHTML}</div>
+                    </div>`;
         };
         
-        async function getFontEmbedCss() {
-            try {
-                const fontUrl = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
-                const cssResponse = await fetch(fontUrl);
-                if (!cssResponse.ok) return null;
-                const css = await cssResponse.text();
-                
-                const resourceUrls = css.match(/url\(https?:\/\/[^)]+\)/g) || [];
-                const fontPromises = resourceUrls.map(async (url) => {
-                    const fontUrl = url.replace(/url\((['"])?(.*?)\1\)/, '$2');
-                    const fontResponse = await fetch(fontUrl);
-                    if (!fontResponse.ok) return null;
-                    const font_blob = await fontResponse.blob();
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve({ url: fontUrl, base64: reader.result });
-                        reader.onerror = reject;
-                        reader.readAsDataURL(font_blob);
-                    });
-                });
-
-                const fonts = (await Promise.all(fontPromises)).filter(f => f);
-                let finalCss = css;
-                fonts.forEach(font => {
-                    finalCss = finalCss.replace(font.url, font.base64);
-                });
-                return finalCss;
-            } catch (error) {
-                console.warn("Impossibile scaricare e incorporare il font.", error);
-                return null;
-            }
-        }
-
         const setupToolButtons = () => {
             const testTitleInput = document.getElementById('test-title-input');
             const fontSizeSelect = document.getElementById('font-size-select');
             const saveDataBtn = document.getElementById('save-data');
             const clearDataBtn = document.getElementById('clear-data');
             const exportPdfBtn = document.getElementById('export-pdf');
-            const exportWordBtn = document.getElementById('export-word');
-            const exportSvgBtn = document.getElementById('export-svg');
             const exportExcelBtn = document.getElementById('export-excel');
             const importExcelInput = document.getElementById('import-excel-input');
             const previewBtn = document.getElementById('preview-btn');
@@ -505,179 +1194,211 @@
             const previewContent = document.getElementById('preview-content');
             const collapseAllBtn = document.getElementById('collapse-all-btn');
             const expandAllBtn = document.getElementById('expand-all-btn');
-            const resetBreaksBtn = document.getElementById('reset-breaks-btn');
             
             testTitleInput.addEventListener('input', saveData);
             fontSizeSelect.addEventListener('change', saveData);
-            collapseAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = true); saveData(); render(); });
-            expandAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = false); saveData(); render(); });
-            saveDataBtn.addEventListener('click', (e) => { saveData(); updateButtonState(e.currentTarget, 'Salvato!'); });
-            
+
+            collapseAllBtn.addEventListener('click', () => {
+                modules.forEach(m => m.isCollapsed = true);
+                saveData();
+                render();
+            });
+
+            expandAllBtn.addEventListener('click', () => {
+                modules.forEach(m => m.isCollapsed = false);
+                saveData();
+                render();
+            });
+
             previewBtn.addEventListener('click', () => {
-                const printHTML = generatePrintHTML(); const iframe = document.createElement('iframe');
-                iframe.style.width = '100%'; iframe.style.height = '100%'; iframe.style.border = 'none';
-                previewContent.innerHTML = ''; previewContent.appendChild(iframe);
-                iframe.contentWindow.document.open(); iframe.contentWindow.document.write(printHTML); iframe.contentWindow.document.close();
+                const printHTML = generatePrintHTML();
+                const iframe = document.createElement('iframe');
+                
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+
+                previewContent.innerHTML = ''; 
+                previewContent.appendChild(iframe);
+                
+                iframe.contentWindow.document.open();
+                iframe.contentWindow.document.write(printHTML);
+                iframe.contentWindow.document.close();
+
                 previewModal.classList.remove('hidden');
             });
             
             closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden'));
-            previewModal.addEventListener('click', (e) => { if(e.target === previewModal) previewModal.classList.add('hidden'); });
+            previewModal.addEventListener('click', (e) => { 
+                if(e.target === previewModal) previewModal.classList.add('hidden'); 
+            });
 
-            resetBreaksBtn.addEventListener('click', (e) => {
-                if (confirm('Sei sicuro di voler rimuovere tutte le interruzioni di pagina manuali?')) {
-                    modules.forEach(module => {
-                        module.forcePageBreak = false;
-                        (module.rows || []).forEach(row => { row.forcePageBreak = false; });
-                    });
-                    saveData();
-                    render();
-                    updateButtonState(e.currentTarget, 'Resettato!');
-                }
+            saveDataBtn.addEventListener('click', (e) => { 
+                saveData(); 
+                updateButtonState(e.currentTarget, 'Salvato!'); 
             });
             
             clearDataBtn.addEventListener('click', (e) => {
                 if (confirm('Sei sicuro di voler cancellare tutto il progetto?')) {
-                    modules = []; moduleCounter = 0; testTitle = 'Verifica'; questionFontSize = '12pt';
+                    modules = []; 
+                    moduleCounter = 0; 
+                    testTitle = 'Verifica';
+                    questionFontSize = '12pt';
                     document.getElementById('test-title-input').value = testTitle;
                     document.getElementById('font-size-select').value = questionFontSize;
-                    saveData(); render(); updateButtonState(e.currentTarget, 'Cancellato!');
+                    saveData(); 
+                    render(); 
+                    updateButtonState(e.currentTarget, 'Cancellato!');
                 }
             });
 
             exportPdfBtn.addEventListener('click', (e) => {
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
-                const resetLoading = setButtonLoading(e.currentTarget, 'Genero PDF...');
+                const resetLoading = setButtonLoading(e.currentTarget, 'Generazione...');
                 const printContainer = document.getElementById('print-area');
-                printContainer.innerHTML = generatePrintHTML('pdf');
+                printContainer.innerHTML = generatePrintHTML();
                 printContainer.classList.remove('hidden');
                 
-                html2pdf().from(printContainer).set({ 
-                    margin: [1, 1.5, 2.5, 1.5], filename: `${currentTitle.replace(/ /g, '_')}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, 
-                    jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: 'css' }
-                }).toPdf().get('pdf').then((pdf) => {
+                const opt = { 
+                    margin: 1.5,
+                    filename: `${currentTitle.replace(/ /g, '_')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 }, 
+                    html2canvas: { scale: 2, letterRendering: true }, 
+                    jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css'] }
+                };
+
+                html2pdf().from(printContainer).set(opt).toPdf().get('pdf').then(function (pdf) {
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i); pdf.setFontSize(9); pdf.setTextColor(128);
-                        pdf.text(`${currentTitle} - Pagina ${i} di ${totalPages}`, pdf.internal.pageSize.getWidth() - 1.5, pdf.internal.pageSize.getHeight() - 1.5, { align: 'right' });
+                        pdf.setPage(i);
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(128);
+                        const footerText = `${currentTitle} - Pagina ${i} di ${totalPages}`;
+                        pdf.text(footerText, pdf.internal.pageSize.getWidth() - 1.5, pdf.internal.pageSize.getHeight() - 1.0, { align: 'right' });
                     }
                 }).save().then(() => {
-                    printContainer.innerHTML = ''; printContainer.classList.add('hidden');
-                    resetLoading(); updateButtonState(e.currentTarget, 'Creato!');
-                });
-            });
-
-            exportWordBtn.addEventListener('click', (e) => {
-                const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
-                const resetLoading = setButtonLoading(e.currentTarget, 'Genero Word...');
-                const content = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${generatePrintHTML('word')}</body></html>`;
-                const converted = htmlDocx.asBlob(content);
-                saveAs(converted, `${currentTitle.replace(/ /g, '_')}.docx`);
-                resetLoading(); updateButtonState(e.currentTarget, 'Creato!');
-            });
-            
-            exportSvgBtn.addEventListener('click', async (e) => {
-                const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
-                const resetLoading = setButtonLoading(e.currentTarget, 'Genero SVG...');
-                const printContainer = document.getElementById('print-area');
-                printContainer.innerHTML = generatePrintHTML('svg');
-                printContainer.classList.remove('hidden');
-
-                try {
-                    const fontEmbedCss = await getFontEmbedCss();
-                    const options = { backgroundColor: '#ffffff' };
-                    if (fontEmbedCss) {
-                        options.fontEmbedCss = fontEmbedCss;
-                    } else {
-                        alert("AVVISO: Non è stato possibile incorporare il font 'Inter'. Per una corretta visualizzazione in editor come Inkscape, assicurati di averlo installato sul tuo computer.");
-                    }
-                    
-                    const dataUrl = await htmlToImage.toSvg(printContainer, options);
-                    saveAs(dataUrl, `${currentTitle.replace(/ /g, '_')}.svg`);
-                } catch (error) {
-                    console.error('Errore definitivo durante la creazione del SVG:', error);
-                    alert('Si è verificato un errore imprevisto durante la creazione del SVG. Controlla la console per i dettagli.');
-                } finally {
                     printContainer.innerHTML = '';
                     printContainer.classList.add('hidden');
                     resetLoading();
                     updateButtonState(e.currentTarget, 'Creato!');
-                }
+                });
             });
 
             exportExcelBtn.addEventListener('click', (e) => {
-                const resetLoading = setButtonLoading(e.currentTarget, 'Esporto...');
+                const resetLoading = setButtonLoading(e.currentTarget, 'Esportazione...');
                 setTimeout(() => {
                     const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['Test Title', testTitle], ['Font Size', questionFontSize]]), "Metadata");
+                    const meta = [['Test Title', testTitle], ['Font Size', questionFontSize]];
+                    const ws_meta = XLSX.utils.aoa_to_sheet(meta);
+                    XLSX.utils.book_append_sheet(wb, ws_meta, "Metadata");
+
                     modules.forEach(module => {
                         const ws_data = [];
+                        // Dati generali del modulo
                         ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions]);
-                        if (typeof module.forcePageBreak !== 'undefined') ws_data.push(['ForcePageBreak', module.forcePageBreak ? 'TRUE' : 'FALSE']);
                         if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
                         if (module.options) ws_data.push(['Options', module.options.join(',')]);
-                        if (module.header1) ws_data.push(['Header1', module.header1], ['Header2', module.header2], ['Header3', module.header3]);
-                        ws_data.push([]); 
+                        if (module.header1) ws_data.push(['Header1', module.header1]);
+                        if (module.header2) ws_data.push(['Header2', module.header2]);
+                        if (module.header3) ws_data.push(['Header3', module.header3]);
+                        
+                        ws_data.push([]); // Riga vuota di separazione
+
+                        // Dati specifici delle righe, con intestazioni corrette
                         if (module.rows.length > 0) {
-                            let headers, rowArrays;
-                            if (module.type === 'trasforma') {
-                                headers = ['id', 'part1', 'part2', 'forcePageBreak'];
-                                rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.forcePageBreak ? 'TRUE' : 'FALSE']);
-                            } else {
-                                headers = ['id', 'text', 'forcePageBreak'];
-                                rowArrays = module.rows.map(row => [row.id, row.text, row.forcePageBreak ? 'TRUE' : 'FALSE']);
+                            let headers = [];
+                            let rowArrays = [];
+
+                            switch (module.type) {
+                                case 'vero-falso':
+                                case 'scegli-funzione':
+                                case 'tre-parti':
+                                case 'libero':
+                                    headers = ['id', 'text'];
+                                    rowArrays = module.rows.map(row => [row.id, row.text]);
+                                    break;
+                                case 'trasforma':
+                                    headers = ['id', 'part1', 'part2'];
+                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2]);
+                                    break;
                             }
-                            ws_data.push(headers, ...rowArrays);
+
+                            if (headers.length > 0) {
+                                ws_data.push(headers);
+                                ws_data.push(...rowArrays);
+                            }
                         }
+                        
+                        const ws = XLSX.utils.aoa_to_sheet(ws_data);
                         const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, "");
-                        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(ws_data), sheetName);
+                        XLSX.utils.book_append_sheet(wb, ws, sheetName);
                     });
                     XLSX.writeFile(wb, "dati_test.xlsx");
-                    resetLoading(); updateButtonState(e.currentTarget, 'Esportato!');
+                    resetLoading();
+                    updateButtonState(e.currentTarget, 'Esportato!');
                 }, 500);
             });
 
             importExcelInput.addEventListener('change', (e) => {
-                const file = e.target.files[0]; if (!file) return;
+                const file = e.target.files[0]; 
+                if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
-                    const importedModules = []; let importedTitle = 'Verifica'; let importedFontSize = '12pt';
-                    if (workbook.SheetNames.includes("Metadata")) {
+                    const importedModules = [];
+                    let importedTitle = 'Verifica';
+                    let importedFontSize = '12pt';
+
+                    if(workbook.SheetNames.includes("Metadata")) {
                         const meta_json = XLSX.utils.sheet_to_json(workbook.Sheets["Metadata"], { header: 1 });
-                        const titleRow = meta_json.find(row => row[0] === 'Test Title'); if(titleRow) importedTitle = titleRow[1];
-                        const fontRow = meta_json.find(row => row[0] === 'Font Size'); if(fontRow) importedFontSize = fontRow[1];
+                        const titleRow = meta_json.find(row => row[0] === 'Test Title');
+                        if(titleRow) importedTitle = titleRow[1];
+                        const fontRow = meta_json.find(row => row[0] === 'Font Size');
+                        if(fontRow) importedFontSize = fontRow[1];
                     }
+                    
                     const moduleSheets = workbook.SheetNames.filter(name => name !== "Metadata");
+
                     moduleSheets.forEach(sheetName => {
                         const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
-                        const moduleData = {}; let headerRowIndex = -1;
+                        const moduleData = {}; 
+                        let headerRowIndex = -1;
                         for(let i=0; i<json.length; i++){
-                            const row = json[i]; if (row.length === 0) { headerRowIndex = i + 1; break; }
-                            const key = row[0], val = row[1];
-                            if(key === 'ModuleType') moduleData.type = val; if(key === 'Title') moduleData.title = val; if(key === 'Instructions') moduleData.instructions = val;
-                            if(key === 'ForcePageBreak') moduleData.forcePageBreak = (val === 'TRUE' || val === true);
-                            if(key === 'AnswerSpace') moduleData.answerSpace = val; if(key === 'Options') moduleData.options = val.split(','); 
-                            if(key === 'Header1') moduleData.header1 = val; if(key === 'Header2') moduleData.header2 = val; if(key === 'Header3') moduleData.header3 = val;
+                            const row = json[i]; 
+                            if (row.length === 0) { headerRowIndex = i + 1; break; }
+                            if(row[0] === 'ModuleType') moduleData.type = row[1]; 
+                            if(row[0] === 'Title') moduleData.title = row[1]; 
+                            if(row[0] === 'Instructions') moduleData.instructions = row[1]; 
+                            if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; 
+                            if(row[0] === 'Options') moduleData.options = row[1].split(','); 
+                            if(row[0] === 'Header1') moduleData.header1 = row[1]; 
+                            if(row[0] === 'Header2') moduleData.header2 = row[1];
+                            if(row[0] === 'Header3') moduleData.header3 = row[1];
                         }
-                        moduleData.id = `mod_${Date.now()}_${Math.random()}`; moduleData.rows = [];
+                        moduleData.id = `mod_${Date.now()}_${Math.random()}`;
+                        moduleData.rows = [];
                         if (headerRowIndex !== -1 && headerRowIndex < json.length) {
-                            const headers = json[headerRowIndex]; const fpbIndex = headers.indexOf('forcePageBreak');
+                            const headers = json[headerRowIndex];
                             for (let i = headerRowIndex + 1; i < json.length; i++) {
-                                const rowData = {}; headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
+                                const rowData = {};
+                                headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
                                 if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`;
-                                if(fpbIndex !== -1){ const fpbValue = json[i][fpbIndex]; rowData.forcePageBreak = (fpbValue === 'TRUE' || fpbValue === true); }
                                 moduleData.rows.push(rowData);
                             }
                         }
                         importedModules.push(moduleData);
                     });
+
                     if(confirm('Importando questo file sovrascriverai tutti i dati attuali. Continuare?')){
-                        modules = importedModules; moduleCounter = modules.length; testTitle = importedTitle; questionFontSize = importedFontSize;
+                        modules = importedModules; 
+                        moduleCounter = modules.length; 
+                        testTitle = importedTitle;
+                        questionFontSize = importedFontSize;
                         document.getElementById('test-title-input').value = testTitle;
                         document.getElementById('font-size-select').value = questionFontSize;
-                        saveData(); render();
+                        saveData(); 
+                        render();
                     }
                     e.target.value = '';
                 };
@@ -685,29 +1406,30 @@
             });
         };
         
-        // MODIFICATO: La funzione ora accetta un formato di esportazione
-        const generatePrintHTML = (exportFormat = 'pdf') => {
+        const generatePrintHTML = () => {
             const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
             const selectedFontSize = document.getElementById('font-size-select').value;
+            
             let html = `
             <div id="page-container">
                 <style>
                     body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
-                    div, p, span, h1, h2 { font-family: 'Inter', Arial, sans-serif !important; }
-                    #page-container > .module-print-card:first-child { padding-top: 0; border-top: none; }
-                    .module-print-card { padding-top: 15px; margin-bottom: 25px; border-top: 1px solid #999; }
-                    .module-print-header { page-break-after: avoid; }
-                    .print-row { 
-                        /* MODIFICATO: Rimossa la regola !important per dare più flessibilità al motore PDF */
-                        page-break-inside: avoid;
-                        break-inside: avoid;
-                        display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; 
+                    div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
+                    
+                    /* --- CSS per paginazione --- */
+                    .print-row {
+                        page-break-inside: avoid; /* Regola fondamentale: non spezzare mai una singola domanda. */
                     }
-                    .force-page-break { page-break-before: always; break-before: page; padding-top: 0 !important; border-top: none !important; }
-                    #page-container { max-width: 800px; margin: auto; }
-                    .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin-top: 20px; margin-bottom: 20px; }
+                    .module-print-card {
+                        padding-top: 15px; /* Spaziatura tra moduli */
+                    }
+
+                    #page-container { max-width: 800px; margin: auto; padding-top: 0; }
+                    .student-info-box { margin-top: 0 !important; } /* Forza la rimozione del margine superiore */
+                    .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin: 0 0 30px 0; } /* Rimosso margine superiore */
                     .title { font-size: 18pt; font-weight: bold; margin: 0; }
                     .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; }
+                    .print-row { display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; }
                     .print-row-number { width: 40px; padding-right: 10px; }
                     .print-row-content { flex: 1; display: flex; gap: 15px; width: 100%; }
                     .print-row-content > div:first-child { flex: 1; }
@@ -719,18 +1441,50 @@
                     .info-item label { font-weight: bold; font-size: 11pt; color: #333; margin-bottom: 2px; }
                     .info-item .line { border-bottom: 1px solid #333; height: 25px; }
                 </style>
-                <div class="student-info-box"><div class="info-item" style="flex-grow: 2.5;"><label>Nome e Cognome:</label><div class="line"></div></div><div class="info-item"><label>Classe:</label><div class="line"></div></div><div class="info-item"><label>Data:</label><div class="line"></div></div></div>
-                <h1 class="main-title">${currentTitle}</h1>`;
+                <div class="student-info-box">
+                    <div class="info-item" style="flex-grow: 2.5;">
+                        <label>Nome e Cognome:</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="info-item">
+                        <label>Classe:</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="info-item">
+                        <label>Data:</label>
+                        <div class="line"></div>
+                    </div>
+                </div>
+
+                <h1 class="main-title">${currentTitle}</h1>
+            `;
+
             modules.forEach((module, index) => {
-                const pageBreakClass = (module.forcePageBreak && index > 0) ? 'force-page-break' : '';
-                html += `<div class="module-print-card ${pageBreakClass}"><div class="module-print-header"><h2 class="title">Modulo ${index + 1} - ${module.title}</h2><p class="instructions">${module.instructions}</p>`;
+                html += `<div class="module-print-card">`;
+                
+                html += `<div class="module-print-header">`;
+                html += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
+                html += `<p class="instructions">${module.instructions}</p>`;
+
                 if(module.type === 'tre-parti'){
-                     html += `<div class="print-row" style="padding-bottom: 10px;"><div class="print-row-number"></div><div class="print-row-content"><div style="flex: 1; font-weight: bold; text-align:center;">${module.header1}</div><div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header2}</div><div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header3}</div></div></div>`;
+                     html += `<div class="print-row" style="padding-bottom: 10px;">
+                                <div class="print-row-number"></div>
+                                <div class="print-row-content">
+                                    <div style="flex: 1; font-weight: bold; text-align:center;">${module.header1}</div>
+                                    <div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header2}</div>
+                                    <div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header3}</div>
+                                </div>
+                            </div>`;
                 }
                 html += `</div>`; 
-                (module.rows || []).forEach((row, i) => { html += generatePrintRowHTML(row, i, module, exportFormat); });
+
+                module.rows.forEach((row, i) => {
+                    html += generatePrintRowHTML(row, i, module);
+                });
+               
                 html += '</div>';
             });
+
             html += '</div>';
             return html;
         };
@@ -750,3 +1504,4 @@
 </script>
 </body>
 </html>
+
