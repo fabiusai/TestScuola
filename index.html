@@ -726,6 +726,10 @@
                     <button id="export-pdf" class="btn btn-secondary btn-full">
                         <span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span>
                     </button>
+
+                    <button id="reset-page-breaks" class="btn btn-secondary btn-full">
+                        <span class="btn-text flex items-center justify-center"><i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i>Resetta Interruzioni</span>
+                    </button>
                     
                     <button id="clear-data" class="btn btn-danger btn-full">
                         <span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span>
@@ -852,6 +856,9 @@
                         <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
                     </div>
                     <div class="flex items-center gap-2">
+                        <button class="text-gray-400 hover:text-blue-500 transition-colors ${module.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina dopo questo modulo" onclick="toggleModulePageBreak('${module.id}')">
+                            <i data-lucide="unfold-vertical" class="w-5 h-5"></i>
+                        </button>
                         <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
                             <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i>
                         </button>
@@ -880,7 +887,16 @@
                 <i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i>
                 <span class="row-number">${index + 1}.</span>
             `;
-            const deleteButton = `<button class="text-red-400 hover:text-red-600 ml-auto" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button>`;
+            const deleteButton = `
+                <div class="flex items-center ml-auto">
+                     <button class="text-gray-400 hover:text-blue-500 transition-colors ${row.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina dopo questa riga" onclick="toggleRowPageBreak('${module.id}', '${row.id}')">
+                        <i data-lucide="unfold-vertical" class="w-4 h-4"></i>
+                    </button>
+                    <button class="text-red-400 hover:text-red-600" onclick="deleteRow('${module.id}', '${row.id}')">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `;
 
             let rowContent = '';
             switch (module.type) {
@@ -989,7 +1005,7 @@
 
          const getModuleDefaults = (type) => {
             moduleCounter++;
-            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false };
+            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false, pageBreakAfter: false };
             switch (type) {
                 case 'vero-falso': return { ...base, type, title: 'Vero o Falso', instructions: 'Indica se ogni affermazione è vera o falsa.' };
                 case 'scegli-funzione': return { ...base, type, title: 'Scegli la Funzione', instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
@@ -1001,7 +1017,7 @@
         };
         
         const getRowDefaults = (type) => {
-            const base = { id: `row_${Date.now()}_${Math.random()}` };
+            const base = { id: `row_${Date.now()}_${Math.random()}`, pageBreakAfter: false };
             switch(type) {
                 case 'vero-falso': return { ...base, text: 'Nuova frase...' };
                 case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
@@ -1058,6 +1074,27 @@
             }
         };
 
+        window.toggleModulePageBreak = (moduleId) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                module.pageBreakAfter = !module.pageBreakAfter;
+                saveData();
+                render();
+            }
+        };
+
+        window.toggleRowPageBreak = (moduleId, rowId) => {
+            const module = modules.find(m => m.id === moduleId);
+            if (module) {
+                const row = module.rows.find(r => r.id === rowId);
+                if (row) {
+                    row.pageBreakAfter = !row.pageBreakAfter;
+                    saveData();
+                    render();
+                }
+            }
+        };
+
         window.updateModuleData = (moduleId, key, value) => { 
             const module = modules.find(m => m.id === moduleId); 
             if (module) { 
@@ -1110,6 +1147,16 @@
                 modules.forEach(module => {
                     if (typeof module.isCollapsed === 'undefined') {
                         module.isCollapsed = false;
+                    }
+                    if (typeof module.pageBreakAfter === 'undefined') {
+                        module.pageBreakAfter = false;
+                    }
+                    if(module.rows){
+                        module.rows.forEach(row => {
+                            if (typeof row.pageBreakAfter === 'undefined') {
+                                row.pageBreakAfter = false;
+                            }
+                        });
                     }
                 });
                 moduleCounter = d.moduleCounter || modules.length; 
@@ -1174,10 +1221,12 @@
                     break;
             }
 
-            return `<div class="print-row">
+            const rowHTML = `<div class="print-row">
                         <div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>
                         <div class="print-row-content">${rowContentHTML}</div>
                     </div>`;
+            const pageBreakHTML = row.pageBreakAfter ? '<div style="page-break-after: always;"></div>' : '';
+            return rowHTML + pageBreakHTML;
         };
         
         const setupToolButtons = () => {
@@ -1194,6 +1243,7 @@
             const previewContent = document.getElementById('preview-content');
             const collapseAllBtn = document.getElementById('collapse-all-btn');
             const expandAllBtn = document.getElementById('expand-all-btn');
+            const resetPageBreaksBtn = document.getElementById('reset-page-breaks');
             
             testTitleInput.addEventListener('input', saveData);
             fontSizeSelect.addEventListener('change', saveData);
@@ -1208,6 +1258,20 @@
                 modules.forEach(m => m.isCollapsed = false);
                 saveData();
                 render();
+            });
+
+            resetPageBreaksBtn.addEventListener('click', (e) => {
+                modules.forEach(module => {
+                    module.pageBreakAfter = false;
+                    if(module.rows){
+                        module.rows.forEach(row => {
+                            row.pageBreakAfter = false;
+                        });
+                    }
+                });
+                saveData();
+                render();
+                updateButtonState(e.currentTarget, 'Resettato!');
             });
 
             previewBtn.addEventListener('click', () => {
@@ -1296,7 +1360,7 @@
                     modules.forEach(module => {
                         const ws_data = [];
                         // Dati generali del modulo
-                        ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions]);
+                        ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions], ['PageBreakAfter', module.pageBreakAfter]);
                         if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
                         if (module.options) ws_data.push(['Options', module.options.join(',')]);
                         if (module.header1) ws_data.push(['Header1', module.header1]);
@@ -1315,12 +1379,12 @@
                                 case 'scegli-funzione':
                                 case 'tre-parti':
                                 case 'libero':
-                                    headers = ['id', 'text'];
-                                    rowArrays = module.rows.map(row => [row.id, row.text]);
+                                    headers = ['id', 'text', 'pageBreakAfter'];
+                                    rowArrays = module.rows.map(row => [row.id, row.text, row.pageBreakAfter]);
                                     break;
                                 case 'trasforma':
-                                    headers = ['id', 'part1', 'part2'];
-                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2]);
+                                    headers = ['id', 'part1', 'part2', 'pageBreakAfter'];
+                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.pageBreakAfter]);
                                     break;
                             }
 
@@ -1370,6 +1434,7 @@
                             if(row[0] === 'ModuleType') moduleData.type = row[1]; 
                             if(row[0] === 'Title') moduleData.title = row[1]; 
                             if(row[0] === 'Instructions') moduleData.instructions = row[1]; 
+                            if(row[0] === 'PageBreakAfter') moduleData.pageBreakAfter = row[1]; 
                             if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; 
                             if(row[0] === 'Options') moduleData.options = row[1].split(','); 
                             if(row[0] === 'Header1') moduleData.header1 = row[1]; 
@@ -1380,10 +1445,13 @@
                         moduleData.rows = [];
                         if (headerRowIndex !== -1 && headerRowIndex < json.length) {
                             const headers = json[headerRowIndex];
+                            const pageBreakIndex = headers.indexOf('pageBreakAfter');
+
                             for (let i = headerRowIndex + 1; i < json.length; i++) {
                                 const rowData = {};
                                 headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
                                 if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`;
+                                rowData.pageBreakAfter = pageBreakIndex !== -1 ? json[i][pageBreakIndex] || false : false;
                                 moduleData.rows.push(rowData);
                             }
                         }
@@ -1460,14 +1528,19 @@
             `;
 
             modules.forEach((module, index) => {
-                html += `<div class="module-print-card">`;
+                let moduleContentHTML = '';
+                module.rows.forEach((row, i) => {
+                    moduleContentHTML += generatePrintRowHTML(row, i, module);
+                });
+
+                let moduleHTML = `<div class="module-print-card">`;
                 
-                html += `<div class="module-print-header">`;
-                html += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
-                html += `<p class="instructions">${module.instructions}</p>`;
+                moduleHTML += `<div class="module-print-header">`;
+                moduleHTML += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
+                moduleHTML += `<p class="instructions">${module.instructions}</p>`;
 
                 if(module.type === 'tre-parti'){
-                     html += `<div class="print-row" style="padding-bottom: 10px;">
+                     moduleHTML += `<div class="print-row" style="padding-bottom: 10px;">
                                 <div class="print-row-number"></div>
                                 <div class="print-row-content">
                                     <div style="flex: 1; font-weight: bold; text-align:center;">${module.header1}</div>
@@ -1476,13 +1549,15 @@
                                 </div>
                             </div>`;
                 }
-                html += `</div>`; 
+                moduleHTML += `</div>`;
+                moduleHTML += moduleContentHTML;
+                moduleHTML += '</div>';
 
-                module.rows.forEach((row, i) => {
-                    html += generatePrintRowHTML(row, i, module);
-                });
-               
-                html += '</div>';
+                if (module.pageBreakAfter) {
+                    moduleHTML += `<div style="page-break-after: always;"></div>`;
+                }
+
+                html += moduleHTML;
             });
 
             html += '</div>';
