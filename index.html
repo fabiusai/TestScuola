@@ -14,1325 +14,219 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            --primary-color: #3b82f6; /* Blu sobrio */
-            --primary-dark: #1d4ed8;
-            --primary-light: #eff6ff; /* Azzurro chiaro per etichetta */
-            --accent-color: #f59e0b; /* Ambra per accenti */
-            --accent-light: #fffbeb;
-            --text-primary: #111827;
-            --text-secondary: #4b5563;
-            --border-color: #e5e7eb;
-            --bg-light: #f9fafb;
-            --bg-medium: #f3f4f6;
-            --white: #ffffff;
-            --danger-color: #ef4444;
-            --danger-light: #fef2f2;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-primary);
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            background: var(--white);
-            color: var(--text-primary);
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0 2rem;
-        }
-
-        .logo-icon {
-            background: var(--primary-color);
-            color: var(--white);
-            width: 3rem;
-            height: 3rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .header-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .header-subtitle {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin: 0;
-            font-weight: 400;
-            color: var(--text-secondary);
-        }
-
-        /* Layout principale */
-        .main-layout {
-            display: flex;
-            min-height: calc(100vh - 100px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 320px;
-            background: var(--white);
-            border-right: 1px solid var(--border-color);
-            padding: 2rem;
-            overflow-y: auto;
-        }
-
-        .sidebar-section {
-            margin-bottom: 2rem;
-        }
-
-        .sidebar-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        /* Bottoni */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 6px;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            white-space: nowrap;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            border-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: var(--white);
-            color: var(--text-secondary);
-            border-color: var(--border-color);
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: var(--bg-medium);
-            border-color: #d1d5db;
-            color: var(--text-primary);
-        }
-
-        .btn-accent {
-            background: var(--accent-color);
-            color: var(--white);
-            border-color: var(--accent-color);
-            font-weight: 600;
-        }
-
-        .btn-accent:hover:not(:disabled) {
-            background: #d97706;
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            background: var(--danger-light);
-            color: var(--danger-color);
-            border-color: #fca5a5;
-        }
-
-        .btn-danger:hover:not(:disabled) {
-            background: #fee2e2;
-        }
-
-        .btn-small {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-full {
-            width: 100%;
-        }
-
-        .btn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Area principale */
-        .content-area {
-            flex: 1;
-            padding: 2rem;
-            background: var(--bg-light);
-            overflow-y: auto;
-        }
-
-        .content-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Messaggio vuoto */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: var(--white);
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            margin: 2rem 0;
-        }
-
-        .empty-icon {
-            width: 4rem;
-            height: 4rem;
-            margin: 0 auto 1rem;
-            color: var(--text-secondary);
-        }
-
-        .empty-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .empty-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Card moduli */
-        .module-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            transition: all 0.2s ease;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-        }
-
-        .module-card:hover {
-            border-color: #d1d5db;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-
-        .module-header {
-            background: var(--bg-medium);
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            cursor: grab;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .module-header:active {
-            cursor: grabbing;
-        }
-        
-        .module-type-label {
-            background-color: var(--primary-light);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-radius: 6px;
-            text-transform: capitalize;
-            white-space: nowrap;
-        }
-
-        .module-number-label {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            white-space: nowrap;
-        }
-
-        .module-content {
-            padding: 1.5rem;
-        }
-
-        .module-footer {
-            background: var(--bg-light);
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Campi editabili */
-        .editable {
-            width: 100%;
-            padding: 0.5rem;
-            border: none;
-            border-bottom: 2px solid transparent;
-            background: transparent;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        .editable:focus {
-            border-bottom-color: var(--accent-color);
-        }
-
-        .editable-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .editable-instructions {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        /* Righe */
-        .rows-container {
-            margin-bottom: 1.5rem;
-        }
-
-        .row-item {
-            display: flex;
-            align-items: flex-start; 
-            gap: 1rem;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--white);
-            margin-bottom: 0.75rem;
-            transition: all 0.2s ease;
-        }
-
-        .row-item:hover {
-            border-color: #d1d5db;
-            background: var(--bg-light);
-        }
-
-        .row-number {
-            color: var(--primary-color);
-            font-weight: 600;
-            min-width: 2rem;
-            text-align: center;
-            padding-top: 0.75rem;
-        }
-
-        .drag-handle {
-            color: var(--text-secondary);
-            cursor: move;
-            padding-top: 0.75rem;
-        }
-
-        .drag-handle:hover {
-            color: var(--primary-color);
-        }
-        .row-content-wrapper {
-            flex: 1;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .editable-content {
-            flex: 1;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: var(--white);
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .editable-content:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        .student-space {
-            background: var(--bg-medium);
-            border: 2px dashed var(--border-color);
-            border-radius: 6px;
-            min-height: 2.5rem; /* 40px */
-            flex: 1;
-            transition: all 0.2s ease;
-        }
-
-        .student-space:hover {
-            background: #e5e7eb;
-        }
-
-        /* Form elements */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background: var(--white);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        /* Sezioni specifiche */
-        .vero-falso-options {
-            display: flex;
-            gap: 1rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            align-items: center;
-            background: var(--bg-medium);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-        }
-
-        .function-options {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            background: var(--bg-medium);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-        
-        .editable-wrapper {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-        .format-toolbar {
-            background: var(--bg-medium);
-            border: 1px solid var(--border-color);
-            border-bottom: none;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            padding: 4px;
-            display: flex;
-            gap: 4px;
-        }
-        .format-btn {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 28px;
-            height: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .format-btn:hover {
-            background: var(--primary-light);
-            border-color: var(--primary-color);
-        }
-        .editable-content.with-toolbar {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-
-        .underline-input {
-            border-bottom: 1px solid #333;
-            min-width: 100px;
-            display: inline-block;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(17, 24, 39, 0.6);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-
-        .modal-content {
-            background: var(--white);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 900px;
-            height: 90vh;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-light);
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .modal-body {
-            flex: 1;
-            padding: 1rem; 
-            overflow-y: auto;
-            background: var(--bg-light);
-        }
-
-        /* Import/Export section */
-        .import-export-section {
-            background: var(--bg-medium);
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .import-export-title {
-            font-weight: 600;
-            color: var(--text-primary);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .header-content {
-                padding: 0 1rem;
-            }
-            
-            .content-area {
-                padding: 1rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .btn-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-title {
-                font-size: 1.25rem;
-            }
-            
-            .sidebar {
-                padding: 1rem;
-            }
-        }
-
-        /* Sorting */
-        .sortable-ghost {
-            background: var(--accent-light);
-            opacity: 0.5;
-            border-color: var(--accent-color);
-        }
-
-        /* Print styles */
-        @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-            }
-        }
-
-        /* Animation per feedback bottoni */
-        .btn.loading {
-            pointer-events: none;
-        }
-
-        .btn.loading .btn-text {
-            opacity: 0;
-        }
-        
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 1rem;
-            height: 1rem;
-            margin: -0.5rem 0 0 -0.5rem;
-            border: 2px solid transparent;
-            border-top-color: currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none !important;
-        }
+            --primary-color: #3b82f6; --primary-dark: #1d4ed8; --primary-light: #eff6ff; --accent-color: #f59e0b; --accent-light: #fffbeb; --text-primary: #111827; --text-secondary: #4b5563; --border-color: #e5e7eb; --bg-light: #f9fafb; --bg-medium: #f3f4f6; --white: #ffffff; --danger-color: #ef4444; --danger-light: #fef2f2;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-light); color: var(--text-primary); line-height: 1.5; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: var(--white); color: var(--text-primary); padding: 1rem 0; border-bottom: 1px solid var(--border-color); }
+        .header-content { display: flex; align-items: center; gap: 1rem; padding: 0 2rem; }
+        .logo-icon { background: var(--primary-color); color: var(--white); width: 3rem; height: 3rem; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; }
+        .header-title { font-size: 1.75rem; font-weight: 600; margin: 0; }
+        .header-subtitle { font-size: 0.9rem; opacity: 0.9; margin: 0; font-weight: 400; color: var(--text-secondary); }
+        .main-layout { display: flex; min-height: calc(100vh - 100px); }
+        .sidebar { width: 320px; background: var(--white); border-right: 1px solid var(--border-color); padding: 2rem; overflow-y: auto; }
+        .sidebar-section { margin-bottom: 2rem; }
+        .sidebar-title { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary-color); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; font-size: 0.875rem; font-weight: 500; border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s ease; text-decoration: none; white-space: nowrap; position: relative; overflow: hidden; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-1px); }
+        .btn-secondary { background: var(--white); color: var(--text-secondary); border-color: var(--border-color); }
+        .btn-secondary:hover:not(:disabled) { background: var(--bg-medium); border-color: #d1d5db; color: var(--text-primary); }
+        .btn-accent { background: var(--accent-color); color: var(--white); border-color: var(--accent-color); font-weight: 600; }
+        .btn-accent:hover:not(:disabled) { background: #d97706; transform: translateY(-1px); }
+        .btn-danger { background: var(--danger-light); color: var(--danger-color); border-color: #fca5a5; }
+        .btn-danger:hover:not(:disabled) { background: #fee2e2; }
+        .btn-small { padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+        .btn-full { width: 100%; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+        .content-area { flex: 1; padding: 2rem; background: var(--bg-light); overflow-y: auto; }
+        .content-container { max-width: 900px; margin: 0 auto; }
+        .empty-state { text-align: center; padding: 4rem 2rem; background: var(--white); border: 2px dashed var(--border-color); border-radius: 12px; margin: 2rem 0; }
+        .empty-icon { width: 4rem; height: 4rem; margin: 0 auto 1rem; color: var(--text-secondary); }
+        .empty-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .empty-text { color: var(--text-secondary); font-size: 0.9rem; }
+        .module-card { background: var(--white); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; transition: all 0.2s ease; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05); }
+        .module-card:hover { border-color: #d1d5db; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .module-header { background: var(--bg-medium); padding: 1.5rem; border-bottom: 1px solid var(--border-color); cursor: grab; display: flex; justify-content: space-between; align-items: flex-start; }
+        .module-header:active { cursor: grabbing; }
+        .module-type-label { background-color: var(--primary-light); color: var(--primary-color); padding: 0.25rem 0.75rem; font-size: 0.8rem; font-weight: 600; border-radius: 6px; text-transform: capitalize; white-space: nowrap; }
+        .module-number-label { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+        .module-content { padding: 1.5rem; }
+        .module-footer { background: var(--bg-light); padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); }
+        .editable { width: 100%; padding: 0.5rem; border: none; border-bottom: 2px solid transparent; background: transparent; outline: none; transition: border-color 0.2s ease; }
+        .editable:focus { border-bottom-color: var(--accent-color); }
+        .editable-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+        .editable-instructions { font-size: 0.9rem; color: var(--text-secondary); font-style: italic; }
+        .rows-container { margin-bottom: 1.5rem; }
+        .row-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--white); margin-bottom: 0.75rem; transition: all 0.2s ease; }
+        .row-item:hover { border-color: #d1d5db; background: var(--bg-light); }
+        .row-number { color: var(--primary-color); font-weight: 600; min-width: 2rem; text-align: center; padding-top: 0.75rem; }
+        .drag-handle { color: var(--text-secondary); cursor: move; padding-top: 0.75rem; }
+        .drag-handle:hover { color: var(--primary-color); }
+        .row-content-wrapper { flex: 1; display: flex; gap: 1rem; align-items: center; }
+        .editable-content { flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--white); outline: none; transition: all 0.2s ease; }
+        .editable-content:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .student-space { background: var(--bg-medium); border: 2px dashed var(--border-color); border-radius: 6px; min-height: 2.5rem; flex: 1; transition: all 0.2s ease; }
+        .student-space:hover { background: #e5e7eb; }
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-input, .form-select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--white); color: var(--text-primary); font-size: 0.9rem; transition: all 0.2s ease; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .vero-falso-options { display: flex; gap: 1rem; color: var(--text-secondary); font-size: 0.9rem; align-items: center; background: var(--bg-medium); padding: 0.5rem 1rem; border-radius: 6px; }
+        .function-options { display: flex; gap: 0.5rem; align-items: center; background: var(--bg-medium); padding: 0.5rem 1rem; border-radius: 6px; font-family: monospace; font-size: 0.85rem; }
+        .editable-wrapper { display: flex; flex-direction: column; flex: 1; }
+        .format-toolbar { background: var(--bg-medium); border: 1px solid var(--border-color); border-bottom: none; border-top-left-radius: 6px; border-top-right-radius: 6px; padding: 4px; display: flex; gap: 4px; }
+        .format-btn { background: var(--white); border: 1px solid var(--border-color); border-radius: 4px; width: 28px; height: 28px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .format-btn:hover { background: var(--primary-light); border-color: var(--primary-color); }
+        .editable-content.with-toolbar { border-top-left-radius: 0; border-top-right-radius: 0; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-content { background: var(--white); border-radius: 12px; width: 100%; max-width: 900px; height: 90vh; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); }
+        .modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
+        .modal-body { flex: 1; padding: 1rem; overflow-y: auto; background: var(--bg-light); }
+        .import-export-section { background: var(--bg-medium); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
+        .import-export-title { font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 1rem; font-size: 0.9rem; }
+        @media (max-width: 1024px) { .main-layout { flex-direction: column; } .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); } .header-content { padding: 0 1rem; } .content-area { padding: 1rem; } }
+        @media (max-width: 640px) { .btn-grid { grid-template-columns: 1fr; } .header-title { font-size: 1.25rem; } .sidebar { padding: 1rem; } }
+        .sortable-ghost { background: var(--accent-light); opacity: 0.5; border-color: var(--accent-color); }
+        .btn.loading { pointer-events: none; } .btn.loading .btn-text { opacity: 0; }
+        .btn.loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 1rem; height: 1rem; margin: -0.5rem 0 0 -0.5rem; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+        #contenitore-stampa { display: none; background-color: var(--bg-medium); padding: 2rem 0; width: 100%; }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-icon">GT</div>
-                <div>
-                    <h1 class="header-title">Generatore di Test</h1>
-                    <p class="header-subtitle">Crea test personalizzati per i tuoi studenti</p>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="main-layout">
-        <aside class="sidebar">
-             <div class="sidebar-section">
-                <h2 class="sidebar-title">Impostazioni Generali</h2>
-                <div class="form-group">
-                    <label for="test-title-input" class="form-label">Titolo del Test</label>
-                    <input type="text" id="test-title-input" class="form-input" placeholder="Es. Verifica di Storia">
-                </div>
-                <div class="form-group">
-                    <label for="font-size-select" class="form-label">Dimensione Carattere Domande</label>
-                    <select id="font-size-select" class="form-select">
-                        <option value="10pt">10 pt</option>
-                        <option value="11pt">11 pt</option>
-                        <option value="12pt" selected>12 pt (Default)</option>
-                        <option value="13pt">13 pt</option>
-                        <option value="14pt">14 pt</option>
-                        <option value="16pt">16 pt</option>
-                        <option value="18pt">18 pt</option>
-                    </select>
-                </div>
-                <div class="btn-grid">
-                    <button id="collapse-all-btn" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span>
-                    </button>
-                    <button id="expand-all-btn" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <h2 class="sidebar-title">Tipologie di Modulo</h2>
-                <div class="btn-grid" id="add-module-buttons">
-                    <button data-type="vero-falso" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Vero/Falso</span>
-                    </button>
-                    <button data-type="scegli-funzione" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="list" class="w-4 h-4 mr-1"></i>Funzione</span>
-                    </button>
-                    <button data-type="tre-parti" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="columns" class="w-4 h-4 mr-1"></i>3 Parti</span>
-                    </button>
-                    <button data-type="trasforma" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 mr-1"></i>Trasforma</span>
-                    </button>
-                    <button data-type="libero" class="btn btn-secondary btn-small">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="edit" class="w-4 h-4 mr-1"></i>Libero</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <h2 class="sidebar-title">Strumenti di Lavoro</h2>
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <button id="preview-btn" class="btn btn-accent btn-full">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 mr-2"></i>Anteprima Test</span>
-                    </button>
-                    
-                    <button id="save-data" class="btn btn-primary btn-full">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span>
-                    </button>
-                    
-                    <button id="export-pdf" class="btn btn-secondary btn-full">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span>
-                    </button>
-
-                    <button id="reset-page-breaks" class="btn btn-secondary btn-full">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i>Resetta Interruzioni</span>
-                    </button>
-                    
-                    <button id="clear-data" class="btn btn-danger btn-full">
-                        <span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="import-export-section">
-                    <h3 class="import-export-title">Gestione Dati</h3>
-                    <div class="btn-grid">
-                        <button id="export-excel" class="btn btn-secondary btn-small">
-                            <span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-1"></i>Esporta Excel</span>
-                        </button>
-                        <label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer">
-                            <span class="btn-text flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 mr-1"></i>Importa Excel</span>
-                            <input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls">
-                        </label>
+    <div id="app-wrapper">
+        <header class="header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo-icon">GT</div>
+                    <div>
+                        <h1 class="header-title">Generatore di Test</h1>
+                        <p class="header-subtitle">Crea test personalizzati per i tuoi studenti</p>
                     </div>
                 </div>
             </div>
-        </aside>
+        </header>
 
-        <main class="content-area">
-            <div class="content-container">
-                <div id="document-container">
-                    </div>
-            </div>
-        </main>
-    </div>
-
-    <div id="print-area" class="hidden"></div>
-    
-    <div id="preview-modal" class="hidden modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i data-lucide="file-check-2" class="w-5 h-5"></i>
-                    Anteprima di Stampa
-                </h3>
-                <button id="close-modal-btn" class="text-gray-400 hover:text-red-600 transition-colors">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            <div id="preview-content" class="modal-body">
-                </div>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-section"><h2 class="sidebar-title">Impostazioni Generali</h2><div class="form-group"><label for="test-title-input" class="form-label">Titolo del Test</label><input type="text" id="test-title-input" class="form-input" placeholder="Es. Verifica di Storia"></div><div class="form-group"><label for="font-size-select" class="form-label">Dimensione Carattere Domande</label><select id="font-size-select" class="form-select"><option value="10pt">10 pt</option><option value="11pt">11 pt</option><option value="12pt" selected>12 pt (Default)</option><option value="13pt">13 pt</option><option value="14pt">14 pt</option><option value="16pt">16 pt</option><option value="18pt">18 pt</option></select></div><div class="btn-grid"><button id="collapse-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span></button><button id="expand-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span></button></div></div>
+                <div class="sidebar-section"><h2 class="sidebar-title">Tipologie di Modulo</h2><div class="btn-grid" id="add-module-buttons"><button data-type="vero-falso" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Vero/Falso</span></button><button data-type="scegli-funzione" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="list" class="w-4 h-4 mr-1"></i>Funzione</span></button><button data-type="tre-parti" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="columns" class="w-4 h-4 mr-1"></i>3 Parti</span></button><button data-type="trasforma" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 mr-1"></i>Trasforma</span></button><button data-type="libero" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="edit" class="w-4 h-4 mr-1"></i>Libero</span></button></div></div>
+                <div class="sidebar-section"><h2 class="sidebar-title">Strumenti di Lavoro</h2><div style="display: flex; flex-direction: column; gap: 0.75rem;"><button id="preview-btn" class="btn btn-accent btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 mr-2"></i>Anteprima Test</span></button><button id="save-data" class="btn btn-primary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span></button><button id="export-pdf" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span></button><button id="reset-page-breaks" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i>Resetta Interruzioni</span></button><button id="clear-data" class="btn btn-danger btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span></button></div></div>
+                <div class="sidebar-section"><div class="import-export-section"><h3 class="import-export-title">Gestione Dati</h3><div class="btn-grid"><button id="export-excel" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-1"></i>Esporta Excel</span></button><label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer"><span class="btn-text flex items-center justify-center"><i data-lucide="download" class="w-4 h-4 mr-1"></i>Importa Excel</span><input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls"></label></div></div></div>
+            </aside>
+            <main class="content-area"><div class="content-container"><div id="document-container"></div></div></main>
         </div>
     </div>
+    <div id="contenitore-stampa"></div>
+    <div id="preview-modal" class="hidden modal-overlay"><div class="modal-content"><div class="modal-header"><h3 class="modal-title"><i data-lucide="file-check-2" class="w-5 h-5"></i> Anteprima di Stampa</h3><button id="close-modal-btn" class="text-gray-400 hover:text-red-600 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button></div><div id="preview-content" class="modal-body"></div></div></div>
 
    <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const documentContainer = document.getElementById('document-container');
-        const addModuleButtons = document.getElementById('add-module-buttons');
-        let modules = [];
-        let moduleCounter = 0;
-        let testTitle = 'Verifica';
-        let questionFontSize = '12pt';
-
-        window.formatText = (elementId, command) => {
-            const element = document.getElementById(elementId);
-            if(element) {
-                element.focus();
-                document.execCommand(command, false, null);
-            }
-        };
-
-        const createModuleHTML = (module, index) => {
-            const card = document.createElement('div');
-            card.className = 'module-card';
-            card.dataset.moduleId = module.id;
-            const isCollapsed = !!module.isCollapsed;
-
-            let footerHTML = '';
-            if (module.type === 'scegli-funzione') {
-                footerHTML += `
-                    <div class="form-group">
-                        <label for="options-${module.id}" class="form-label">Opzioni disponibili (separate da virgola)</label>
-                        <input type="text" id="options-${module.id}" class="form-input" value="${module.options.join(',')}" onchange="updateModuleData('${module.id}', 'options', this.value.split(',').map(s => s.trim()))" placeholder="CO, AU, PV">
-                    </div>
-                `;
-            }
-            if (module.type === 'tre-parti') {
-                footerHTML += `
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-                        <div class="form-group">
-                            <label for="header1-${module.id}" class="form-label">Titolo Prima Colonna</label>
-                            <input type="text" id="header1-${module.id}" class="form-input" value="${module.header1}" onchange="updateModuleData('${module.id}', 'header1', this.value)">
-                        </div>
-                        <div class="form-group">
-                            <label for="header2-${module.id}" class="form-label">Titolo Seconda Colonna</label>
-                            <input type="text" id="header2-${module.id}" class="form-input" value="${module.header2}" onchange="updateModuleData('${module.id}', 'header2', this.value)">
-                        </div>
-                        <div class="form-group">
-                            <label for="header3-${module.id}" class="form-label">Titolo Terza Colonna</label>
-                            <input type="text" id="header3-${module.id}" class="form-input" value="${module.header3}" onchange="updateModuleData('${module.id}', 'header3', this.value)">
-                        </div>
-                    </div>
-                `;
-            }
-            if (module.type === 'libero') {
-                footerHTML += `
-                    <div class="form-group">
-                        <label for="answer-space-${module.id}" class="form-label">Dimensione spazio di risposta</label>
-                        <select id="answer-space-${module.id}" class="form-select" onchange="updateModuleData('${module.id}', 'answerSpace', this.value)">
-                            <option value="none" ${module.answerSpace === 'none' ? 'selected' : ''}>Nessun campo</option>
-                            <option value="small" ${module.answerSpace === 'small' ? 'selected' : ''}>Piccolo</option>
-                            <option value="medium" ${module.answerSpace === 'medium' ? 'selected' : ''}>Medio</option>
-                            <option value="large" ${module.answerSpace === 'large' ? 'selected' : ''}>Grande</option>
-                        </select>
-                    </div>
-                `;
-            }
-
-            card.innerHTML = `
-                <div class="module-header">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
-                            <div style="display: flex; align-items: baseline; gap: 0.5rem; flex: 1;">
-                                <span class="module-number-label">Modulo ${index + 1} -</span>
-                                <div contenteditable="true" class="editable editable-title" onblur="updateModuleData('${module.id}', 'title', this.innerText)">${module.title}</div>
-                            </div>
-                            <span class="module-type-label">${module.type.replace('-', ' ')}</span>
-                        </div>
-                        <div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button class="text-gray-400 hover:text-blue-500 transition-colors ${module.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina dopo questo modulo" onclick="toggleModulePageBreak('${module.id}')">
-                            <i data-lucide="unfold-vertical" class="w-5 h-5"></i>
-                        </button>
-                        <button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')">
-                            <i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i>
-                        </button>
-                        <button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')">
-                            <i data-lucide="trash-2" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="module-collapsible-area ${isCollapsed ? 'hidden' : ''}">
-                    <div class="module-content">
-                        <div class="rows-container" data-module-id="${module.id}">
-                            ${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}
-                        </div>
-                        <button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')">
-                           <span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span>
-                        </button>
-                    </div>
-                    ${footerHTML ? `<div class="module-footer">${footerHTML}</div>` : ''}
-                </div>
-            `;
-            return card;
-        };
-
-        const createRowHTML = (module, row, index) => {
-            const commonControls = `
-                <i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i>
-                <span class="row-number">${index + 1}.</span>
-            `;
-            const deleteButton = `
-                <div class="flex items-center ml-auto">
-                     <button class="text-gray-400 hover:text-blue-500 transition-colors ${row.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina dopo questa riga" onclick="toggleRowPageBreak('${module.id}', '${row.id}')">
-                        <i data-lucide="unfold-vertical" class="w-4 h-4"></i>
-                    </button>
-                    <button class="text-red-400 hover:text-red-600" onclick="deleteRow('${module.id}', '${row.id}')">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            `;
-
-            let rowContent = '';
-            switch (module.type) {
-                case 'vero-falso':
-                    rowContent = `
-                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === 'Nuova frase...') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = 'Nuova frase...'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class="vero-falso-options">
-                            <span>Vero □</span>
-                            <span>Falso □</span>
-                        </div>
-                    `;
-                    break;
-                case 'scegli-funzione':
-                     const phFunzione = 'Testo della domanda.';
-                     rowContent = `
-                        <div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim() === '${phFunzione}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phFunzione}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class="function-options">
-                            ${module.options.map(opt => `<span>[${opt}]</span>`).join('')}
-                        </div>
-                    `;
-                    break;
-                case 'tre-parti':
-                     const phDueParti = 'Elemento da analizzare...';
-                     rowContent = `
-                        <div contenteditable="true" class="editable-content" style="flex: 1;" onfocus="if(this.innerText.trim() === '${phDueParti}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phDueParti}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerText)">${row.text}</div>
-                        <div class="student-space"></div>
-                        <div class="student-space"></div>
-                    `;
-                    break;
-                case 'trasforma':
-                     const phPart1 = 'Elemento';
-                     const phPart2 = 'Trasformazione';
-                     rowContent = `
-                        <div contenteditable="true" class="editable-content" style="width: 20%;" onfocus="if(this.innerText.trim() === '${phPart1}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phPart1}'; } updateRowData('${module.id}', '${row.id}', 'part1', this.innerText)">${row.part1}</div>
-                        <div contenteditable="true" class="editable-content" style="width: 40%;" onfocus="if(this.innerText.trim() === '${phPart2}') { this.innerText = '' }" onblur="if(this.innerText.trim() === '') { this.innerText = '${phPart2}'; } updateRowData('${module.id}', '${row.id}', 'part2', this.innerText)">${row.part2}</div>
-                        <div class="student-space" style="width: 40%;"></div>
-                    `;
-                    break;
-                case 'libero':
-                    const phLibero = 'Scrivi qui la tua domanda...';
-                    let answerSpaceHTML = '';
-                    if (module.answerSpace && module.answerSpace !== 'none') {
-                        const heightClass = module.answerSpace === 'large' ? 'min-h-[120px]' : module.answerSpace === 'medium' ? 'min-h-[80px]' : 'min-h-[40px]';
-                        answerSpaceHTML = `<div class="student-space ${heightClass}" style="flex: 0 0 50%;"></div>`;
-                    }
-                     const rowId = `libero-input-${row.id}`;
-                     rowContent = `
-                        <div class="editable-wrapper">
-                             <div class="format-toolbar">
-                                <button type="button" class="format-btn" title="Grassetto (Ctrl+B)" onclick="formatText('${rowId}', 'bold')">B</button>
-                            </div>
-                            <div id="${rowId}" contenteditable="true" class="editable-content with-toolbar" 
-                                 onfocus="if(this.innerHTML.trim() === '${phLibero}') { this.innerHTML = '' }" 
-                                 onblur="if(this.innerHTML.trim() === '') { this.innerHTML = '${phLibero}'; } updateRowData('${module.id}', '${row.id}', 'text', this.innerHTML)">${row.text}</div>
-                        </div>
-                        ${answerSpaceHTML}
-                    `;
-                    break;
-            }
-
-            return `
-                <div class="row-item" data-row-id="${row.id}">
-                    ${commonControls}
-                    <div class="row-content-wrapper">${rowContent}</div>
-                    ${deleteButton}
-                </div>
-            `;
-        };
-
-        const render = () => {
-            documentContainer.innerHTML = '';
-            if(modules.length === 0){
-                documentContainer.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            <i data-lucide="file-plus" style="width: 100%; height: 100%;"></i>
-                        </div>
-                        <h3 class="empty-title">Inizia a creare il tuo test</h3>
-                        <p class="empty-text">Seleziona una tipologia di modulo dal pannello di sinistra per iniziare</p>
-                    </div>
-                `;
-            } else {
-                modules.forEach((module, index) => {
-                    const moduleEl = createModuleHTML(module, index);
-                    documentContainer.appendChild(moduleEl);
-                    const rowsContainer = moduleEl.querySelector('.rows-container');
-                    if (rowsContainer) {
-                        new Sortable(rowsContainer, {
-                            animation: 150, 
-                            handle: '.drag-handle', 
-                            ghostClass: 'sortable-ghost',
-                            onEnd: (evt) => {
-                                const currentModule = modules.find(m => m.id === module.id);
-                                const row = currentModule.rows.splice(evt.oldIndex, 1)[0];
-                                currentModule.rows.splice(evt.newIndex, 0, row);
-                                saveData();
-                                render();
-                            }
-                        });
-                    }
-                });
-                saveData();
-            }
-            lucide.createIcons();
-        };
-
-         const getModuleDefaults = (type) => {
-            moduleCounter++;
-            const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false, pageBreakAfter: false };
-            switch (type) {
-                case 'vero-falso': return { ...base, type, title: 'Vero o Falso', instructions: 'Indica se ogni affermazione è vera o falsa.' };
-                case 'scegli-funzione': return { ...base, type, title: 'Scegli la Funzione', instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] };
-                case 'tre-parti': return { ...base, type, title: 'Completa le tre parti', instructions: 'Completa le informazioni per ogni elemento.', header1: 'Elemento', header2: 'Titolo 2', header3: 'Titolo 3' };
-                case 'trasforma': return { ...base, type, title: 'Trasforma', instructions: 'Esegui la trasformazione richiesta.' };
-                case 'libero': return { ...base, type, title: 'Domande a Risposta Aperta', instructions: 'Rispondi alle seguenti domande.', answerSpace: 'none'};
-                default: return null;
-            }
-        };
+        const documentContainer = document.getElementById('document-container'); const addModuleButtons = document.getElementById('add-module-buttons'); let modules = []; let moduleCounter = 0; let testTitle = 'Verifica'; let questionFontSize = '12pt';
+        window.formatText = (elementId, command) => { const element = document.getElementById(elementId); if(element) { element.focus(); document.execCommand(command, false, null); } };
+        const createModuleHTML = (module, index) => { const card = document.createElement('div'); card.className = 'module-card'; card.dataset.moduleId = module.id; const isCollapsed = !!module.isCollapsed; let footerHTML = ''; if (module.type === 'scegli-funzione') { footerHTML += `<div class="form-group"><label for="options-${module.id}" class="form-label">Opzioni (separate da virgola)</label><input type="text" id="options-${module.id}" class="form-input" value="${module.options.join(',')}" onchange="updateModuleData('${module.id}', 'options', this.value.split(',').map(s => s.trim()))" placeholder="CO, AU, PV"></div>`; } if (module.type === 'tre-parti') { footerHTML += `<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;"><div class="form-group"><label for="header1-${module.id}" class="form-label">Titolo 1</label><input type="text" id="header1-${module.id}" class="form-input" value="${module.header1}" onchange="updateModuleData('${module.id}', 'header1', this.value)"></div><div class="form-group"><label for="header2-${module.id}" class="form-label">Titolo 2</label><input type="text" id="header2-${module.id}" class="form-input" value="${module.header2}" onchange="updateModuleData('${module.id}', 'header2', this.value)"></div><div class="form-group"><label for="header3-${module.id}" class="form-label">Titolo 3</label><input type="text" id="header3-${module.id}" class="form-input" value="${module.header3}" onchange="updateModuleData('${module.id}', 'header3', this.value)"></div></div>`; } if (module.type === 'libero') { footerHTML += `<div class="form-group"><label for="answer-space-${module.id}" class="form-label">Spazio Risposta</label><select id="answer-space-${module.id}" class="form-select" onchange="updateModuleData('${module.id}', 'answerSpace', this.value)"><option value="none" ${module.answerSpace === 'none' ? 'selected' : ''}>Nessuno</option><option value="small" ${module.answerSpace === 'small' ? 'selected' : ''}>Piccolo</option><option value="medium" ${module.answerSpace === 'medium' ? 'selected' : ''}>Medio</option><option value="large" ${module.answerSpace === 'large' ? 'selected' : ''}>Grande</option></select></div>`; }
+            card.innerHTML = `<div class="module-header"><div style="flex: 1;"><div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;"><div style="display: flex; align-items: baseline; gap: 0.5rem; flex: 1;"><span class="module-number-label">Modulo ${index + 1} -</span><div contenteditable="true" class="editable editable-title" onblur="updateModuleData('${module.id}', 'title', this.innerText)">${module.title}</div></div><span class="module-type-label">${module.type.replace('-', ' ')}</span></div><div contenteditable="true" class="editable editable-instructions" onblur="updateModuleData('${module.id}', 'instructions', this.innerText)">${module.instructions}</div></div><div class="flex items-center gap-2"><button class="text-gray-400 hover:text-blue-500 transition-colors ${module.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina" onclick="toggleModulePageBreak('${module.id}')"><i data-lucide="unfold-vertical" class="w-5 h-5"></i></button><button class="text-gray-400 hover:text-blue-500 transition-colors" onclick="toggleModuleCollapse('${module.id}')"><i data-lucide="${isCollapsed ? 'chevron-down' : 'chevron-up'}" class="w-5 h-5"></i></button><button class="text-gray-400 hover:text-red-500 transition-colors" onclick="deleteModule('${module.id}')"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div></div><div class="module-collapsible-area ${isCollapsed ? 'hidden' : ''}"><div class="module-content"><div class="rows-container" data-module-id="${module.id}">${module.rows.map((row, index) => createRowHTML(module, row, index)).join('')}</div><button class="btn btn-secondary btn-small" onclick="addRow('${module.id}')"><span class="btn-text flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4 mr-1"></i>Aggiungi Elemento</span></button></div>${footerHTML ? `<div class="module-footer">${footerHTML}</div>` : ''}</div>`; return card; };
+        const createRowHTML = (module, row, index) => { const commonControls = `<i data-lucide="grip-vertical" class="drag-handle w-5 h-5"></i><span class="row-number">${index + 1}.</span>`; const deleteButton = `<div class="flex items-center ml-auto"><button class="text-gray-400 hover:text-blue-500 transition-colors ${row.pageBreakAfter ? 'text-blue-500' : ''}" title="Forza interruzione di pagina" onclick="toggleRowPageBreak('${module.id}', '${row.id}')"><i data-lucide="unfold-vertical" class="w-4 h-4"></i></button><button class="text-red-400 hover:text-red-600" onclick="deleteRow('${module.id}', '${row.id}')"><i data-lucide="x" class="w-4 h-4"></i></button></div>`; let rowContent = ''; switch (module.type) { case 'vero-falso': rowContent = `<div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim()==='Nuova frase...'){this.innerText=''}" onblur="if(this.innerText.trim()===''){this.innerText='Nuova frase...';} updateRowData('${module.id}','${row.id}','text',this.innerText)">${row.text}</div><div class="vero-falso-options"><span>Vero □</span><span>Falso □</span></div>`; break; case 'scegli-funzione': rowContent = `<div contenteditable="true" class="editable-content" onfocus="if(this.innerText.trim()==='Testo della domanda.'){this.innerText=''}" onblur="if(this.innerText.trim()===''){this.innerText='Testo della domanda.';} updateRowData('${module.id}','${row.id}','text',this.innerText)">${row.text}</div><div class="function-options">${module.options.map(opt => `<span>[${opt}]</span>`).join('')}</div>`; break; case 'tre-parti': rowContent = `<div contenteditable="true" class="editable-content" style="flex:1" onfocus="if(this.innerText.trim()==='Elemento da analizzare...'){this.innerText=''}" onblur="if(this.innerText.trim()===''){this.innerText='Elemento da analizzare...';} updateRowData('${module.id}','${row.id}','text',this.innerText)">${row.text}</div><div class="student-space"></div><div class="student-space"></div>`; break; case 'trasforma': rowContent = `<div contenteditable="true" class="editable-content" style="width:20%" onfocus="if(this.innerText.trim()==='Elemento'){this.innerText=''}" onblur="if(this.innerText.trim()===''){this.innerText='Elemento';} updateRowData('${module.id}','${row.id}','part1',this.innerText)">${row.part1}</div><div contenteditable="true" class="editable-content" style="width:40%" onfocus="if(this.innerText.trim()==='Trasformazione'){this.innerText=''}" onblur="if(this.innerText.trim()===''){this.innerText='Trasformazione';} updateRowData('${module.id}','${row.id}','part2',this.innerText)">${row.part2}</div><div class="student-space" style="width:40%"></div>`; break; case 'libero': let answerSpaceHTML = ''; if (module.answerSpace && module.answerSpace !== 'none') { const heightClass = module.answerSpace === 'large' ? 'min-h-[120px]' : module.answerSpace === 'medium' ? 'min-h-[80px]' : 'min-h-[40px]'; answerSpaceHTML = `<div class="student-space ${heightClass}" style="flex:0 0 50%"></div>`; } const rowId = `libero-input-${row.id}`; rowContent = `<div class="editable-wrapper"><div class="format-toolbar"><button type="button" class="format-btn" title="Grassetto (Ctrl+B)" onclick="formatText('${rowId}','bold')">B</button></div><div id="${rowId}" contenteditable="true" class="editable-content with-toolbar" onfocus="if(this.innerHTML.trim()==='Scrivi qui la tua domanda...'){this.innerHTML=''}" onblur="if(this.innerHTML.trim()===''){this.innerHTML='Scrivi qui la tua domanda...';} updateRowData('${module.id}','${row.id}','text',this.innerHTML)">${row.text}</div></div>${answerSpaceHTML}`; break; } return `<div class="row-item" data-row-id="${row.id}">${commonControls}<div class="row-content-wrapper">${rowContent}</div>${deleteButton}</div>`; };
+        const render = () => { documentContainer.innerHTML = ''; if(modules.length === 0){ documentContainer.innerHTML = `<div class="empty-state"><div class="empty-icon"><i data-lucide="file-plus" style="width:100%;height:100%"></i></div><h3 class="empty-title">Inizia a creare il tuo test</h3><p class="empty-text">Seleziona una tipologia di modulo dal pannello di sinistra per iniziare</p></div>`; } else { modules.forEach((module, index) => { const moduleEl = createModuleHTML(module, index); documentContainer.appendChild(moduleEl); const rowsContainer = moduleEl.querySelector('.rows-container'); if (rowsContainer) { new Sortable(rowsContainer, { animation: 150, handle: '.drag-handle', ghostClass: 'sortable-ghost', onEnd: (evt) => { const currentModule = modules.find(m => m.id === module.id); const row = currentModule.rows.splice(evt.oldIndex, 1)[0]; currentModule.rows.splice(evt.newIndex, 0, row); saveData(); render(); } }); } }); saveData(); } lucide.createIcons(); };
+        const getModuleDefaults = (type) => { const base = { id: `mod_${Date.now()}`, rows: [], isCollapsed: false, pageBreakAfter: false }; switch (type) { case 'vero-falso': return { ...base, type, title: 'Vero o Falso', instructions: 'Indica se ogni affermazione è vera o falsa.' }; case 'scegli-funzione': return { ...base, type, title: 'Scegli la Funzione', instructions: 'Metti una croce sulla funzione corretta.', options: ['CO', 'AU', 'PV'] }; case 'tre-parti': return { ...base, type, title: 'Completa le tre parti', instructions: 'Completa le informazioni per ogni elemento.', header1: 'Elemento', header2: 'Titolo 2', header3: 'Titolo 3' }; case 'trasforma': return { ...base, type, title: 'Trasforma', instructions: 'Esegui la trasformazione richiesta.' }; case 'libero': return { ...base, type, title: 'Domande a Risposta Aperta', instructions: 'Rispondi alle seguenti domande.', answerSpace: 'none'}; default: return null; }};
+        const getRowDefaults = (type) => { const base = { id: `row_${Date.now()}_${Math.random()}`, pageBreakAfter: false }; switch(type) { case 'vero-falso': return { ...base, text: 'Nuova frase...' }; case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' }; case 'tre-parti': return { ...base, text: 'Elemento da analizzare...' }; case 'trasforma': return { ...base, part1: 'Elemento', part2: 'Trasformazione' }; case 'libero': return { ...base, text: 'Scrivi qui la tua domanda...' }; default: return {}; }};
+        new Sortable(documentContainer, { animation: 150, handle: '.module-header', ghostClass: 'sortable-ghost', onEnd: (evt) => { const item = modules.splice(evt.oldIndex, 1)[0]; modules.splice(evt.newIndex, 0, item); render(); }});
+        window.addRow = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows.push(getRowDefaults(module.type)); saveData(); render(); } };
+        window.deleteModule = (moduleId) => { if (confirm('Sei sicuro di voler eliminare questo modulo?')) { modules = modules.filter(m => m.id !== moduleId); render(); } };
+        window.deleteRow = (moduleId, rowId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows = module.rows.filter(r => r.id !== rowId); saveData(); render(); } };
+        window.toggleModuleCollapse = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.isCollapsed = !module.isCollapsed; saveData(); render(); }};
+        window.toggleModulePageBreak = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.pageBreakAfter = !module.pageBreakAfter; saveData(); render(); }};
+        window.toggleRowPageBreak = (moduleId, rowId) => { const module = modules.find(m => m.id === moduleId); if (module) { const row = module.rows.find(r => r.id === rowId); if (row) { row.pageBreakAfter = !row.pageBreakAfter; saveData(); render(); }}};
+        window.updateModuleData = (moduleId, key, value) => { const module = modules.find(m => m.id === moduleId); if (module) { module[key] = value; saveData(); if (key === 'answerSpace') render(); } };
+        window.updateRowData = (moduleId, rowId, key, value) => { const module = modules.find(m => m.id === moduleId); if (module) { const row = module.rows.find(r => r.id === rowId); if (row) { row[key] = value; saveData(); } } };
+        addModuleButtons.addEventListener('click', (e) => { const button = e.target.closest('button'); if (button && button.dataset.type) { const type = button.dataset.type; const newModule = getModuleDefaults(type); if (newModule) { modules.push(newModule); render(); setTimeout(() => { document.querySelector(`[data-module-id="${newModule.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);}}});
+        const saveData = () => { testTitle = document.getElementById('test-title-input').value; questionFontSize = document.getElementById('font-size-select').value; localStorage.setItem('testCreatorData', JSON.stringify({ testTitle, modules, moduleCounter, questionFontSize })); };
+        const loadData = () => { const data = localStorage.getItem('testCreatorData'); if (data) { const d = JSON.parse(data); modules = d.modules || []; modules.forEach(module => { if (typeof module.isCollapsed === 'undefined') module.isCollapsed = false; if (typeof module.pageBreakAfter === 'undefined') module.pageBreakAfter = false; if(module.rows) module.rows.forEach(row => { if (typeof row.pageBreakAfter === 'undefined') row.pageBreakAfter = false; }); }); moduleCounter = d.moduleCounter || modules.length; testTitle = d.testTitle || 'Verifica'; questionFontSize = d.questionFontSize || '12pt'; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; }};
+        const updateButtonState = (btn, text, duration = 2000) => { const originalContent = btn.querySelector('.btn-text').innerHTML; btn.querySelector('.btn-text').innerHTML = `<i data-lucide="check" class="w-4 h-4 mr-2"></i> ${text}`; lucide.createIcons(); btn.disabled = true; setTimeout(() => { btn.querySelector('.btn-text').innerHTML = originalContent; btn.disabled = false; lucide.createIcons(); }, duration); };
+        const setButtonLoading = (btn, loadingText) => { const btnText = btn.querySelector('.btn-text'); const originalHTML = btnText.innerHTML; btnText.innerHTML = loadingText; btn.classList.add('loading'); btn.disabled = true; return () => { btnText.innerHTML = originalHTML; btn.classList.remove('loading'); btn.disabled = false; lucide.createIcons(); }; };
         
-        const getRowDefaults = (type) => {
-            const base = { id: `row_${Date.now()}_${Math.random()}`, pageBreakAfter: false };
-            switch(type) {
-                case 'vero-falso': return { ...base, text: 'Nuova frase...' };
-                case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' };
-                case 'tre-parti': return { ...base, text: 'Elemento da analizzare...' };
-                case 'trasforma': return { ...base, part1: 'Elemento', part2: 'Trasformazione' };
-                case 'libero': return { ...base, text: 'Scrivi qui la tua domanda...' };
-                default: return {};
-            }
-        };
-        
-        new Sortable(documentContainer, { 
-            animation: 150, 
-            handle: '.module-header', 
-            ghostClass: 'sortable-ghost',
-            onEnd: (evt) => {
-                const item = modules.splice(evt.oldIndex, 1)[0];
-                modules.splice(evt.newIndex, 0, item);
-                render();
-            }
-        });
+        // ===================================================================
+        // FUNZIONI DI STAMPA E SETUP BOTTONI (SEZIONE MODIFICATA)
+        // ===================================================================
 
-        window.addRow = (moduleId) => { 
-            const module = modules.find(m => m.id === moduleId); 
-            if (module) { 
-                module.rows.push(getRowDefaults(module.type)); 
-                saveData(); 
-                render(); 
-            } 
-        };
-
-        window.deleteModule = (moduleId) => { 
-            if (confirm('Sei sicuro di voler eliminare questo modulo?')) { 
-                modules = modules.filter(m => m.id !== moduleId);
-                moduleCounter = modules.length > 0 ? Math.max(...modules.map((m, i) => i + 1)) : 0;
-                render(); 
-            } 
-        };
-
-        window.deleteRow = (moduleId, rowId) => { 
-            const module = modules.find(m => m.id === moduleId); 
-            if (module) { 
-                module.rows = module.rows.filter(r => r.id !== rowId); 
-                saveData(); 
-                render(); 
-            } 
-        };
-
-        window.toggleModuleCollapse = (moduleId) => {
-            const module = modules.find(m => m.id === moduleId);
-            if (module) {
-                module.isCollapsed = !module.isCollapsed;
-                saveData();
-                render();
-            }
-        };
-
-        window.toggleModulePageBreak = (moduleId) => {
-            const module = modules.find(m => m.id === moduleId);
-            if (module) {
-                module.pageBreakAfter = !module.pageBreakAfter;
-                saveData();
-                render();
-            }
-        };
-
-        window.toggleRowPageBreak = (moduleId, rowId) => {
-            const module = modules.find(m => m.id === moduleId);
-            if (module) {
-                const row = module.rows.find(r => r.id === rowId);
-                if (row) {
-                    row.pageBreakAfter = !row.pageBreakAfter;
-                    saveData();
-                    render();
-                }
-            }
-        };
-
-        window.updateModuleData = (moduleId, key, value) => { 
-            const module = modules.find(m => m.id === moduleId); 
-            if (module) { 
-                module[key] = value;
-                saveData(); 
-                if (key === 'answerSpace') render(); 
-            } 
-        };
-
-        window.updateRowData = (moduleId, rowId, key, value) => { 
-            const module = modules.find(m => m.id === moduleId); 
-            if (module) { 
-                const row = module.rows.find(r => r.id === rowId); 
-                if (row) { 
-                    row[key] = value; 
-                    saveData(); 
-                } 
-            } 
-        };
-
-        addModuleButtons.addEventListener('click', (e) => {
-            const button = e.target.closest('button');
-            if (button && button.dataset.type) {
-                const type = button.dataset.type;
-                const newModule = getModuleDefaults(type);
-                if (newModule) {
-                    modules.push(newModule);
-                    render();
-                    setTimeout(() => {
-                        const newModuleEl = document.querySelector(`[data-module-id="${newModule.id}"]`);
-                        if (newModuleEl) {
-                           newModuleEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    }, 100);
-                }
-            }
-        });
-
-        const saveData = () => {
-            testTitle = document.getElementById('test-title-input').value;
-            questionFontSize = document.getElementById('font-size-select').value;
-            localStorage.setItem('testCreatorData', JSON.stringify({ testTitle, modules, moduleCounter, questionFontSize }));
-        };
-
-        const loadData = () => { 
-            const data = localStorage.getItem('testCreatorData'); 
-            if (data) { 
-                const d = JSON.parse(data); 
-                modules = d.modules || []; 
-                modules.forEach(module => {
-                    if (typeof module.isCollapsed === 'undefined') {
-                        module.isCollapsed = false;
-                    }
-                    if (typeof module.pageBreakAfter === 'undefined') {
-                        module.pageBreakAfter = false;
-                    }
-                    if(module.rows){
-                        module.rows.forEach(row => {
-                            if (typeof row.pageBreakAfter === 'undefined') {
-                                row.pageBreakAfter = false;
-                            }
-                        });
-                    }
-                });
-                moduleCounter = d.moduleCounter || modules.length; 
-                testTitle = d.testTitle || 'Verifica';
-                questionFontSize = d.questionFontSize || '12pt';
-                document.getElementById('test-title-input').value = testTitle;
-                document.getElementById('font-size-select').value = questionFontSize;
-            }
-        };
-        
-        const updateButtonState = (btn, text, duration = 2000) => {
-            const originalContent = btn.querySelector('.btn-text').innerHTML;
-            btn.querySelector('.btn-text').innerHTML = `<i data-lucide="check" class="w-4 h-4 mr-2"></i> ${text}`;
-            lucide.createIcons();
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.querySelector('.btn-text').innerHTML = originalContent;
-                btn.disabled = false;
-                lucide.createIcons();
-            }, duration);
-        };
-
-        const setButtonLoading = (btn, loadingText) => {
-            const btnText = btn.querySelector('.btn-text');
-            const originalHTML = btnText.innerHTML;
-            btnText.innerHTML = loadingText;
-            btn.classList.add('loading');
-            btn.disabled = true;
-            
-            return () => {
-                btnText.innerHTML = originalHTML;
-                btn.classList.remove('loading');
-                btn.disabled = false;
-                lucide.createIcons();
-            };
-        };
-
-        const generatePrintRowHTML = (row, rowIndex, module) => {
-            const cleanedText = row.text ? String(row.text) : '';
-            let rowContentHTML = '';
-
-            switch (module.type) {
-                case 'vero-falso':
-                    rowContentHTML = `<div>${cleanedText}</div><div style="flex: 0 0 150px; text-align: right; white-space: nowrap;">Vero ☐ Falso ☐</div>`;
-                    break;
-                case 'scegli-funzione':
-                    rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap; text-align: right;">${module.options.map(o => `[${o}]`).join(' ')}</div>`;
-                    break;
-                case 'tre-parti':
-                    rowContentHTML = `<div style="flex: 1;">${cleanedText}</div><div style="flex: 1;"><div class="student-answer-box"></div></div><div style="flex: 1;"><div class="student-answer-box"></div></div>`;
-                    break;
-                case 'trasforma':
-                    rowContentHTML = `<div style="flex: 0 0 20%;">${row.part1}</div><div style="flex: 1;">${row.part2}</div><div style="flex: 0 0 40%;"><div class="student-answer-box"></div></div>`;
-                    break;
-                case 'libero':
-                    let answerBox = '';
-                    if (module.answerSpace && module.answerSpace !== 'none') {
-                        const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px';
-                        answerBox = `<div style="flex: 0 0 50%;"><div class="student-answer-box" style="min-height: ${h};"></div></div>`;
-                    }
-                    rowContentHTML = `<div>${cleanedText}</div>${answerBox}`;
-                    break;
-            }
-
-            const rowHTML = `<div class="print-row">
-                        <div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div>
-                        <div class="print-row-content">${rowContentHTML}</div>
-                    </div>`;
-            const pageBreakHTML = row.pageBreakAfter ? '<div style="page-break-after: always;"></div>' : '';
-            return rowHTML + pageBreakHTML;
+        const generatePrintHTML = () => {
+            const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
+            const selectedFontSize = document.getElementById('font-size-select').value;
+            // La funzione ora genera un singolo blocco di HTML lungo
+            let html = `<div id="page-container">
+                <style>
+                    /* Stili per garantire la coerenza */
+                    #page-container * { font-family: Arial, Helvetica, sans-serif !important; }
+                    .print-row, .module-print-card, .student-info-box, .main-title { page-break-inside: avoid; }
+                    .module-print-card { padding-top: 20px; }
+                    .main-title { font-size: 24pt; font-weight: bold; margin: 0 0 30px 0; }
+                    .title { font-size: 18pt; font-weight: bold; margin: 0; }
+                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; font-weight: bold; color: #333; }
+                    .print-row { display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; }
+                    .print-row-number { width: 40px; padding-right: 10px; }
+                    .print-row-content { flex: 1; display: flex; gap: 15px; width: 100%; }
+                    .print-row-content > div:first-child { flex: 1; }
+                    .row-number-box { background-color: #000; color: #fff; font-weight: bold; border-radius: 4px; padding: 2px 0; min-width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
+                    .student-answer-box { border: 1px dashed #999; border-radius: 4px; height: 100%; min-height: 1.8em; }
+                    .student-info-box { border: 1.5px solid #555; border-radius: 10px; padding: 15px 20px; margin-bottom: 30px; display: flex; gap: 25px; align-items: flex-end; }
+                    .info-item { display: flex; flex-direction: column; flex-grow: 1; }
+                    .info-item label { font-weight: bold; font-size: 11pt; color: #333; margin-bottom: 2px; }
+                    .info-item .line { border-bottom: 1px solid #333; height: 25px; }
+                    .module-page-break { page-break-after: always !important; }
+                    .row-page-break { page-break-after: always !important; }
+                </style>
+                <div class="student-info-box"><div class="info-item" style="flex-grow:2.5"><label>Nome e Cognome:</label><div class="line"></div></div><div class="info-item"><label>Classe:</label><div class="line"></div></div><div class="info-item"><label>Data:</label><div class="line"></div></div></div>
+                <h1 class="main-title">${currentTitle}</h1>
+            `;
+            const generatePrintRowHTML = (row, rowIndex, module) => { const cleanedText = row.text ? String(row.text) : ''; let rowContentHTML = ''; switch (module.type) { case 'vero-falso': rowContentHTML = `<div>${cleanedText}</div><div style="flex:0 0 150px;text-align:right;white-space:nowrap">Vero ☐ Falso ☐</div>`; break; case 'scegli-funzione': rowContentHTML = `<div>${cleanedText}</div><div style="white-space:nowrap;text-align:right">${module.options.map(o => `[${o}]`).join(' ')}</div>`; break; case 'tre-parti': rowContentHTML = `<div style="flex:1">${cleanedText}</div><div style="flex:1"><div class="student-answer-box"></div></div><div style="flex:1"><div class="student-answer-box"></div></div>`; break; case 'trasforma': rowContentHTML = `<div style="flex:0 0 20%">${row.part1}</div><div style="flex:1">${row.part2}</div><div style="flex:0 0 40%"><div class="student-answer-box"></div></div>`; break; case 'libero': let answerBox = ''; if (module.answerSpace && module.answerSpace !== 'none') { const h = module.answerSpace === 'large' ? '120px' : module.answerSpace === 'medium' ? '80px' : '40px'; answerBox = `<div style="flex:0 0 50%"><div class="student-answer-box" style="min-height:${h}"></div></div>`; } rowContentHTML = `<div>${cleanedText}</div>${answerBox}`; break; } const rowHTML = `<div class="print-row ${row.pageBreakAfter ? 'row-page-break' : ''}"><div class="print-row-number"><span class="row-number-box">${rowIndex + 1}</span></div><div class="print-row-content">${rowContentHTML}</div></div>`; return rowHTML; };
+            modules.forEach((module, index) => {
+                let moduleContentHTML = '';
+                module.rows.forEach((row, i) => { moduleContentHTML += generatePrintRowHTML(row, i, module); });
+                let moduleHTML = `<div class="module-print-card ${module.pageBreakAfter ? 'module-page-break' : ''}"><h2 class="title">Modulo ${index + 1} - ${module.title}</h2><p class="instructions">${module.instructions}</p>`;
+                if(module.type === 'tre-parti'){ moduleHTML += `<div class="print-row" style="padding-bottom:10px"><div class="print-row-number"></div><div class="print-row-content"><div style="flex:1;font-weight:bold;text-align:center">${module.header1}</div><div style="flex:1;text-align:center;font-weight:bold;border-bottom:1px solid #000">${module.header2}</div><div style="flex:1;text-align:center;font-weight:bold;border-bottom:1px solid #000">${module.header3}</div></div></div>`; }
+                moduleHTML += `${moduleContentHTML}</div>`;
+                html += moduleHTML;
+            });
+            html += '</div>';
+            return html;
         };
         
         const setupToolButtons = () => {
-            const testTitleInput = document.getElementById('test-title-input');
-            const fontSizeSelect = document.getElementById('font-size-select');
-            const saveDataBtn = document.getElementById('save-data');
-            const clearDataBtn = document.getElementById('clear-data');
-            const exportPdfBtn = document.getElementById('export-pdf');
-            const exportExcelBtn = document.getElementById('export-excel');
-            const importExcelInput = document.getElementById('import-excel-input');
-            const previewBtn = document.getElementById('preview-btn');
-            const previewModal = document.getElementById('preview-modal');
-            const closeModalBtn = document.getElementById('close-modal-btn');
-            const previewContent = document.getElementById('preview-content');
-            const collapseAllBtn = document.getElementById('collapse-all-btn');
-            const expandAllBtn = document.getElementById('expand-all-btn');
-            const resetPageBreaksBtn = document.getElementById('reset-page-breaks');
-            
-            testTitleInput.addEventListener('input', saveData);
-            fontSizeSelect.addEventListener('change', saveData);
-
-            collapseAllBtn.addEventListener('click', () => {
-                modules.forEach(m => m.isCollapsed = true);
-                saveData();
-                render();
-            });
-
-            expandAllBtn.addEventListener('click', () => {
-                modules.forEach(m => m.isCollapsed = false);
-                saveData();
-                render();
-            });
-
-            resetPageBreaksBtn.addEventListener('click', (e) => {
-                modules.forEach(module => {
-                    module.pageBreakAfter = false;
-                    if(module.rows){
-                        module.rows.forEach(row => {
-                            row.pageBreakAfter = false;
-                        });
-                    }
-                });
-                saveData();
-                render();
-                updateButtonState(e.currentTarget, 'Resettato!');
-            });
-
-            previewBtn.addEventListener('click', () => {
-                const printHTML = generatePrintHTML();
-                const iframe = document.createElement('iframe');
-                
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
-
-                previewContent.innerHTML = ''; 
-                previewContent.appendChild(iframe);
-                
-                iframe.contentWindow.document.open();
-                iframe.contentWindow.document.write(printHTML);
-                iframe.contentWindow.document.close();
-
-                previewModal.classList.remove('hidden');
-            });
-            
-            closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden'));
-            previewModal.addEventListener('click', (e) => { 
-                if(e.target === previewModal) previewModal.classList.add('hidden'); 
-            });
-
-            saveDataBtn.addEventListener('click', (e) => { 
-                saveData(); 
-                updateButtonState(e.currentTarget, 'Salvato!'); 
-            });
-            
-            clearDataBtn.addEventListener('click', (e) => {
-                if (confirm('Sei sicuro di voler cancellare tutto il progetto?')) {
-                    modules = []; 
-                    moduleCounter = 0; 
-                    testTitle = 'Verifica';
-                    questionFontSize = '12pt';
-                    document.getElementById('test-title-input').value = testTitle;
-                    document.getElementById('font-size-select').value = questionFontSize;
-                    saveData(); 
-                    render(); 
-                    updateButtonState(e.currentTarget, 'Cancellato!');
-                }
-            });
+            const testTitleInput = document.getElementById('test-title-input'); const fontSizeSelect = document.getElementById('font-size-select'); const saveDataBtn = document.getElementById('save-data'); const clearDataBtn = document.getElementById('clear-data'); const exportPdfBtn = document.getElementById('export-pdf'); const exportExcelBtn = document.getElementById('export-excel'); const importExcelInput = document.getElementById('import-excel-input'); const previewBtn = document.getElementById('preview-btn'); const previewModal = document.getElementById('preview-modal'); const closeModalBtn = document.getElementById('close-modal-btn'); const previewContent = document.getElementById('preview-content'); const collapseAllBtn = document.getElementById('collapse-all-btn'); const expandAllBtn = document.getElementById('expand-all-btn'); const resetPageBreaksBtn = document.getElementById('reset-page-breaks');
+            testTitleInput.addEventListener('input', saveData); fontSizeSelect.addEventListener('change', saveData); collapseAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = true); saveData(); render(); }); expandAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = false); saveData(); render(); }); resetPageBreaksBtn.addEventListener('click', (e) => { modules.forEach(m => { m.pageBreakAfter = false; if(m.rows) m.rows.forEach(r => r.pageBreakAfter = false); }); saveData(); render(); updateButtonState(e.currentTarget, 'Resettato!'); }); previewBtn.addEventListener('click', () => { const printHTML = generatePrintHTML(); const iframe = document.createElement('iframe'); iframe.style.cssText = 'width:100%;height:100%;border:none'; previewContent.innerHTML = ''; previewContent.appendChild(iframe); const iDoc = iframe.contentWindow.document; iDoc.open(); iDoc.write(printHTML); iDoc.close(); previewModal.classList.remove('hidden'); }); closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden')); previewModal.addEventListener('click', (e) => { if(e.target === previewModal) previewModal.classList.add('hidden'); }); saveDataBtn.addEventListener('click', (e) => { saveData(); updateButtonState(e.currentTarget, 'Salvato!'); });
+            clearDataBtn.addEventListener('click', (e) => { if (confirm('Sei sicuro di voler cancellare tutto?')) { modules = []; moduleCounter = 0; testTitle = 'Verifica'; questionFontSize = '12pt'; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); updateButtonState(e.currentTarget, 'Cancellato!'); } });
 
             exportPdfBtn.addEventListener('click', (e) => {
+                const appWrapper = document.getElementById('app-wrapper');
+                const printContainer = document.getElementById('contenitore-stampa');
                 const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
-                const resetLoading = setButtonLoading(e.currentTarget, 'Generazione...');
-                const printContainer = document.getElementById('print-area');
-                printContainer.innerHTML = generatePrintHTML();
-                printContainer.classList.remove('hidden');
+                const resetLoading = setButtonLoading(e.currentTarget, 'Preparo PDF...');
                 
-                const opt = { 
-                    margin: 1.5,
+                const htmlCompleto = generatePrintHTML();
+                printContainer.innerHTML = htmlCompleto;
+
+                appWrapper.style.display = 'none';
+                printContainer.style.display = 'block';
+                window.scrollTo(0, 0);
+
+                const elementToPrint = printContainer.querySelector('#page-container');
+
+                const opt = {
+                    margin: 1.5, // Margini gestiti da jsPDF in cm
                     filename: `${currentTitle.replace(/ /g, '_')}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 }, 
-                    html2canvas: { scale: 2, letterRendering: true }, 
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, letterRendering: true, useCORS: true },
                     jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css'] }
+                    pagebreak: { mode: ['css', 'legacy'] }
                 };
 
-                html2pdf().from(printContainer).set(opt).toPdf().get('pdf').then(function (pdf) {
+                html2pdf().from(elementToPrint).set(opt).toPdf().get('pdf').then(function (pdf) {
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
@@ -1341,242 +235,22 @@
                         const footerText = `${currentTitle} - Pagina ${i} di ${totalPages}`;
                         pdf.text(footerText, pdf.internal.pageSize.getWidth() - 1.5, pdf.internal.pageSize.getHeight() - 1.0, { align: 'right' });
                     }
-                }).save().then(() => {
-                    printContainer.innerHTML = '';
-                    printContainer.classList.add('hidden');
+                }).save().finally(() => {
+                    printContainer.style.display = 'none';
+                    appWrapper.style.display = 'block';
                     resetLoading();
-                    updateButtonState(e.currentTarget, 'Creato!');
                 });
             });
-
-            exportExcelBtn.addEventListener('click', (e) => {
-                const resetLoading = setButtonLoading(e.currentTarget, 'Esportazione...');
-                setTimeout(() => {
-                    const wb = XLSX.utils.book_new();
-                    const meta = [['Test Title', testTitle], ['Font Size', questionFontSize]];
-                    const ws_meta = XLSX.utils.aoa_to_sheet(meta);
-                    XLSX.utils.book_append_sheet(wb, ws_meta, "Metadata");
-
-                    modules.forEach(module => {
-                        const ws_data = [];
-                        // Dati generali del modulo
-                        ws_data.push(['ModuleID', module.id], ['ModuleType', module.type], ['Title', module.title], ['Instructions', module.instructions], ['PageBreakAfter', module.pageBreakAfter]);
-                        if (module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]);
-                        if (module.options) ws_data.push(['Options', module.options.join(',')]);
-                        if (module.header1) ws_data.push(['Header1', module.header1]);
-                        if (module.header2) ws_data.push(['Header2', module.header2]);
-                        if (module.header3) ws_data.push(['Header3', module.header3]);
-                        
-                        ws_data.push([]); // Riga vuota di separazione
-
-                        // Dati specifici delle righe, con intestazioni corrette
-                        if (module.rows.length > 0) {
-                            let headers = [];
-                            let rowArrays = [];
-
-                            switch (module.type) {
-                                case 'vero-falso':
-                                case 'scegli-funzione':
-                                case 'tre-parti':
-                                case 'libero':
-                                    headers = ['id', 'text', 'pageBreakAfter'];
-                                    rowArrays = module.rows.map(row => [row.id, row.text, row.pageBreakAfter]);
-                                    break;
-                                case 'trasforma':
-                                    headers = ['id', 'part1', 'part2', 'pageBreakAfter'];
-                                    rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.pageBreakAfter]);
-                                    break;
-                            }
-
-                            if (headers.length > 0) {
-                                ws_data.push(headers);
-                                ws_data.push(...rowArrays);
-                            }
-                        }
-                        
-                        const ws = XLSX.utils.aoa_to_sheet(ws_data);
-                        const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, "");
-                        XLSX.utils.book_append_sheet(wb, ws, sheetName);
-                    });
-                    XLSX.writeFile(wb, "dati_test.xlsx");
-                    resetLoading();
-                    updateButtonState(e.currentTarget, 'Esportato!');
-                }, 500);
-            });
-
-            importExcelInput.addEventListener('change', (e) => {
-                const file = e.target.files[0]; 
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'});
-                    const importedModules = [];
-                    let importedTitle = 'Verifica';
-                    let importedFontSize = '12pt';
-
-                    if(workbook.SheetNames.includes("Metadata")) {
-                        const meta_json = XLSX.utils.sheet_to_json(workbook.Sheets["Metadata"], { header: 1 });
-                        const titleRow = meta_json.find(row => row[0] === 'Test Title');
-                        if(titleRow) importedTitle = titleRow[1];
-                        const fontRow = meta_json.find(row => row[0] === 'Font Size');
-                        if(fontRow) importedFontSize = fontRow[1];
-                    }
-                    
-                    const moduleSheets = workbook.SheetNames.filter(name => name !== "Metadata");
-
-                    moduleSheets.forEach(sheetName => {
-                        const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
-                        const moduleData = {}; 
-                        let headerRowIndex = -1;
-                        for(let i=0; i<json.length; i++){
-                            const row = json[i]; 
-                            if (row.length === 0) { headerRowIndex = i + 1; break; }
-                            if(row[0] === 'ModuleType') moduleData.type = row[1]; 
-                            if(row[0] === 'Title') moduleData.title = row[1]; 
-                            if(row[0] === 'Instructions') moduleData.instructions = row[1]; 
-                            if(row[0] === 'PageBreakAfter') moduleData.pageBreakAfter = row[1]; 
-                            if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; 
-                            if(row[0] === 'Options') moduleData.options = row[1].split(','); 
-                            if(row[0] === 'Header1') moduleData.header1 = row[1]; 
-                            if(row[0] === 'Header2') moduleData.header2 = row[1];
-                            if(row[0] === 'Header3') moduleData.header3 = row[1];
-                        }
-                        moduleData.id = `mod_${Date.now()}_${Math.random()}`;
-                        moduleData.rows = [];
-                        if (headerRowIndex !== -1 && headerRowIndex < json.length) {
-                            const headers = json[headerRowIndex];
-                            const pageBreakIndex = headers.indexOf('pageBreakAfter');
-
-                            for (let i = headerRowIndex + 1; i < json.length; i++) {
-                                const rowData = {};
-                                headers.forEach((h, idx) => { rowData[h] = json[i][idx] });
-                                if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`;
-                                rowData.pageBreakAfter = pageBreakIndex !== -1 ? json[i][pageBreakIndex] || false : false;
-                                moduleData.rows.push(rowData);
-                            }
-                        }
-                        importedModules.push(moduleData);
-                    });
-
-                    if(confirm('Importando questo file sovrascriverai tutti i dati attuali. Continuare?')){
-                        modules = importedModules; 
-                        moduleCounter = modules.length; 
-                        testTitle = importedTitle;
-                        questionFontSize = importedFontSize;
-                        document.getElementById('test-title-input').value = testTitle;
-                        document.getElementById('font-size-select').value = questionFontSize;
-                        saveData(); 
-                        render();
-                    }
-                    e.target.value = '';
-                };
-                reader.readAsArrayBuffer(file);
-            });
-        };
-        
-        const generatePrintHTML = () => {
-            const currentTitle = document.getElementById('test-title-input').value || 'Verifica';
-            const selectedFontSize = document.getElementById('font-size-select').value;
             
-            let html = `
-            <div id="page-container">
-                <style>
-                    body { font-family: Arial, sans-serif; font-size: ${selectedFontSize}; color: #000; margin: 0; padding: 0; }
-                    div, p, span, h1, h2 { font-family: Arial, sans-serif !important; }
-                    
-                    /* --- CSS per paginazione --- */
-                    .print-row {
-                        page-break-inside: avoid; /* Regola fondamentale: non spezzare mai una singola domanda. */
-                    }
-                    .module-print-card {
-                        padding-top: 15px; /* Spaziatura tra moduli */
-                    }
-
-                    #page-container { max-width: 800px; margin: auto; padding-top: 0; }
-                    .student-info-box { margin-top: 0 !important; } /* Forza la rimozione del margine superiore */
-                    .main-title { font-size: 24pt; font-weight: bold; text-align: left; margin: 0 0 30px 0; } /* Rimosso margine superiore */
-                    .title { font-size: 18pt; font-weight: bold; margin: 0; }
-                    .instructions { font-size: 1.1em; margin-top: 4px; margin-bottom: 20px; color: #333; font-style: normal; font-weight: bold; }
-                    .print-row { display: flex; align-items: flex-start; padding-top: 5px; padding-bottom: 15px; line-height: 1.8; }
-                    .print-row-number { width: 40px; padding-right: 10px; }
-                    .print-row-content { flex: 1; display: flex; gap: 15px; width: 100%; }
-                    .print-row-content > div:first-child { flex: 1; }
-                    .row-number-box { background-color: #000; color: #fff; font-weight: bold; border-radius: 4px; padding: 2px 0; min-width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
-                    b, strong { font-weight: bold; }
-                    .student-answer-box { border: 1px dashed #999; border-radius: 4px; height: 100%; min-height: 1.8em; }
-                    .student-info-box { border: 1.5px solid #555; border-radius: 10px; padding: 15px 20px; margin-bottom: 30px; display: flex; gap: 25px; align-items: flex-end; }
-                    .info-item { display: flex; flex-direction: column; flex-grow: 1; }
-                    .info-item label { font-weight: bold; font-size: 11pt; color: #333; margin-bottom: 2px; }
-                    .info-item .line { border-bottom: 1px solid #333; height: 25px; }
-                </style>
-                <div class="student-info-box">
-                    <div class="info-item" style="flex-grow: 2.5;">
-                        <label>Nome e Cognome:</label>
-                        <div class="line"></div>
-                    </div>
-                    <div class="info-item">
-                        <label>Classe:</label>
-                        <div class="line"></div>
-                    </div>
-                    <div class="info-item">
-                        <label>Data:</label>
-                        <div class="line"></div>
-                    </div>
-                </div>
-
-                <h1 class="main-title">${currentTitle}</h1>
-            `;
-
-            modules.forEach((module, index) => {
-                let moduleContentHTML = '';
-                module.rows.forEach((row, i) => {
-                    moduleContentHTML += generatePrintRowHTML(row, i, module);
-                });
-
-                let moduleHTML = `<div class="module-print-card">`;
-                
-                moduleHTML += `<div class="module-print-header">`;
-                moduleHTML += `<h2 class="title">Modulo ${index + 1} - ${module.title}</h2>`;
-                moduleHTML += `<p class="instructions">${module.instructions}</p>`;
-
-                if(module.type === 'tre-parti'){
-                     moduleHTML += `<div class="print-row" style="padding-bottom: 10px;">
-                                <div class="print-row-number"></div>
-                                <div class="print-row-content">
-                                    <div style="flex: 1; font-weight: bold; text-align:center;">${module.header1}</div>
-                                    <div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header2}</div>
-                                    <div style="flex: 1; text-align:center; font-weight: bold; border-bottom: 1px solid #000;">${module.header3}</div>
-                                </div>
-                            </div>`;
-                }
-                moduleHTML += `</div>`;
-                moduleHTML += moduleContentHTML;
-                moduleHTML += '</div>';
-
-                if (module.pageBreakAfter) {
-                    moduleHTML += `<div style="page-break-after: always;"></div>`;
-                }
-
-                html += moduleHTML;
-            });
-
-            html += '</div>';
-            return html;
+            exportExcelBtn.addEventListener('click', (e) => { const resetLoading = setButtonLoading(e.currentTarget, 'Esporto...'); setTimeout(() => { const wb = XLSX.utils.book_new(); const meta = [['Test Title', testTitle], ['Font Size', questionFontSize]]; const ws_meta = XLSX.utils.aoa_to_sheet(meta); XLSX.utils.book_append_sheet(wb, ws_meta, "Metadata"); modules.forEach(module => { const ws_data = []; ws_data.push(['ModuleID', module.id],['ModuleType', module.type],['Title', module.title],['Instructions', module.instructions],['PageBreakAfter', module.pageBreakAfter]); if(module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]); if(module.options) ws_data.push(['Options', module.options.join(',')]); if(module.header1) ws_data.push(['Header1', module.header1]); if(module.header2) ws_data.push(['Header2', module.header2]); if(module.header3) ws_data.push(['Header3', module.header3]); ws_data.push([]); if (module.rows.length > 0) { let headers = []; let rowArrays = []; switch (module.type) { case 'vero-falso': case 'scegli-funzione': case 'tre-parti': case 'libero': headers = ['id', 'text', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.text, row.pageBreakAfter]); break; case 'trasforma': headers = ['id', 'part1', 'part2', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.pageBreakAfter]); break; } if (headers.length > 0) { ws_data.push(headers); ws_data.push(...rowArrays); }} const ws = XLSX.utils.aoa_to_sheet(ws_data); const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, ""); XLSX.utils.book_append_sheet(wb, ws, sheetName); }); XLSX.writeFile(wb, "dati_test.xlsx"); resetLoading(); updateButtonState(e.currentTarget, 'Esportato!'); }, 500);});
+            importExcelInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'}); const importedModules = []; let importedTitle = 'Verifica'; let importedFontSize = '12pt'; if(workbook.SheetNames.includes("Metadata")) { const meta_json = XLSX.utils.sheet_to_json(workbook.Sheets["Metadata"], { header: 1 }); const titleRow = meta_json.find(row => row[0] === 'Test Title'); if(titleRow) importedTitle = titleRow[1]; const fontRow = meta_json.find(row => row[0] === 'Font Size'); if(fontRow) importedFontSize = fontRow[1]; } const moduleSheets = workbook.SheetNames.filter(name => name !== "Metadata"); moduleSheets.forEach(sheetName => { const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 }); const moduleData = {}; let headerRowIndex = -1; for(let i=0; i<json.length; i++){ const row = json[i]; if (row.length === 0) { headerRowIndex = i + 1; break; } if(row[0] === 'ModuleType') moduleData.type = row[1]; if(row[0] === 'Title') moduleData.title = row[1]; if(row[0] === 'Instructions') moduleData.instructions = row[1]; if(row[0] === 'PageBreakAfter') moduleData.pageBreakAfter = row[1]; if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; if(row[0] === 'Options') moduleData.options = row[1].split(','); if(row[0] === 'Header1') moduleData.header1 = row[1]; if(row[0] === 'Header2') moduleData.header2 = row[1]; if(row[0] === 'Header3') moduleData.header3 = row[1]; } moduleData.id = `mod_${Date.now()}_${Math.random()}`; moduleData.rows = []; if (headerRowIndex !== -1 && headerRowIndex < json.length) { const headers = json[headerRowIndex]; const pageBreakIndex = headers.indexOf('pageBreakAfter'); for (let i = headerRowIndex + 1; i < json.length; i++) { const rowData = {}; headers.forEach((h, idx) => { rowData[h] = json[i][idx] }); if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`; rowData.pageBreakAfter = pageBreakIndex !== -1 ? json[i][pageBreakIndex] || false : false; moduleData.rows.push(rowData); } } importedModules.push(moduleData); }); if(confirm('Importando sovrascriverai i dati. Continuare?')){ modules = importedModules; testTitle = importedTitle; questionFontSize = importedFontSize; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); } e.target.value = ''; }; reader.readAsArrayBuffer(file); });
         };
-
-        documentContainer.addEventListener('paste', (e) => {
-            if (e.target.isContentEditable) {
-                e.preventDefault();
-                const text = e.clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            }
-        });
-
+        documentContainer.addEventListener('paste', (e) => { if (e.target.isContentEditable) { e.preventDefault(); const text = e.clipboardData.getData('text/plain'); document.execCommand('insertText', false, text); }});
+        
         loadData(); 
         render(); 
         setupToolButtons();
     });
-</script>
+   </script>
 </body>
 </html>
-
