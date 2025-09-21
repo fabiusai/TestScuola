@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore di Prompt per Test AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #fafafa;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .checkbox-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 0.75rem;
+            margin-top: 0.125rem;
+        }
+        
+        .checkbox-content h4 {
+            font-weight: 500;
+            color: #111827;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .checkbox-content p {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        .module-config {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .result-section {
+            margin-top: 2rem;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .result-textarea {
+            width: 100%;
+            height: 400px;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            background-color: #f9fafb;
+            resize: vertical;
+        }
+        
+        .result-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        /* Icone CSS semplici */
+        .icon-sparkles::before {
+            content: "✨";
+            margin-right: 8px;
+        }
+        
+        .icon-clipboard::before {
+            content: "📋";
+            margin-right: 8px;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .header p {
+            color: #6b7280;
+            font-size: 1rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Generatore di Prompt per Test AI</h1>
+            <p>Crea prompt personalizzati per generare test compatibili con la tua applicazione</p>
+        </header>
+
+        <!-- Sezione 1: Dettagli del Test -->
+        <div class="card">
+            <h2 class="section-title">
+                <span class="section-number">1</span>
+                Dettagli del Test
+            </h2>
+            
+            <div class="form-group">
+                <label for="argomento" class="form-label">Argomento Principale *</label>
+                <input type="text" id="argomento" class="form-input" 
+                       placeholder="Es: La Rivoluzione Francese, I verbi irregolari inglesi...">
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="materia" class="form-label">Materia *</label>
+                    <input type="text" id="materia" class="form-input" 
+                           placeholder="Es: Storia, Matematica...">
+                </div>
+                <div class="form-group">
+                    <label for="classe" class="form-label">Classe *</label>
+                    <input type="text" id="classe" class="form-input" 
+                           placeholder="Es: Terza Media, 5A Liceo...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="testo-introduttivo" class="form-label">Testo Introduttivo (opzionale)</label>
+                <textarea id="testo-introduttivo" rows="4" class="form-textarea" 
+                          placeholder="Inserisci qui un testo che l'AI userà come base per generare le domande..."></textarea>
+            </div>
+        </div>
+
+        <!-- Sezione 2: Struttura del Test -->
+        <div class="card">
+            <h2 class="section-title">
+                <span class="section-number">2</span>
+                Struttura del Test
+            </h2>
+            
+            <div class="form-group">
+                <label for="numero-moduli" class="form-label">Numero di Moduli *</label>
+                <input type="number" id="numero-moduli" class="form-input" 
+                       min="1" max="10" placeholder="Inserisci il numero di moduli (1-10)">
+            </div>
+            
+            <div id="moduli-container"></div>
+        </div>
+
+        <!-- Sezione 3: Fonti dei Dati -->
+        <div class="card">
+            <h2 class="section-title">
+                <span class="section-number">3</span>
+                Fonti dei Dati
+            </h2>
+            
+            <div class="checkbox-item">
+                <input type="checkbox" id="fonte-testo" name="fonti">
+                <div class="checkbox-content">
+                    <h4>Testo Introduttivo</h4>
+                    <p>Utilizza il testo fornito sopra come base per le domande</p>
+                </div>
+            </div>
+            
+            <div class="checkbox-item">
+                <input type="checkbox" id="fonte-file" name="fonti">
+                <div class="checkbox-content">
+                    <h4>File Esterni</h4>
+                    <p>Considera i file che verranno allegati nell'interfaccia AI</p>
+                </div>
+            </div>
+            
+            <div class="checkbox-item">
+                <input type="checkbox" id="fonte-web" name="fonti" checked>
+                <div class="checkbox-content">
+                    <h4>Ricerca Web</h4>
+                    <p>Esegui ricerche su fonti attendibili del web</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottone Genera -->
+        <div class="text-center">
+            <button id="generate-btn" class="btn btn-primary icon-sparkles">
+                Genera Prompt
+            </button>
+        </div>
+
+        <!-- Risultato -->
+        <div id="result-container" class="hidden fade-in">
+            <div class="card result-section">
+                <div class="result-header">
+                    <h2 class="section-title" style="margin-bottom: 0;">Prompt Generato</h2>
+                    <button id="copy-btn" class="btn btn-secondary icon-clipboard">
+                        <span id="copy-text">Copia</span>
+                    </button>
+                </div>
+                <textarea id="prompt-output" class="result-textarea" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const numeroModuliInput = document.getElementById('numero-moduli');
+            const moduliContainer = document.getElementById('moduli-container');
+            const generateBtn = document.getElementById('generate-btn');
+            const resultContainer = document.getElementById('result-container');
+            const promptOutput = document.getElementById('prompt-output');
+            const copyBtn = document.getElementById('copy-btn');
+            const copyText = document.getElementById('copy-text');
+
+            // Gestione moduli dinamici
+            numeroModuliInput.addEventListener('input', () => {
+                const count = parseInt(numeroModuliInput.value, 10);
+                moduliContainer.innerHTML = '';
+
+                if (count > 0 && count <= 10) {
+                    const moduleConfig = document.createElement('div');
+                    moduleConfig.className = 'module-config';
+                    moduleConfig.innerHTML = `
+                        <h3 style="margin: 0 0 1rem 0; font-size: 0.875rem; font-weight: 600; color: #374151;">
+                            Numero di domande per modulo
+                        </h3>
+                        <div class="module-grid" id="module-grid"></div>
+                    `;
+                    
+                    const moduleGrid = moduleConfig.querySelector('#module-grid');
+                    
+                    for (let i = 1; i <= count; i++) {
+                        const moduleInput = document.createElement('div');
+                        moduleInput.innerHTML = `
+                            <label for="modulo-${i}" class="form-label">Modulo ${i}</label>
+                            <input type="number" id="modulo-${i}" class="form-input modulo-domande" 
+                                   min="1" max="20" placeholder="N° domande">
+                        `;
+                        moduleGrid.appendChild(moduleInput);
+                    }
+                    
+                    moduliContainer.appendChild(moduleConfig);
+                }
+            });
+
+            // Gestione copia
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(promptOutput.value);
+                    copyText.textContent = 'Copiato!';
+                    setTimeout(() => {
+                        copyText.textContent = 'Copia';
+                    }, 2000);
+                } catch (err) {
+                    promptOutput.select();
+                    document.execCommand('copy');
+                    copyText.textContent = 'Copiato!';
+                    setTimeout(() => {
+                        copyText.textContent = 'Copia';
+                    }, 2000);
+                }
+            });
+
+            // Generazione prompt
+            generateBtn.addEventListener('click', () => {
+                const argomento = document.getElementById('argomento').value.trim();
+                const testoIntroduttivo = document.getElementById('testo-introduttivo').value.trim();
+                const numeroModuli = parseInt(document.getElementById('numero-moduli').value, 10);
+                const materia = document.getElementById('materia').value.trim();
+                const classe = document.getElementById('classe').value.trim();
+                
+                // Validazione
+                if (!argomento || isNaN(numeroModuli) || numeroModuli <= 0 || !materia || !classe) {
+                    alert('Per favore, compila tutti i campi obbligatori (contrassegnati con *).');
+                    return;
+                }
+
+                // Controllo domande per modulo
+                const domandePerModulo = [];
+                let domandeMancanti = false;
+                
+                for (let i = 1; i <= numeroModuli; i++) {
+                    const domandeInput = document.getElementById(`modulo-${i}`);
+                    const numDomande = parseInt(domandeInput.value, 10);
+                    if (isNaN(numDomande) || numDomande <= 0) {
+                        domandeMancanti = true;
+                        break;
+                    }
+                    domandePerModulo.push(numDomande);
+                }
+
+                if (domandeMancanti) {
+                    alert('Per favore, specifica un numero valido di domande per ogni modulo.');
+                    return;
+                }
+
+                // Fonti selezionate
+                const fonti = {
+                    testo: document.getElementById('fonte-testo').checked,
+                    file: document.getElementById('fonte-file').checked,
+                    web: document.getElementById('fonte-web').checked
+                };
+                
+                let fontiSelezionate = [];
+                if(fonti.testo) fontiSelezionate.push("il testo introduttivo fornito");
+                if(fonti.file) fontiSelezionate.push("i file che verranno allegati");
+                if(fonti.web) fontiSelezionate.push("una ricerca web su fonti attendibili");
+
+                // Genera il prompt
+                const prompt = generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo);
+                
+                promptOutput.value = prompt;
+                resultContainer.classList.remove('hidden');
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            function generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo) {
+                return `Sei un assistente AI esperto nella creazione di materiale didattico. Il tuo compito è generare il contenuto di un test in formato JSON, che sarà importato da un'applicazione specifica.
+
+**REGOLE FONDAMENTALI:**
+1. L'output DEVE essere unicamente un blocco di codice JSON.
+2. NON includere spiegazioni, commenti o testo prima o dopo il blocco di codice JSON (nemmeno \`\`\`json). L'output deve iniziare con \`{\` e finire con \`}\`.
+3. Rispetta scrupolosamente la struttura e le chiavi del JSON specificate di seguito.
+
+---
+
+**DETTAGLI DEL TEST DA CREARE:**
+
+* **Argomento Principale:** ${argomento}
+* **Materia:** ${materia}
+* **Classe di destinazione:** ${classe}
+* **Numero Totale di Moduli:** ${numeroModuli}
+* **Distribuzione Domande:** ${domandePerModulo.map((d, i) => `Modulo ${i+1}: ${d} domande`).join('; ')}.
+* **Fonti da Utilizzare:** ${fontiSelezionate.join(', ')}.
+${testoIntroduttivo ? `
+* **Testo Introduttivo fornito:**
+    """
+    ${testoIntroduttivo}
+    """
+` : ''}
+
+---
+
+**STRUTTURA JSON RICHIESTA:**
+
+L'oggetto JSON principale deve avere questa struttura:
+\`\`\`json
+{
+  "testTitle": "...",
+  "questionFontSize": "12pt",
+  "modules": [
+    {
+      "id": "...",
+      "type": "...",
+      "title": "...",
+      "instructions": "...",
+      "rows": [ ... ]
+    }
+  ]
+}
+\`\`\`
+
+**DETTAGLI SUI MODULI:**
+
+1. Genera ${numeroModuli} moduli in totale.
+2. Nel campo \`title\` di ogni modulo, scrivi solo il titolo dell'argomento (es: "I concetti chiave della Rivoluzione"), NON includere la numerazione.
+3. Per ogni modulo, scegli un \`type\` appropriato tra: 'risposta-multipla', 'vero-falso', 'scegli-funzione', 'tre-parti', 'trasforma', 'libero'.
+4. Ogni modulo deve contenere l'esatto numero di domande specificato.
+5. Ogni oggetto deve avere un campo \`id\` univoco.
+
+**TIPI DI DOMANDE:**
+
+- **risposta-multipla**: { "id": "...", "text": "...", "pageBreakAfter": false, "answers": [{"text": "...", "isCorrect": true/false}] }
+- **vero-falso**: { "id": "...", "text": "...", "pageBreakAfter": false }
+- **trasforma**: { "id": "...", "part1": "Elemento da trasformare", "part2": "Istruzione", "pageBreakAfter": false }
+- **tre-parti**: Richiede headers: "header1", "header2", "header3" nel modulo
+- **scegli-funzione**: Richiede "options": ["A", "B", ...] nel modulo
+- **libero**: { "id": "...", "text": "...", "pageBreakAfter": false }
+
+**ISTRUZIONI FINALI:**
+* Per 'risposta-multipla', crea 3-4 opzioni con ESATTAMENTE UNA corretta.
+* Formula domande adatte al livello della classe.
+* Il campo \`testTitle\` deve essere '${argomento}'.
+
+Procedi con la generazione del JSON.`;
+            }
+        });
+    </script>
+</body>
+</html>
