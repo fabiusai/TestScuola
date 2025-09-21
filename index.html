@@ -215,6 +215,8 @@
 
             if (module.type === 'testo-introduttivo') {
                 const editorId = `text-editor-${module.id}`;
+                const imageUrlValue = (module.imageUrl && !module.imageUrl.startsWith('data:')) ? module.imageUrl : '';
+
                 card.innerHTML = `
                     <div class="module-header">
                         <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -243,19 +245,20 @@
                                 </label>
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Immagine (opzionale)</label>
+                                <label for="img-url-${module.id}" class="form-label">Immagine (URL o File Locale)</label>
                                 <div class="flex items-center gap-2">
-                                    <label for="file-upload-${module.id}" class="btn btn-secondary btn-full cursor-pointer">
-                                        <span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-2"></i>Carica Immagine</span>
+                                    <input type="text" id="img-url-${module.id}" class="form-input flex-grow" value="${imageUrlValue}" onchange="updateModuleData('${module.id}', 'imageUrl', this.value); render();" placeholder="Incolla URL o carica file...">
+                                    <label for="file-upload-${module.id}" class="btn btn-secondary cursor-pointer" title="Carica da computer">
+                                        <span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4"></i></span>
                                     </label>
                                     <input type="file" id="file-upload-${module.id}" data-module-id="${module.id}" class="hidden" accept="image/*">
-                                    ${module.imageUrl ? `<button class="btn btn-danger btn-small" title="Rimuovi immagine" onclick="updateModuleData('${module.id}', 'imageUrl', ''); render();"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                                    ${module.imageUrl ? `<button class="btn btn-danger btn-small" title="Rimuovi immagine" onclick="updateModuleData('${module.id}', 'imageUrl', '');"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                                 </div>
                             </div>
                             ${module.imageUrl ? `
                             <div>
                                  <div style="text-align:center; padding-bottom:1rem;">
-                                    <img src="${module.imageUrl}" style="width: 150px; height: 150px; border: 1px solid var(--border-color); border-radius: 8px; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                                    <img src="${module.imageUrl}" style="max-width: 150px; max-height: 150px; border: 1px solid var(--border-color); border-radius: 8px;" onerror="this.style.display='none'; this.parentElement.style.display='none';">
                                 </div>
                                 <div class="form-group" style="margin-bottom: 0;">
                                      <label class="form-label">Dimensione Immagine</label>
@@ -298,7 +301,7 @@
             if (module) {
                 module[key] = value;
                 saveData();
-                if (key === 'answerSpace' || key === 'imagePosition' || key === 'imageSize') {
+                if (key === 'answerSpace' || key === 'imagePosition' || key === 'imageSize' || key === 'imageUrl') {
                     render();
                 }
             }
@@ -344,15 +347,25 @@
             let exerciseModuleCounter = 0;
             modules.forEach((module, index) => {
                 if (module.type === 'testo-introduttivo') {
-                    const imagePrintSizes = { small: '100px', medium: '150px', large: '200px' };
-                    const printSize = imagePrintSizes[module.imageSize] || imagePrintSizes['medium'];
+                    let finalPrintSize;
+                    let imageStyle;
+
+                    if (module.imagePosition === 'above') {
+                        const aboveSizes = { small: '30%', medium: '50%', large: '100%' };
+                        finalPrintSize = aboveSizes[module.imageSize] || aboveSizes['medium'];
+                        imageStyle = `max-width: ${finalPrintSize}; height: auto;`;
+                    } else {
+                        const sideSizes = { small: '100px', medium: '150px', large: '200px' };
+                        finalPrintSize = sideSizes[module.imageSize] || sideSizes['medium'];
+                        imageStyle = `width: ${finalPrintSize}; height: auto;`;
+                    }
+
                     const textStyle = module.isJustified ? 'text-align: justify; text-justify: inter-word;' : '';
                     const moduleClasses = `${module.pageBreakAfter ? 'module-page-break' : ''}`.trim();
-
                     let moduleHTML = `<div class="module-print-card ${moduleClasses}" style="padding-top: 10px; padding-bottom: 10px; font-size: ${selectedFontSize}; line-height: 1.8;">`;
 
                     if (module.imageUrl) {
-                        const imgTag = `<img src="${module.imageUrl}" style="width: ${printSize}; height: ${printSize}; object-fit: cover;" />`;
+                        const imgTag = `<img src="${module.imageUrl}" style="${imageStyle}" />`;
                         const textDiv = `<div style="${textStyle} flex: 1;">${module.text}</div>`;
 
                         if (module.imagePosition === 'above') {
@@ -361,7 +374,7 @@
                         } else { // 'left' or 'right'
                             const flexDirection = module.imagePosition === 'right' ? 'row-reverse' : 'row';
                             const margin = module.imagePosition === 'right' ? 'margin-left: 15px;' : 'margin-right: 15px;';
-                            const imageContainer = `<div style="flex: 0 0 ${printSize}; ${margin}">${imgTag}</div>`;
+                            const imageContainer = `<div style="flex: 0 0 ${finalPrintSize}; ${margin}">${imgTag}</div>`;
 
                             moduleHTML += `<div style="display: flex; flex-direction: ${flexDirection}; align-items: flex-start;">`;
                             moduleHTML += imageContainer;
@@ -369,7 +382,6 @@
                             moduleHTML += `</div>`;
                         }
                     } else {
-                        // No image, just text
                         moduleHTML += `<div style="${textStyle}">${module.text}</div>`;
                     }
 
