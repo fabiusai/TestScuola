@@ -41,7 +41,7 @@
         .btn-danger:hover:not(:disabled) { background: #fee2e2; }
         .btn-small { padding: 0.5rem 0.75rem; font-size: 0.8rem; }
         .btn-full { width: 100%; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
         .content-area { flex: 1; padding: 2rem; background: var(--bg-light); overflow-y: auto; }
         .content-container { max-width: 900px; margin: 0 auto; }
         .empty-state { text-align: center; padding: 4rem 2rem; background: var(--white); border: 2px dashed var(--border-color); border-radius: 12px; margin: 2rem 0; }
@@ -88,7 +88,7 @@
         .modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
         .modal-body { flex: 1; padding: 1rem; overflow-y: auto; background: var(--bg-light); }
         .import-export-section { background: var(--bg-medium); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); }
-        .import-export-title { font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 1rem; font-size: 0.9rem; }
+        .import-export-title { font-weight: 600; color: var(--text-primary); text-align: center; }
         @media (max-width: 1024px) { .main-layout { flex-direction: column; } .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); } .header-content { padding: 0 1rem; } .content-area { padding: 1rem; } }
         @media (max-width: 640px) { .btn-grid { grid-template-columns: 1fr; } .header-title { font-size: 1.25rem; } .sidebar { padding: 1rem; } }
         .sortable-ghost { background: var(--accent-light); opacity: 0.5; border-color: var(--accent-color); }
@@ -120,16 +120,31 @@
                 <div class="sidebar-section"><h2 class="sidebar-title">Impostazioni Generali</h2><div class="form-group"><label for="test-title-input" class="form-label">Titolo del Test</label><input type="text" id="test-title-input" class="form-input" placeholder="Es. Verifica di Storia"></div><div class="form-group"><label for="font-size-select" class="form-label">Dimensione Carattere Domande</label><select id="font-size-select" class="form-select"><option value="10pt">10 pt</option><option value="11pt">11 pt</option><option value="12pt" selected>12 pt (Default)</option><option value="13pt">13 pt</option><option value="14pt">14 pt</option><option value="16pt">16 pt</option><option value="18pt">18 pt</option></select></div><div class="btn-grid"><button id="collapse-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-up-down" class="w-4 h-4 mr-1"></i>Chiudi Tutti</span></button><button id="expand-all-btn" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="chevrons-down-up" class="w-4 h-4 mr-1"></i>Apri Tutti</span></button></div></div>
                 <div class="sidebar-section"><h2 class="sidebar-title">Tipologie di Modulo</h2><div class="btn-grid" id="add-module-buttons"><button data-type="testo-introduttivo" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="pilcrow" class="w-4 h-4 mr-1"></i>Testo</span></button><button data-type="vero-falso" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>Vero/Falso</span></button><button data-type="risposta-multipla" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="list-checks" class="w-4 h-4 mr-1"></i>Multipla</span></button><button data-type="scegli-funzione" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="list" class="w-4 h-4 mr-1"></i>Funzione</span></button><button data-type="tre-parti" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="columns" class="w-4 h-4 mr-1"></i>3 Parti</span></button><button data-type="trasforma" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="type" class="w-4 h-4 mr-1"></i>Trasforma</span></button><button data-type="libero" class="btn btn-secondary btn-small"><span class="btn-text flex items-center justify-center"><i data-lucide="edit" class="w-4 h-4 mr-1"></i>Libero</span></button></div></div>
                 <div class="sidebar-section"><h2 class="sidebar-title">Strumenti di Lavoro</h2><div style="display: flex; flex-direction: column; gap: 0.75rem;"><button id="preview-btn" class="btn btn-accent btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="eye" class="w-4 h-4 mr-2"></i>Anteprima Test</span></button><button id="save-data" class="btn btn-primary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="save" class="w-4 h-4 mr-2"></i>Salva Progetto</span></button><button id="export-pdf" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="file-down" class="w-4 h-4 mr-2"></i>Esporta PDF</span></button><button id="reset-page-breaks" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i>Resetta Interruzioni</span></button><button id="reset-allow-split" class="btn btn-secondary btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="unlink-2" class="w-4 h-4 mr-2"></i>Resetta Divisioni</span></button><button id="clear-data" class="btn btn-danger btn-full"><span class="btn-text flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4 mr-2"></i>Cancella Tutto</span></button></div></div>
-                <div class="sidebar-section"><div class="import-export-section"><h3 class="import-export-title">Gestione Dati</h3><div class="btn-grid"><button id="export-excel" class="btn btn-secondary btn-small"><i data-lucide="upload" class="w-4 h-4 mr-1"></i> Excel</button>
-<label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer">
-  <i data-lucide="download" class="w-4 h-4 mr-1"></i> Excel
-  <input type="file" id="import-excel-input" class="hidden" accept=".xlsx,.xls">
-</label>
-<button id="export-csv" class="btn btn-secondary btn-small"><i data-lucide="upload" class="w-4 h-4 mr-1"></i> CSV</button>
-<label for="import-csv-input" class="btn btn-secondary btn-small cursor-pointer">
-  <i data-lucide="download" class="w-4 h-4 mr-1"></i> CSV
-  <input type="file" id="import-csv-input" class="hidden" accept=".csv,.txt">
-</label></div></div></div>
+                <!-- Sezione Import/Export Aggiornata -->
+                <div class="sidebar-section">
+                    <div class="import-export-section">
+                        <h3 class="import-export-title" style="margin-bottom: 0.5rem; text-align: left; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Esporta Dati</h3>
+                        <div class="btn-grid" style="gap: 0.75rem; margin-bottom: 1.5rem;">
+                            <button id="export-excel" class="btn btn-secondary btn-small">
+                                <span class="btn-text flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1"></i>Excel</span>
+                            </button>
+                            <button id="export-text" class="btn btn-secondary btn-small">
+                                 <span class="btn-text flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 mr-1"></i>Testo (JSON)</span>
+                            </button>
+                        </div>
+                        <h3 class="import-export-title" style="margin-bottom: 0.5rem; text-align: left; font-size: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Importa Dati</h3>
+                        <div class="btn-grid" style="gap: 0.75rem;">
+                            <label for="import-excel-input" class="btn btn-secondary btn-small cursor-pointer">
+                                <span class="btn-text flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1"></i>Da Excel</span>
+                                <input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls">
+                            </label>
+                            <label for="import-text-input" class="btn btn-secondary btn-small cursor-pointer">
+                                <span class="btn-text flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 mr-1"></i>Da Testo (JSON)</span>
+                                <input type="file" id="import-text-input" class="hidden" accept=".txt,.json">
+                            </label>
+                        </div>
+                    </div>
+                </div>
             </aside>
             <main class="content-area"><div class="content-container"><div id="document-container"></div></div></main>
         </div>
@@ -267,7 +282,7 @@
         const getRowDefaults = (type) => { const base = { id: `row_${Date.now()}_${Math.random()}`, pageBreakAfter: false }; switch(type) { case 'vero-falso': return { ...base, text: 'Nuova frase...' }; case 'scegli-funzione': return { ...base, text: 'Testo della domanda.' }; case 'tre-parti': return { ...base, text: 'Elemento da analizzare...' }; case 'trasforma': return { ...base, part1: 'Elemento', part2: 'Trasformazione' }; case 'libero': return { ...base, text: 'Scrivi qui la tua domanda...' }; case 'risposta-multipla': return { ...base, text: 'Testo della domanda...', answers: [ { id: `ans_${Date.now()}_1`, text: 'Nuova Risposta', isCorrect: true }, { id: `ans_${Date.now()}_2`, text: 'Nuova Risposta', isCorrect: false }, { id: `ans_${Date.now()}_3`, text: 'Nuova Risposta', isCorrect: false } ] }; default: return {}; }};
         new Sortable(documentContainer, { animation: 150, handle: '.module-header', ghostClass: 'sortable-ghost', onEnd: (evt) => { const item = modules.splice(evt.oldIndex, 1)[0]; modules.splice(evt.newIndex, 0, item); render(); }});
         window.addRow = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows.push(getRowDefaults(module.type)); saveData(); render(); } };
-        window.deleteModule = (moduleId) => { if (confirm('Sei sicuro di voler eliminare questo modulo?')) { modules = modules.filter(m => m.id !== moduleId); render(); } };
+        window.deleteModule = (moduleId) => { modules = modules.filter(m => m.id !== moduleId); render(); };
         window.deleteRow = (moduleId, rowId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.rows = module.rows.filter(r => r.id !== rowId); saveData(); render(); } };
         window.toggleModuleCollapse = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.isCollapsed = !module.isCollapsed; saveData(); render(); }};
         window.toggleModulePageBreak = (moduleId) => { const module = modules.find(m => m.id === moduleId); if (module) { module.pageBreakAfter = !module.pageBreakAfter; saveData(); render(); }};
@@ -353,8 +368,15 @@
         
         const setupToolButtons = () => {
             const testTitleInput = document.getElementById('test-title-input'); const fontSizeSelect = document.getElementById('font-size-select'); const saveDataBtn = document.getElementById('save-data'); const clearDataBtn = document.getElementById('clear-data'); const exportPdfBtn = document.getElementById('export-pdf'); const exportExcelBtn = document.getElementById('export-excel'); const importExcelInput = document.getElementById('import-excel-input'); const previewBtn = document.getElementById('preview-btn'); const previewModal = document.getElementById('preview-modal'); const closeModalBtn = document.getElementById('close-modal-btn'); const previewContent = document.getElementById('preview-content'); const collapseAllBtn = document.getElementById('collapse-all-btn'); const expandAllBtn = document.getElementById('expand-all-btn'); const resetPageBreaksBtn = document.getElementById('reset-page-breaks'); const resetAllowSplitBtn = document.getElementById('reset-allow-split');
+            // Nuovi elementi per import/export testuale
+            const exportTextBtn = document.getElementById('export-text');
+            const importTextInput = document.getElementById('import-text-input');
+
             testTitleInput.addEventListener('input', saveData); fontSizeSelect.addEventListener('change', saveData); collapseAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = true); saveData(); render(); }); expandAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = false); saveData(); render(); }); resetPageBreaksBtn.addEventListener('click', (e) => { modules.forEach(m => { m.pageBreakAfter = false; if(m.rows) m.rows.forEach(r => r.pageBreakAfter = false); }); saveData(); render(); updateButtonState(e.currentTarget, 'Resettato!'); }); resetAllowSplitBtn.addEventListener('click', (e) => { modules.forEach(m => { m.allowSplit = false; }); saveData(); render(); updateButtonState(e.currentTarget, 'Resettato!'); }); previewBtn.addEventListener('click', () => { const printHTML = generatePrintHTML(); const iframe = document.createElement('iframe'); iframe.style.cssText = 'width:100%;height:100%;border:none'; previewContent.innerHTML = ''; previewContent.appendChild(iframe); const iDoc = iframe.contentWindow.document; iDoc.open(); iDoc.write(printHTML); iDoc.close(); previewModal.classList.remove('hidden'); }); closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden')); previewModal.addEventListener('click', (e) => { if(e.target === previewModal) previewModal.classList.add('hidden'); }); saveDataBtn.addEventListener('click', (e) => { saveData(); updateButtonState(e.currentTarget, 'Salvato!'); });
-            clearDataBtn.addEventListener('click', (e) => { if (confirm('Sei sicuro di voler cancellare tutto?')) { modules = []; moduleCounter = 0; testTitle = 'Verifica'; questionFontSize = '12pt'; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); updateButtonState(e.currentTarget, 'Cancellato!'); } });
+            
+            clearDataBtn.addEventListener('click', (e) => {
+                modules = []; moduleCounter = 0; testTitle = 'Verifica'; questionFontSize = '12pt'; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); updateButtonState(e.currentTarget, 'Cancellato!');
+            });
 
             exportPdfBtn.addEventListener('click', (e) => {
                 const appWrapper = document.getElementById('app-wrapper');
@@ -396,86 +418,65 @@
                 });
             });
             
-            exportExcelBtn.addEventListener('click', (e) => { const resetLoading = setButtonLoading(e.currentTarget, 'Esporto...'); setTimeout(() => { const wb = XLSX.utils.book_new(); const meta = [['Test Title', testTitle], ['Font Size', questionFontSize]]; const ws_meta = XLSX.utils.aoa_to_sheet(meta); XLSX.utils.book_append_sheet(wb, ws_meta, "Metadata"); modules.forEach(module => { const ws_data = []; ws_data.push(['ModuleID', module.id],['ModuleType', module.type],['Title', module.title],['Instructions', module.instructions],['PageBreakAfter', module.pageBreakAfter],['AllowSplit', module.allowSplit]); if(module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]); if(module.options) ws_data.push(['Options', module.options.join(',')]); if(module.header1) ws_data.push(['Header1', module.header1]); if(module.header2) ws_data.push(['Header2', module.header2]); if(module.header3) ws_data.push(['Header3', module.header3]); if(module.type === 'testo-introduttivo') { ws_data.push(['Text', module.text], ['ImageURL', module.imageUrl], ['ImagePosition', module.imagePosition], ['ImageSize', module.imageSize], ['IsJustified', module.isJustified]); } ws_data.push([]); if (module.rows && module.rows.length > 0) { let headers = []; let rowArrays = []; switch (module.type) { case 'vero-falso': case 'scegli-funzione': case 'tre-parti': case 'libero': headers = ['id', 'text', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.text, row.pageBreakAfter]); break; case 'trasforma': headers = ['id', 'part1', 'part2', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.pageBreakAfter]); break; case 'risposta-multipla': headers = ['id', 'text', 'answers', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.text, JSON.stringify(row.answers), row.pageBreakAfter]); break; } if (headers.length > 0) { ws_data.push(headers); ws_data.push(...rowArrays); }} const ws = XLSX.utils.aoa_to_sheet(ws_data); const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, ""); XLSX.utils.book_append_sheet(wb, ws, sheetName); }); XLSX.writeFile(wb, "dati_test.xlsx"); resetLoading(); updateButtonState(e.currentTarget, 'Esportato!'); }, 500);});
+            exportExcelBtn.addEventListener('click', (e) => { const resetLoading = setButtonLoading(e.currentTarget, 'Esporto...'); setTimeout(() => { const wb = XLSX.utils.book_new(); const meta = [['Test Title', testTitle], ['Font Size', questionFontSize]]; const ws_meta = XLSX.utils.aoa_to_sheet(meta); XLSX.utils.book_append_sheet(wb, ws_meta, "Metadata"); modules.forEach(module => { const ws_data = []; ws_data.push(['ModuleID', module.id],['ModuleType', module.type],['Title', module.title],['Instructions', module.instructions],['PageBreakAfter', module.pageBreakAfter],['AllowSplit', module.allowSplit]); if(module.answerSpace) ws_data.push(['AnswerSpace', module.answerSpace]); if(module.options) ws_data.push(['Options', module.options.join(',')]); if(module.header1) ws_data.push(['Header1', module.header1]); if(module.header2) ws_data.push(['Header2', module.header2]); if(module.header3) ws_data.push(['Header3', module.header3]); if(module.type === 'testo-introduttivo') { ws_data.push(['Text', module.text], ['ImageURL', module.imageUrl], ['ImagePosition', module.imagePosition], ['ImageSize', module.imageSize], ['IsJustified', module.isJustified]); } ws_data.push([]); if (module.rows && module.rows.length > 0) { let headers = []; let rowArrays = []; switch (module.type) { case 'vero-falso': case 'scegli-funzione': case 'tre-parti': case 'libero': headers = ['id', 'text', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.text, row.pageBreakAfter]); break; case 'trasforma': headers = ['id', 'part1', 'part2', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.part1, row.part2, row.pageBreakAfter]); break; case 'risposta-multipla': headers = ['id', 'text', 'answers', 'pageBreakAfter']; rowArrays = module.rows.map(row => [row.id, row.text, JSON.stringify(row.answers), row.pageBreakAfter]); break; } if (headers.length > 0) { ws_data.push(headers); ws_data.push(...rowArrays); }} const ws = XLSX.utils.aoa_to_sheet(ws_data); const sheetName = module.title.substring(0, 30).replace(/[:\\/?*[\]]/g, ""); XLSX.utils.book_append_sheet(wb, ws, sheetName); }); const fileName = (testTitle || 'test').replace(/ /g, '_'); XLSX.writeFile(wb, `${fileName}_data.xlsx`); resetLoading(); updateButtonState(e.currentTarget, 'Esportato!'); }, 500);});
             
-// --- CSV EXPORT ---
-function exportCSV() {
-  const rows = [];
-  rows.push(["TestTitle", testTitle]);
-  rows.push(["FontSize", questionFontSize]);
-  modules.forEach(module => {
-    rows.push([]);
-    rows.push(["Module", module.title, module.type]);
-    if (module.instructions) rows.push(["Instructions", module.instructions]);
-    if (module.rows && module.rows.length > 0) {
-      rows.push(["RowID","Text/Part1","Part2/Answers","PageBreak"]);
-      module.rows.forEach(r => {
-        if (module.type === "trasforma") {
-          rows.push([r.id, r.part1, r.part2, r.pageBreakAfter]);
-        } else if (module.type === "risposta-multipla") {
-          rows.push([r.id, r.text, JSON.stringify(r.answers), r.pageBreakAfter]);
-        } else {
-          rows.push([r.id, r.text, "", r.pageBreakAfter]);
-        }
-      });
-    }
-  });
+            importExcelInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { try { const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'}); const importedModules = []; let importedTitle = 'Verifica'; let importedFontSize = '12pt'; if(workbook.SheetNames.includes("Metadata")) { const meta_json = XLSX.utils.sheet_to_json(workbook.Sheets["Metadata"], { header: 1 }); const titleRow = meta_json.find(row => row[0] === 'Test Title'); if(titleRow) importedTitle = titleRow[1]; const fontRow = meta_json.find(row => row[0] === 'Font Size'); if(fontRow) importedFontSize = fontRow[1]; } const moduleSheets = workbook.SheetNames.filter(name => name !== "Metadata"); moduleSheets.forEach(sheetName => { const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 }); const moduleData = {}; let headerRowIndex = -1; for(let i=0; i<json.length; i++){ const row = json[i]; if (row.length === 0) { if(moduleData.type !== 'testo-introduttivo') { headerRowIndex = i + 1; } break; } if(row[0] === 'ModuleType') moduleData.type = row[1]; if(row[0] === 'Title') moduleData.title = row[1]; if(row[0] === 'Instructions') moduleData.instructions = row[1]; if(row[0] === 'PageBreakAfter') moduleData.pageBreakAfter = row[1]; if(row[0] === 'AllowSplit') moduleData.allowSplit = row[1]; if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; if(row[0] === 'Options') moduleData.options = row[1].split(','); if(row[0] === 'Header1') moduleData.header1 = row[1]; if(row[0] === 'Header2') moduleData.header2 = row[1]; if(row[0] === 'Header3') moduleData.header3 = row[1]; if(row[0] === 'Text') moduleData.text = row[1]; if(row[0] === 'ImageURL') moduleData.imageUrl = row[1]; if(row[0] === 'ImagePosition') moduleData.imagePosition = row[1]; if(row[0] === 'ImageSize') moduleData.imageSize = row[1]; if(row[0] === 'IsJustified') moduleData.isJustified = row[1]; } moduleData.id = `mod_${Date.now()}_${Math.random()}`; moduleData.rows = []; if (headerRowIndex !== -1 && headerRowIndex < json.length) { const headers = json[headerRowIndex]; const pageBreakIndex = headers.indexOf('pageBreakAfter'); const answersIndex = headers.indexOf('answers'); for (let i = headerRowIndex + 1; i < json.length; i++) { const rowData = {}; headers.forEach((h, idx) => { rowData[h] = json[i][idx] }); if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`; rowData.pageBreakAfter = pageBreakIndex !== -1 ? json[i][pageBreakIndex] || false : false; if (answersIndex !== -1 && moduleData.type === 'risposta-multipla' && json[i][answersIndex]) { try { rowData.answers = JSON.parse(json[i][answersIndex]); } catch (err) { console.error("Failed to parse answers JSON:", json[i][answersIndex]); rowData.answers = []; }} moduleData.rows.push(rowData); } } importedModules.push(moduleData); }); modules = importedModules; testTitle = importedTitle; questionFontSize = importedFontSize; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); } catch(err) { console.error("Errore durante l'importazione da Excel:", err); } finally { e.target.value = ''; } }; reader.readAsArrayBuffer(file); });
 
-  let csvContent = rows.map(e => e.map(v => `"${
-    (v ?? "").toString().replace(/"/g,'""')
-  }"`).join(",")).join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "dati_test.csv";
-  link.click();
-}
+            // --- NUOVE FUNZIONALITÀ IMPORT/EXPORT TESTO ---
+            exportTextBtn.addEventListener('click', (e) => {
+                const resetLoading = setButtonLoading(e.currentTarget, 'Esporto...');
+                setTimeout(() => {
+                    try {
+                        const dataToSave = { testTitle, questionFontSize, modules, moduleCounter };
+                        const dataStr = JSON.stringify(dataToSave, null, 2);
+                        const blob = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        const fileName = (testTitle || 'test').replace(/ /g, '_');
+                        a.href = url;
+                        a.download = `${fileName}_data.txt`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        resetLoading();
+                        updateButtonState(e.currentTarget, 'Esportato!');
+                    } catch (error) {
+                        console.error('Errore durante l\'esportazione testuale:', error);
+                        resetLoading();
+                    }
+                }, 500);
+            });
 
-// --- CSV IMPORT ---
-function importCSV(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const text = e.target.result;
-    const lines = text.split(/\r?\n/).map(l =>
-      l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g,''))
-    );
-    let importedModules = [];
-    let currentModule = null;
-    lines.forEach(row => {
-      if (row[0] === "TestTitle") testTitle = row[1];
-      if (row[0] === "FontSize") questionFontSize = row[1];
-      if (row[0] === "Module") {
-        if (currentModule) importedModules.push(currentModule);
-        currentModule = { id:`mod_${Date.now()}_${Math.random()}`, title: row[1], type: row[2], rows: [] };
-      }
-      if (row[0] && row[0].startsWith("row_")) {
-        if (currentModule) {
-          const rowData = { id: row[0], text: row[1], pageBreakAfter: row[3]==="true" };
-          if (currentModule.type==="trasforma") { rowData.part1=row[1]; rowData.part2=row[2]; }
-          if (currentModule.type==="risposta-multipla") { try{rowData.answers=JSON.parse(row[2]);}catch{} }
-          currentModule.rows.push(rowData);
-        }
-      }
-    });
-    if (currentModule) importedModules.push(currentModule);
-
-    modules = importedModules;
-    render();
-    document.getElementById("test-title-input").value = testTitle;
-    document.getElementById("font-size-select").value = questionFontSize;
-    saveData();
-  };
-  reader.readAsText(file);
-}
-
-// --- Attach CSV buttons ---
-document.getElementById("export-csv").addEventListener("click", exportCSV);
-document.getElementById("import-csv-input").addEventListener("change", e => {
-  if (e.target.files.length>0) importCSV(e.target.files[0]);
-});
-
-importExcelInput.addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (event) => { const workbook = XLSX.read(new Uint8Array(event.target.result), {type: 'array'}); const importedModules = []; let importedTitle = 'Verifica'; let importedFontSize = '12pt'; if(workbook.SheetNames.includes("Metadata")) { const meta_json = XLSX.utils.sheet_to_json(workbook.Sheets["Metadata"], { header: 1 }); const titleRow = meta_json.find(row => row[0] === 'Test Title'); if(titleRow) importedTitle = titleRow[1]; const fontRow = meta_json.find(row => row[0] === 'Font Size'); if(fontRow) importedFontSize = fontRow[1]; } const moduleSheets = workbook.SheetNames.filter(name => name !== "Metadata"); moduleSheets.forEach(sheetName => { const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 }); const moduleData = {}; let headerRowIndex = -1; for(let i=0; i<json.length; i++){ const row = json[i]; if (row.length === 0) { if(moduleData.type !== 'testo-introduttivo') { headerRowIndex = i + 1; } break; } if(row[0] === 'ModuleType') moduleData.type = row[1]; if(row[0] === 'Title') moduleData.title = row[1]; if(row[0] === 'Instructions') moduleData.instructions = row[1]; if(row[0] === 'PageBreakAfter') moduleData.pageBreakAfter = row[1]; if(row[0] === 'AllowSplit') moduleData.allowSplit = row[1]; if(row[0] === 'AnswerSpace') moduleData.answerSpace = row[1]; if(row[0] === 'Options') moduleData.options = row[1].split(','); if(row[0] === 'Header1') moduleData.header1 = row[1]; if(row[0] === 'Header2') moduleData.header2 = row[1]; if(row[0] === 'Header3') moduleData.header3 = row[1]; if(row[0] === 'Text') moduleData.text = row[1]; if(row[0] === 'ImageURL') moduleData.imageUrl = row[1]; if(row[0] === 'ImagePosition') moduleData.imagePosition = row[1]; if(row[0] === 'ImageSize') moduleData.imageSize = row[1]; if(row[0] === 'IsJustified') moduleData.isJustified = row[1]; } moduleData.id = `mod_${Date.now()}_${Math.random()}`; moduleData.rows = []; if (headerRowIndex !== -1 && headerRowIndex < json.length) { const headers = json[headerRowIndex]; const pageBreakIndex = headers.indexOf('pageBreakAfter'); const answersIndex = headers.indexOf('answers'); for (let i = headerRowIndex + 1; i < json.length; i++) { const rowData = {}; headers.forEach((h, idx) => { rowData[h] = json[i][idx] }); if(!rowData.id) rowData.id = `row_${Date.now()}_${Math.random()}`; rowData.pageBreakAfter = pageBreakIndex !== -1 ? json[i][pageBreakIndex] || false : false; if (answersIndex !== -1 && moduleData.type === 'risposta-multipla' && json[i][answersIndex]) { try { rowData.answers = JSON.parse(json[i][answersIndex]); } catch (err) { console.error("Failed to parse answers JSON:", json[i][answersIndex]); rowData.answers = []; }} moduleData.rows.push(rowData); } } importedModules.push(moduleData); }); if(confirm('Importando sovrascriverai i dati. Continuare?')){ modules = importedModules; testTitle = importedTitle; questionFontSize = importedFontSize; document.getElementById('test-title-input').value = testTitle; document.getElementById('font-size-select').value = questionFontSize; saveData(); render(); } e.target.value = ''; }; reader.readAsArrayBuffer(file); });
+            importTextInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data && data.modules && data.testTitle) {
+                            modules = data.modules || [];
+                            testTitle = data.testTitle || 'Verifica';
+                            questionFontSize = data.questionFontSize || '12pt';
+                            moduleCounter = data.moduleCounter || data.modules.length;
+                            document.getElementById('test-title-input').value = testTitle;
+                            document.getElementById('font-size-select').value = questionFontSize;
+                            saveData();
+                            render();
+                        } else {
+                           console.error('File di testo non valido o corrotto.');
+                        }
+                    } catch (error) {
+                        console.error('Errore durante la lettura del file di testo:', error);
+                    } finally {
+                        e.target.value = ''; // Resetta l'input file
+                    }
+                };
+                reader.readAsText(file);
+            });
         };
+
         documentContainer.addEventListener('paste', (e) => { if (e.target.isContentEditable) { e.preventDefault(); const text = e.clipboardData.getData('text/plain'); document.execCommand('insertText', false, text); }});
         
         loadData(); 
@@ -485,4 +486,3 @@ importExcelInput.addEventListener('change', (e) => { const file = e.target.files
    </script>
 </body>
 </html>
-
