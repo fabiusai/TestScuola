@@ -173,7 +173,7 @@
         
         .result-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
@@ -263,13 +263,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header class="header">
             <h1>Generatore di Prompt per Test AI</h1>
             <p>Crea prompt personalizzati per generare test compatibili con la tua applicazione</p>
         </header>
 
-        <!-- Sezione 1: Dettagli del Test -->
         <div class="card">
             <h2 class="section-title">
                 <span class="section-number">1</span>
@@ -300,9 +298,14 @@
                 <textarea id="testo-introduttivo" rows="4" class="form-textarea" 
                           placeholder="Inserisci qui un testo che l'AI userà come base per generare le domande..."></textarea>
             </div>
+            
+            <div class="form-group">
+                <label for="indicazioni-aggiuntive" class="form-label">Indicazioni Aggiuntive (opzionale)</label>
+                <textarea id="indicazioni-aggiuntive" rows="3" class="form-textarea" 
+                          placeholder="Fornisci qui istruzioni specifiche per l'AI, es: 'Usa un tono formale', 'Crea domande che stimolino il pensiero critico'..."></textarea>
+            </div>
         </div>
 
-        <!-- Sezione 2: Struttura del Test -->
         <div class="card">
             <h2 class="section-title">
                 <span class="section-number">2</span>
@@ -318,7 +321,6 @@
             <div id="moduli-container"></div>
         </div>
 
-        <!-- Sezione 3: Fonti dei Dati -->
         <div class="card">
             <h2 class="section-title">
                 <span class="section-number">3</span>
@@ -350,14 +352,12 @@
             </div>
         </div>
 
-        <!-- Bottone Genera -->
         <div class="text-center">
             <button id="generate-btn" class="btn btn-primary icon-sparkles">
                 Genera Prompt
             </button>
         </div>
 
-        <!-- Risultato -->
         <div id="result-container" class="hidden fade-in">
             <div class="card result-section">
                 <div class="result-header">
@@ -437,6 +437,8 @@
                 const numeroModuli = parseInt(document.getElementById('numero-moduli').value, 10);
                 const materia = document.getElementById('materia').value.trim();
                 const classe = document.getElementById('classe').value.trim();
+                // LEGGI IL NUOVO CAMPO
+                const indicazioniAggiuntive = document.getElementById('indicazioni-aggiuntive').value.trim();
                 
                 // Validazione
                 if (!argomento || isNaN(numeroModuli) || numeroModuli <= 0 || !materia || !classe) {
@@ -476,14 +478,16 @@
                 if(fonti.web) fontiSelezionate.push("una ricerca web su fonti attendibili");
 
                 // Genera il prompt
-                const prompt = generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo);
+                // PASSA IL NUOVO VALORE ALLA FUNZIONE
+                const prompt = generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive);
                 
                 promptOutput.value = prompt;
                 resultContainer.classList.remove('hidden');
                 resultContainer.scrollIntoView({ behavior: 'smooth' });
             });
 
-            function generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo) {
+            // FUNZIONE AGGIORNATA
+            function generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive) {
                 return `Sei un assistente AI esperto nella creazione di materiale didattico. Il tuo compito è generare il contenuto di un test in formato JSON, che sarà importato da un'applicazione specifica.
 
 **REGOLE FONDAMENTALI:**
@@ -506,7 +510,26 @@ ${testoIntroduttivo ? `
     """
     ${testoIntroduttivo}
     """
+` : ''}${indicazioniAggiuntive ? `
+* **Indicazioni Aggiuntive Fornite:**
+    """
+    ${indicazioniAggiuntive}
+    """
 ` : ''}
+
+---
+
+**DESCRIZIONE CONCETTUALE DEI MODULI:**
+
+Varia la tipologia del test utilizzando in modo appropriato i seguenti tipi di modulo.
+
+* **✍️ Testo Introduttivo:** Per inserire un blocco di testo (introduzione, brano da analizzare). Non è una domanda, ma un modulo contenitore a sé stante.
+* **👍 vero-falso ('vero-falso'):** Per una lista di affermazioni a cui rispondere Vero o Falso.
+* **✅ risposta-multipla ('risposta-multipla'):** Per domande con 3-5 opzioni di risposta, di cui una sola corretta.
+* **🔠 scegli-funzione ('scegli-funzione'):** Per esercizi di analisi (grammaticale, logica) in cui si associa un elemento a un'opzione predefinita (es. Soggetto, Predicato).
+* **🏛️ 3-parti ('tre-parti'):** Per esercizi in una tabella a 3 colonne, dove lo studente compila la seconda e la terza (es. Parola, Sinonimo, Contrario).
+* **🔄 trasforma ('trasforma'):** Per esercizi di trasformazione (es. da frase attiva a passiva).
+* **📝 libero ('libero'):** Per domande a risposta aperta. Puoi chiedere di mettere in grassetto parti della domanda per porre quesiti specifici su di esse.
 
 ---
 
@@ -537,14 +560,14 @@ L'oggetto JSON principale deve avere questa struttura:
 4. Ogni modulo deve contenere l'esatto numero di domande specificato.
 5. Ogni oggetto deve avere un campo \`id\` univoco.
 
-**TIPI DI DOMANDE:**
+**TIPI DI DOMANDE (JSON nel campo 'rows'):**
 
-- **risposta-multipla**: { "id": "...", "text": "...", "pageBreakAfter": false, "answers": [{"text": "...", "isCorrect": true/false}] }
-- **vero-falso**: { "id": "...", "text": "...", "pageBreakAfter": false }
-- **trasforma**: { "id": "...", "part1": "Elemento da trasformare", "part2": "Istruzione", "pageBreakAfter": false }
-- **tre-parti**: Richiede headers: "header1", "header2", "header3" nel modulo
-- **scegli-funzione**: Richiede "options": ["A", "B", ...] nel modulo
-- **libero**: { "id": "...", "text": "...", "pageBreakAfter": false }
+* **risposta-multipla**: { "id": "...", "text": "...", "pageBreakAfter": false, "answers": [{"text": "...", "isCorrect": true/false}] }
+* **vero-falso**: { "id": "...", "text": "...", "pageBreakAfter": false }
+* **trasforma**: { "id": "...", "part1": "Elemento da trasformare", "part2": "Istruzione", "pageBreakAfter": false }
+* **tre-parti**: Richiede l'impostazione degli "headers" nel modulo: "header1", "header2", "header3".
+* **scegli-funzione**: Richiede l'impostazione delle "options" nel modulo: ["A", "B", ...].
+* **libero**: { "id": "...", "text": "...", "pageBreakAfter": false }
 
 **ISTRUZIONI FINALI:**
 * Per 'risposta-multipla', crea 3-4 opzioni con ESATTAMENTE UNA corretta.
