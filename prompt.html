@@ -437,7 +437,6 @@
                 const numeroModuli = parseInt(document.getElementById('numero-moduli').value, 10);
                 const materia = document.getElementById('materia').value.trim();
                 const classe = document.getElementById('classe').value.trim();
-                // LEGGI IL NUOVO CAMPO
                 const indicazioniAggiuntive = document.getElementById('indicazioni-aggiuntive').value.trim();
                 
                 // Validazione
@@ -478,7 +477,6 @@
                 if(fonti.web) fontiSelezionate.push("una ricerca web su fonti attendibili");
 
                 // Genera il prompt
-                // PASSA IL NUOVO VALORE ALLA FUNZIONE
                 const prompt = generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive);
                 
                 promptOutput.value = prompt;
@@ -529,7 +527,26 @@ Varia la tipologia del test utilizzando in modo appropriato i seguenti tipi di m
 * **🔠 scegli-funzione ('scegli-funzione'):** Per esercizi di analisi (grammaticale, logica) in cui si associa un elemento a un'opzione predefinita (es. Soggetto, Predicato).
 * **🏛️ 3-parti ('tre-parti'):** Per esercizi in una tabella a 3 colonne, dove lo studente compila la seconda e la terza (es. Parola, Sinonimo, Contrario).
 * **🔄 trasforma ('trasforma'):** Per esercizi di trasformazione (es. da frase attiva a passiva).
-* **📝 libero ('libero'):** Per domande a risposta aperta. Puoi chiedere di mettere in grassetto parti della domanda per porre quesiti specifici su di esse.
+* **📝 libero ('libero'):** Per domande a risposta aperta. Per applicare il grassetto, usa la struttura "textSpans" come descritto nella sezione "FORMATTAZIONE DEL TESTO".
+
+---
+
+**FORMATTAZIONE DEL TESTO (GRASSETTO):**
+
+Quando devi applicare il grassetto a una parte del testo di una domanda (in particolare per i moduli di tipo 'libero'), NON usare markdown (\`**...**\`). Invece, sostituisci la chiave \`"text": "..."\` con una chiave \`"textSpans"\` che contiene un array di oggetti.
+Ogni oggetto nell'array deve avere una chiave \`"text"\` e, opzionalmente, una chiave \`"isBold": true\` per le parti in grassetto.
+
+**Esempio:**
+INVECE DI:
+\`"text": "Analizza la seguente parola: **Fotosintesi**."\`
+
+USA QUESTO FORMATO:
+\`"textSpans": [
+  { "text": "Analizza la seguente parola: " },
+  { "text": "Fotosintesi", "isBold": true },
+  { "text": "." }
+]\`
+Applica questa regola a tutte le domande che richiedono il grassetto.
 
 ---
 
@@ -567,7 +584,7 @@ L'oggetto JSON principale deve avere questa struttura:
 * **trasforma**: { "id": "...", "part1": "Elemento da trasformare", "part2": "Istruzione", "pageBreakAfter": false }
 * **tre-parti**: Richiede l'impostazione degli "headers" nel modulo: "header1", "header2", "header3".
 * **scegli-funzione**: Richiede l'impostazione delle "options" nel modulo: ["A", "B", ...].
-* **libero**: { "id": "...", "text": "...", "pageBreakAfter": false }
+* **libero**: { "id": "...", "text": "...", "pageBreakAfter": false } (o "textSpans": [...] se c'è grassetto).
 
 **ISTRUZIONI FINALI:**
 * Per 'risposta-multipla', crea 3-4 opzioni con ESATTAMENTE UNA corretta.
