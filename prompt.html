@@ -484,114 +484,198 @@
                 resultContainer.scrollIntoView({ behavior: 'smooth' });
             });
 
-            // FUNZIONE AGGIORNATA
+            // --- FUNZIONE PRINCIPALE AGGIORNATA ---
             function generaPrompt(argomento, materia, classe, numeroModuli, domandePerModulo, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive) {
-                return `Sei un assistente AI esperto nella creazione di materiale didattico. Il tuo compito è generare il contenuto di un test in formato JSON, che sarà importato da un'applicazione specifica.
+                return `Sei un assistente AI esperto nella creazione di materiale didattico. Il tuo compito è generare il contenuto di un test in un formato JSON strutturato che verrà importato da un'applicazione specifica.
 
-**REGOLE FONDAMENTALI:**
-1. L'output DEVE essere unicamente un blocco di codice JSON.
-2. NON includere spiegazioni, commenti o testo prima o dopo il blocco di codice JSON (nemmeno \`\`\`json). L'output deve iniziare con \`{\` e finire con \`}\`.
-3. Rispetta scrupolosamente la struttura e le chiavi del JSON specificate di seguito.
-
----
-
-**DETTAGLI DEL TEST DA CREARE:**
-
-* **Argomento Principale:** ${argomento}
-* **Materia:** ${materia}
-* **Classe di destinazione:** ${classe}
-* **Numero Totale di Moduli:** ${numeroModuli}
-* **Distribuzione Domande:** ${domandePerModulo.map((d, i) => `Modulo ${i+1}: ${d} domande`).join('; ')}.
-* **Fonti da Utilizzare:** ${fontiSelezionate.join(', ')}.
-${testoIntroduttivo ? `
-* **Testo Introduttivo fornito:**
-    """
-    ${testoIntroduttivo}
-    """
-` : ''}${indicazioniAggiuntive ? `
-* **Indicazioni Aggiuntive Fornite:**
-    """
-    ${indicazioniAggiuntive}
-    """
-` : ''}
+### DIRETTIVE PRIMARIE
+1.  **SOLO JSON**: L'output deve essere unicamente un blocco di codice JSON valido.
+2.  **NESSUN TESTO AGGIUNTIVO**: Non includere spiegazioni, commenti o testo prima o dopo il blocco di codice JSON (nemmeno \`\`\`json). L'output deve iniziare con \`{\` e finire con \`}\`.
+3.  **RISPETTO DELLA STRUTTURA**: Aderisci scrupolosamente alla struttura, alle chiavi e ai tipi di dato specificati di seguito. I booleani devono essere \`true\` o \`false\`, non stringhe.
+4.  **ID UNICI**: Genera ID univoci per ogni modulo e per ogni riga/domanda (es: "mod_12345", "row_67890").
 
 ---
 
-**DESCRIZIONE CONCETTUALE DEI MODULI:**
-
-Varia la tipologia del test utilizzando in modo appropriato i seguenti tipi di modulo.
-
-* **✍️ Testo Introduttivo:** Per inserire un blocco di testo (introduzione, brano da analizzare). Non è una domanda, ma un modulo contenitore a sé stante.
-* **👍 vero-falso ('vero-falso'):** Per una lista di affermazioni a cui rispondere Vero o Falso.
-* **✅ risposta-multipla ('risposta-multipla'):** Per domande con 3-5 opzioni di risposta, di cui una sola corretta.
-* **🔠 scegli-funzione ('scegli-funzione'):** Per esercizi di analisi (grammaticale, logica) in cui si associa un elemento a un'opzione predefinita (es. Soggetto, Predicato).
-* **🏛️ 3-parti ('tre-parti'):** Per esercizi in una tabella a 3 colonne, dove lo studente compila la seconda e la terza (es. Parola, Sinonimo, Contrario).
-* **🔄 trasforma ('trasforma'):** Per esercizi di trasformazione (es. da frase attiva a passiva).
-* **📝 libero ('libero'):** Per domande a risposta aperta. Per applicare il grassetto, usa la struttura "textSpans" come descritto nella sezione "FORMATTAZIONE DEL TESTO".
+### SPECIFICHE DEL TEST DA CREARE
+* **Argomento Principale**: ${argomento}
+* **Materia**: ${materia}
+* **Classe di destinazione**: ${classe}
+* **Numero Totale di Moduli da creare**: ${numeroModuli}
+* **Distribuzione Domande**: ${domandePerModulo.map((d, i) => `Modulo ${i+1}: ${d} domande`).join('; ')}.
+* **Fonti da Utilizzare**: ${fontiSelezionate.join(', ')}.
+${testoIntroduttivo ? `* **Testo Introduttivo (da usare come contesto)**:\n    """\n    ${testoIntroduttivo}\n    """` : ''}
+${indicazioniAggiuntive ? `* **Indicazioni Aggiuntive**:\n    """\n    ${indicazioniAggiuntive}\n    """` : ''}
 
 ---
 
-**FORMATTAZIONE DEL TESTO (GRASSETTO):**
-
-Quando devi applicare il grassetto a una parte del testo di una domanda (in particolare per i moduli di tipo 'libero'), NON usare markdown (\`**...**\`). Invece, sostituisci la chiave \`"text": "..."\` con una chiave \`"textSpans"\` che contiene un array di oggetti.
-Ogni oggetto nell'array deve avere una chiave \`"text"\` e, opzionalmente, una chiave \`"isBold": true\` per le parti in grassetto.
-
-**Esempio:**
-INVECE DI:
-\`"text": "Analizza la seguente parola: **Fotosintesi**."\`
-
-USA QUESTO FORMATO:
-\`"textSpans": [
-  { "text": "Analizza la seguente parola: " },
-  { "text": "Fotosintesi", "isBold": true },
-  { "text": "." }
-]\`
-Applica questa regola a tutte le domande che richiedono il grassetto.
-
----
-
-**STRUTTURA JSON RICHIESTA:**
-
-L'oggetto JSON principale deve avere questa struttura:
+### STRUTTURA JSON GENERALE
+L'oggetto JSON radice deve avere la seguente struttura:
 \`\`\`json
 {
-  "testTitle": "...",
-  "questionFontSize": "12pt",
-  "modules": [
-    {
-      "id": "...",
-      "type": "...",
-      "title": "...",
-      "instructions": "...",
-      "rows": [ ... ]
-    }
-  ]
+  "testTitle": "string",
+  "questionFontSize": "string",
+  "modules": [ /* array di oggetti modulo */ ]
 }
 \`\`\`
+- \`testTitle\`: Imposta il valore a "${argomento}".
+- \`questionFontSize\`: Usa il valore fisso "12pt".
+- \`modules\`: Un array contenente i ${numeroModuli} moduli che genererai.
 
-**DETTAGLI SUI MODULI:**
+---
 
-1. Genera ${numeroModuli} moduli in totale.
-2. Nel campo \`title\` di ogni modulo, scrivi solo il titolo dell'argomento (es: "I concetti chiave della Rivoluzione"), NON includere la numerazione.
-3. Per ogni modulo, scegli un \`type\` appropriato tra: 'risposta-multipla', 'vero-falso', 'scegli-funzione', 'tre-parti', 'trasforma', 'libero'.
-4. Ogni modulo deve contenere l'esatto numero di domande specificato.
-5. Ogni oggetto deve avere un campo \`id\` univoco.
+### FORMATTAZIONE DEL TESTO
+Per tutti i campi di testo (come \`text\`, \`part1\`, \`part2\`), puoi usare tag HTML per la formattazione. NON usare Markdown.
+-   Grassetto: \`<b>testo in grassetto</b>\`
+-   Corsivo: \`<i>testo in corsivo</i>\`
+-   Sottolineato: \`<u>testo sottolineato</u>\`
+Esempio: \`"text": "Analizza la parola <b>Fotosintesi</b> e spiegane il significato."\`
 
-**TIPI DI DOMANDE (JSON nel campo 'rows'):**
+---
 
-* **risposta-multipla**: { "id": "...", "text": "...", "pageBreakAfter": false, "answers": [{"text": "...", "isCorrect": true/false}] }
-* **vero-falso**: { "id": "...", "text": "...", "pageBreakAfter": false }
-* **trasforma**: { "id": "...", "part1": "Elemento da trasformare", "part2": "Istruzione", "pageBreakAfter": false }
-* **tre-parti**: Richiede l'impostazione degli "headers" nel modulo: "header1", "header2", "header3".
-* **scegli-funzione**: Richiede l'impostazione delle "options" nel modulo: ["A", "B", ...].
-* **libero**: { "id": "...", "text": "...", "pageBreakAfter": false } (o "textSpans": [...] se c'è grassetto).
+### SPECIFICHE DETTAGLIATE DEI MODULI
+Crea ${numeroModuli} moduli, variando la tipologia in modo appropriato per l'argomento. Ogni modulo deve contenere il numero esatto di domande specificato.
 
-**ISTRUZIONI FINALI:**
-* Per 'risposta-multipla', crea 3-4 opzioni con ESATTAMENTE UNA corretta.
-* Formula domande adatte al livello della classe.
-* Il campo \`testTitle\` deve essere '${argomento}'.
+**1. Modulo: 'testo-introduttivo'**
+* **Scopo**: Inserire un blocco di testo o un'immagine. Non è un esercizio.
+* **Struttura Modulo**:
+    \`\`\`json
+    {
+      "id": "mod_...",
+      "type": "testo-introduttivo",
+      "text": "stringa con HTML",
+      "imageUrl": "",
+      "imagePosition": "above",
+      "imageSize": "medium",
+      "isJustified": false,
+      "pageBreakAfter": false,
+      "rows": [] 
+    }
+    \`\`\`
+* **Note**: \`rows\` DEVE essere un array vuoto. Non ha \`title\` né \`instructions\`.
 
-Procedi con la generazione del JSON.`;
+**2. Modulo: 'vero-falso'**
+* **Scopo**: Lista di affermazioni da giudicare vere o false.
+* **Struttura Modulo**:
+    \`\`\`json
+    {
+      "id": "mod_...",
+      "type": "vero-falso",
+      "title": "Titolo dell'esercizio",
+      "instructions": "Istruzioni per lo studente",
+      "pageBreakAfter": false,
+      "allowSplit": false,
+      "rows": [
+        {
+          "id": "row_...",
+          "text": "Testo dell'affermazione 1",
+          "pageBreakAfter": false
+        },
+        { "... Dati affermazione 2 ..." }
+      ]
+    }
+    \`\`\`
+
+**3. Modulo: 'risposta-multipla'**
+* **Scopo**: Domande con più opzioni, di cui una sola corretta.
+* **Struttura Modulo**: Simile a 'vero-falso'.
+* **Struttura Oggetto in 'rows'**:
+    \`\`\`json
+    {
+      "id": "row_...",
+      "text": "Testo della domanda",
+      "pageBreakAfter": false,
+      "answers": [
+        { "id": "ans_...", "text": "Testo opzione A", "isCorrect": false },
+        { "id": "ans_...", "text": "Testo opzione B", "isCorrect": true },
+        { "id": "ans_...", "text": "Testo opzione C", "isCorrect": false }
+      ]
+    }
+    \`\`\`
+* **Regola**: L'array \`answers\` deve contenere da 3 a 5 opzioni. ESATTAMENTE UNA deve avere \`"isCorrect": true\`.
+
+**4. Modulo: 'scegli-funzione'**
+* **Scopo**: Esercizi di classificazione (es. analisi grammaticale).
+* **Struttura Modulo**:
+    \`\`\`json
+    {
+      "id": "mod_...",
+      "type": "scegli-funzione",
+      "title": "Analisi Logica",
+      "instructions": "Indica la funzione di ogni elemento.",
+      "options": ["Soggetto", "Predicato", "Complemento"],
+      "pageBreakAfter": false,
+      "allowSplit": false,
+      "rows": [
+        {
+          "id": "row_...",
+          "text": "Elemento da analizzare",
+          "pageBreakAfter": false
+        }
+      ]
+    }
+    \`\`\`
+
+**5. Modulo: 'tre-parti'**
+* **Scopo**: Tabella a 3 colonne dove lo studente compila la seconda e la terza.
+* **Struttura Modulo**:
+    \`\`\`json
+    {
+      "id": "mod_...",
+      "type": "tre-parti",
+      "title": "Sinonimi e Contrari",
+      "instructions": "Per ogni parola, trova un sinonimo e un contrario.",
+      "header1": "Parola",
+      "header2": "Sinonimo",
+      "header3": "Contrario",
+      "pageBreakAfter": false,
+      "allowSplit": false,
+      "rows": [
+        {
+          "id": "row_...",
+          "text": "Contenuto colonna 1",
+          "pageBreakAfter": false
+        }
+      ]
+    }
+    \`\`\`
+
+**6. Modulo: 'trasforma'**
+* **Scopo**: Esercizi di trasformazione (es. da attivo a passivo).
+* **Struttura Modulo**: Simile a 'vero-falso'.
+* **Struttura Oggetto in 'rows'**:
+    \`\`\`json
+    {
+      "id": "row_...",
+      "part1": "Elemento da trasformare",
+      "part2": "Istruzione sulla trasformazione",
+      "pageBreakAfter": false
+    }
+    \`\`\`
+
+**7. Modulo: 'libero'**
+* **Scopo**: Domande a risposta aperta.
+* **Struttura Modulo**:
+    \`\`\`json
+    {
+      "id": "mod_...",
+      "type": "libero",
+      "title": "Domande Aperte",
+      "instructions": "Rispondi in modo completo.",
+      "answerSpace": "medium",
+      "pageBreakAfter": false,
+      "allowSplit": false,
+      "rows": [
+        {
+          "id": "row_...",
+          "text": "Testo della domanda con <b>HTML</b>",
+          "pageBreakAfter": false
+        }
+      ]
+    }
+    \`\`\`
+* **Note**: \`answerSpace\` può essere 'none', 'small', 'medium', 'large'. Usa 'medium' o 'large' di default.
+
+Ora procedi con la generazione del JSON completo e valido.`;
             }
         });
     </script>
