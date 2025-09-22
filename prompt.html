@@ -689,7 +689,7 @@ Crea ${totalModules} moduli, variando la tipologia in base alle istruzioni sulla
       "rows": [] 
     }
     \`\`\`
-* **Note**: \`rows\` DEVE essere un array vuoto. Non ha \`title\` né \`instructions\`.
+* **Note**: \`rows\` DEVE essere un array vuoto.
 
 **2. Modulo: 'vero-falso'**
 * **Scopo**: Lista di affermazioni da giudicare vere o false.
@@ -709,7 +709,7 @@ Crea ${totalModules} moduli, variando la tipologia in base alle istruzioni sulla
 
 **3. Modulo: 'risposta-multipla'**
 * **Scopo**: Domande con più opzioni, di cui una sola corretta.
-* **Struttura Modulo**: Simile a 'vero-falso', l'array 'rows' deve contenere ${questionsPerModule} domande.
+* **Struttura Modulo**: Simile a 'vero-falso'.
 * **Struttura Oggetto in 'rows'**:
     \`\`\`json
     {
@@ -741,9 +741,15 @@ Crea ${totalModules} moduli, variando la tipologia in base alle istruzioni sulla
     }
     \`\`\`
 * **Struttura Oggetto in 'rows'**: \`{ "id": "row_...", "text": "Elemento da analizzare", "pageBreakAfter": false }\`
+* **REGOLA OBBLIGATORIA per le Opzioni**: La leggibilità del test richiede opzioni molto brevi.
+  1. **Verifica la Lunghezza**: Controlla la lunghezza di ogni possibile opzione.
+  2. **Se ANCHE UNA SOLA opzione supera i 7 caratteri**, DEVI usare il seguente metodo:
+     - Elenca i concetti completi nel campo \`instructions\`, associando a ciascuno una sigla breve (es: Fase Monarchico-Costituzionale (MC)).
+     - Nel campo \`options\` inserisci **esclusivamente le sigle** (es: \`"options": ["MC", "RD", "RM"]\`).
+  3. **Se TUTTE le opzioni sono di 7 caratteri o meno**, puoi inserirle direttamente.
 
 **5. Modulo: 'tre-parti'**
-* **Scopo**: Tabella a 3 colonne dove lo studente compila la seconda e la terza.
+* **Scopo**: Tabella a 3 colonne.
 * **Struttura Modulo**:
     \`\`\`json
     {
@@ -762,8 +768,8 @@ Crea ${totalModules} moduli, variando la tipologia in base alle istruzioni sulla
 * **Struttura Oggetto in 'rows'**: \`{ "id": "row_...", "text": "Contenuto colonna 1", "pageBreakAfter": false }\`
 
 **6. Modulo: 'trasforma'**
-* **Scopo**: Esercizi di trasformazione (es. da attivo a passivo).
-* **Struttura Modulo**: Simile a 'vero-falso', l'array 'rows' deve contenere ${questionsPerModule} domande.
+* **Scopo**: Esercizi di trasformazione.
+* **Struttura Modulo**: Simile a 'vero-falso'.
 * **Struttura Oggetto in 'rows'**:
     \`\`\`json
     {
@@ -790,7 +796,7 @@ Crea ${totalModules} moduli, variando la tipologia in base alle istruzioni sulla
     }
     \`\`\`
 * **Struttura Oggetto in 'rows'**: \`{ "id": "row_...", "text": "Testo della domanda", "pageBreakAfter": false }\`
-* **Note**: \`answerSpace\` può essere 'small', 'medium', 'large'. Usa 'medium' o 'large' di default.
+* **Note**: \`answerSpace\` può essere 'small', 'medium', 'large'.
 
 Ora procedi con la generazione del JSON completo e valido.`;
             }
