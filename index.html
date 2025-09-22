@@ -137,10 +137,15 @@
                                 <span class="btn-text flex items-center justify-center"><i data-lucide="file-spreadsheet" class="w-4 h-4 mr-1"></i>Da Excel</span>
                                 <input type="file" id="import-excel-input" class="hidden" accept=".xlsx, .xls">
                             </label>
-                            <label for="import-text-input" class="btn btn-secondary btn-small cursor-pointer">
-                                <span class="btn-text flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 mr-1"></i>Da Testo (JSON)</span>
-                                <input type="file" id="import-text-input" class="hidden" accept=".txt,.json">
-                            </label>
+                            <div class="btn-grid">
+                                <label for="import-text-input" title="Importa da file .txt o .json" class="btn btn-secondary btn-small cursor-pointer">
+                                    <span class="btn-text flex items-center justify-center"><i data-lucide="upload" class="w-4 h-4 mr-1"></i>File JSON...</span>
+                                    <input type="file" id="import-text-input" class="hidden" accept=".txt,.json">
+                                </label>
+                                <button id="import-paste-json-btn" title="Incolla dati JSON dagli appunti" class="btn btn-secondary btn-small">
+                                     <span class="btn-text flex items-center justify-center"><i data-lucide="clipboard-paste" class="w-4 h-4 mr-1"></i>Incolla JSON</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -402,11 +407,47 @@
             html += '</div>';
             return html;
         };
+
+        const processImportedJsonData = (jsonString) => {
+            try {
+                const data = JSON.parse(jsonString);
+                if (data && data.modules && data.testTitle) {
+                    modules = data.modules || [];
+                    testTitle = data.testTitle || 'Verifica';
+                    questionFontSize = data.questionFontSize || '12pt';
+                    moduleCounter = data.moduleCounter || data.modules.length;
+
+                    modules.forEach(module => { 
+                        if (typeof module.isCollapsed === 'undefined') module.isCollapsed = false; 
+                        if (typeof module.pageBreakAfter === 'undefined') module.pageBreakAfter = false; 
+                        if (typeof module.allowSplit === 'undefined') module.allowSplit = false; 
+                        if(module.rows) module.rows.forEach(row => { 
+                            if (typeof row.pageBreakAfter === 'undefined') row.pageBreakAfter = false; 
+                        }); 
+                    });
+
+                    document.getElementById('test-title-input').value = testTitle;
+                    document.getElementById('font-size-select').value = questionFontSize;
+                    saveData();
+                    render();
+                    return true;
+                } else {
+                   console.error('Dati JSON non validi o corrotti.');
+                   alert('Errore: I dati JSON importati non hanno il formato corretto.');
+                   return false;
+                }
+            } catch (error) {
+                console.error('Errore durante il parsing del JSON:', error);
+                alert('Errore: Il testo importato non è un JSON valido.');
+                return false;
+            }
+        };
         
         const setupToolButtons = () => {
             const testTitleInput = document.getElementById('test-title-input'); const fontSizeSelect = document.getElementById('font-size-select'); const saveDataBtn = document.getElementById('save-data'); const clearDataBtn = document.getElementById('clear-data'); const exportPdfBtn = document.getElementById('export-pdf'); const exportExcelBtn = document.getElementById('export-excel'); const importExcelInput = document.getElementById('import-excel-input'); const previewBtn = document.getElementById('preview-btn'); const previewModal = document.getElementById('preview-modal'); const closeModalBtn = document.getElementById('close-modal-btn'); const previewContent = document.getElementById('preview-content'); const collapseAllBtn = document.getElementById('collapse-all-btn'); const expandAllBtn = document.getElementById('expand-all-btn'); const resetPageBreaksBtn = document.getElementById('reset-page-breaks'); const resetAllowSplitBtn = document.getElementById('reset-allow-split');
             const exportTextBtn = document.getElementById('export-text');
             const importTextInput = document.getElementById('import-text-input');
+            const importPasteJsonBtn = document.getElementById('import-paste-json-btn');
 
             testTitleInput.addEventListener('input', saveData); fontSizeSelect.addEventListener('change', saveData); collapseAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = true); saveData(); render(); }); expandAllBtn.addEventListener('click', () => { modules.forEach(m => m.isCollapsed = false); saveData(); render(); }); resetPageBreaksBtn.addEventListener('click', (e) => { modules.forEach(m => { m.pageBreakAfter = false; if(m.rows) m.rows.forEach(r => r.pageBreakAfter = false); }); saveData(); render(); updateButtonState(e.currentTarget, 'Resettato!'); }); resetAllowSplitBtn.addEventListener('click', (e) => { modules.forEach(m => { m.allowSplit = false; }); saveData(); render(); updateButtonState(e.currentTarget, 'Resettato!'); }); previewBtn.addEventListener('click', () => { const printHTML = generatePrintHTML(); const iframe = document.createElement('iframe'); iframe.style.cssText = 'width:100%;height:100%;border:none'; previewContent.innerHTML = ''; previewContent.appendChild(iframe); const iDoc = iframe.contentWindow.document; iDoc.open(); iDoc.write(printHTML); iDoc.close(); previewModal.classList.remove('hidden'); }); closeModalBtn.addEventListener('click', () => previewModal.classList.add('hidden')); previewModal.addEventListener('click', (e) => { if(e.target === previewModal) previewModal.classList.add('hidden'); }); saveDataBtn.addEventListener('click', (e) => { saveData(); updateButtonState(e.currentTarget, 'Salvato!'); });
             
@@ -488,27 +529,26 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        if (data && data.modules && data.testTitle) {
-                            modules = data.modules || [];
-                            testTitle = data.testTitle || 'Verifica';
-                            questionFontSize = data.questionFontSize || '12pt';
-                            moduleCounter = data.moduleCounter || data.modules.length;
-                            document.getElementById('test-title-input').value = testTitle;
-                            document.getElementById('font-size-select').value = questionFontSize;
-                            saveData();
-                            render();
-                        } else {
-                           console.error('File di testo non valido o corrotto.');
-                        }
-                    } catch (error) {
-                        console.error('Errore durante la lettura del file di testo:', error);
-                    } finally {
-                        e.target.value = ''; 
-                    }
+                    processImportedJsonData(event.target.result);
+                    e.target.value = ''; 
                 };
                 reader.readAsText(file);
+            });
+
+            importPasteJsonBtn.addEventListener('click', async (e) => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    if (text) {
+                        if (processImportedJsonData(text)) {
+                            updateButtonState(e.currentTarget, 'Incollato!');
+                        }
+                    } else {
+                        alert('Nessun testo trovato negli appunti.');
+                    }
+                } catch (err) {
+                    console.error('Impossibile leggere dagli appunti:', err);
+                    alert('Impossibile leggere dagli appunti. Assicurati di aver dato i permessi necessari al browser.');
+                }
             });
         };
 
