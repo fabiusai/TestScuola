@@ -137,7 +137,7 @@
             padding: 0.75rem;
         }
 
-        .checkbox-item-simple input[type="checkbox"] {
+        .checkbox-item-simple input[type="checkbox"], .checkbox-item-simple input[type="radio"] {
             margin-right: 0.5rem;
             height: 1rem;
             width: 1rem;
@@ -361,7 +361,7 @@
             <div class="form-group">
                 <label for="testo-introduttivo" class="form-label">Testo Introduttivo (opzionale)</label>
                 <textarea id="testo-introduttivo" rows="4" class="form-textarea" 
-                          placeholder="Inserisci qui un testo che l'AI userà come base per generare le domande..."></textarea>
+                          placeholder="Inserisci qui un testo che l'AI userà come base per generare le domande (e l'immagine, se attivata)..."></textarea>
             </div>
             
             <div class="form-group">
@@ -370,10 +370,35 @@
                           placeholder="Fornisci qui istruzioni specifiche per l'AI, es: 'Usa un tono formale', 'Crea domande che stimolino il pensiero critico'..."></textarea>
             </div>
         </div>
-
+        
         <div class="card">
             <h2 class="section-title">
                 <span class="section-number">2</span>
+                Immagine di Copertina (Opzionale)
+            </h2>
+            <div class="checkbox-item-simple">
+                <input type="checkbox" id="enable-image-prompt">
+                <label for="enable-image-prompt">Genera un prompt per un'immagine di copertina</label>
+            </div>
+
+            <div id="image-options-container" class="hidden" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e5e7eb;">
+                <label class="form-label">Formato Immagine *</label>
+                <div class="form-group" style="margin-bottom: 0;">
+                     <div class="checkbox-item-simple" style="padding-top: 0;">
+                        <input type="radio" id="formato-quadrato" name="image-format" value="quadrato" checked>
+                        <label for="formato-quadrato" style="font-weight: normal;">Quadrato (800x800px)</label>
+                     </div>
+                     <div class="checkbox-item-simple" style="padding-top: 0;">
+                         <input type="radio" id="formato-orizzontale" name="image-format" value="orizzontale">
+                         <label for="formato-orizzontale" style="font-weight: normal;">Orizzontale (2000x560px)</label>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">
+                <span class="section-number">3</span>
                 Struttura del Test
             </h2>
             
@@ -453,7 +478,7 @@
 
         <div class="card">
             <h2 class="section-title">
-                <span class="section-number">3</span>
+                <span class="section-number">4</span>
                 Fonti dei Dati
             </h2>
             
@@ -491,7 +516,7 @@
         <div id="result-container" class="hidden fade-in">
             <div class="card result-section">
                 <div class="result-header">
-                    <h2 class="section-title" style="margin-bottom: 0;">Prompt Generato</h2>
+                    <h2 class="section-title" style="margin-bottom: 0;">Prompt JSON Generato</h2>
                     <button id="copy-btn" class="btn btn-secondary icon-clipboard">
                         <span id="copy-text">Copia</span>
                     </button>
@@ -499,27 +524,49 @@
                 <textarea id="prompt-output" class="result-textarea" readonly></textarea>
             </div>
         </div>
+        
+        <div id="image-result-container" class="hidden fade-in">
+            <div class="card result-section" style="margin-top: 1rem;">
+                <div class="result-header">
+                    <h2 class="section-title" style="margin-bottom: 0;">Prompt Immagine Generato</h2>
+                    <button id="copy-image-btn" class="btn btn-secondary icon-clipboard">
+                        <span id="copy-image-text">Copia</span>
+                    </button>
+                </div>
+                <textarea id="image-prompt-output" class="result-textarea" readonly style="height: 400px;"></textarea>
+            </div>
+        </div>
+        
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Elementi UI
             const generateBtn = document.getElementById('generate-btn');
             const resultContainer = document.getElementById('result-container');
             const promptOutput = document.getElementById('prompt-output');
             const copyBtn = document.getElementById('copy-btn');
             const copyText = document.getElementById('copy-text');
-            
             const enablePercentagesCheckbox = document.getElementById('enable-percentages');
             const percentageContainer = document.getElementById('percentage-container');
             const sliders = document.querySelectorAll('.percentage-slider');
             const totalPercentageSpan = document.getElementById('total-percentage');
-
-            // Gestione visibilità selettori percentuali
+            const enableImagePromptCheckbox = document.getElementById('enable-image-prompt');
+            const imageOptionsContainer = document.getElementById('image-options-container');
+            const imageResultContainer = document.getElementById('image-result-container');
+            const imagePromptOutput = document.getElementById('image-prompt-output');
+            const copyImageBtn = document.getElementById('copy-image-btn');
+            const copyImageText = document.getElementById('copy-image-text');
+            
+            // Gestione visibilità sezioni opzionali
+            enableImagePromptCheckbox.addEventListener('change', () => {
+                imageOptionsContainer.classList.toggle('hidden', !enableImagePromptCheckbox.checked);
+            });
             enablePercentagesCheckbox.addEventListener('change', () => {
                 percentageContainer.classList.toggle('hidden', !enablePercentagesCheckbox.checked);
             });
 
-            // Gestione sliders
+            // Gestione sliders percentuali
             function updatePercentages() {
                 let total = 0;
                 sliders.forEach(slider => {
@@ -528,45 +575,43 @@
                     total += parseInt(slider.value, 10);
                 });
                 totalPercentageSpan.textContent = `${total}%`;
-                if (total === 100) {
-                    totalPercentageSpan.style.color = '#16a34a'; // Verde
-                } else {
-                    totalPercentageSpan.style.color = '#dc2626'; // Rosso
-                }
+                totalPercentageSpan.style.color = (total === 100) ? '#16a34a' : '#dc2626';
             }
-
-            sliders.forEach(slider => {
-                slider.addEventListener('input', updatePercentages);
-            });
-            
+            sliders.forEach(slider => slider.addEventListener('input', updatePercentages));
             updatePercentages();
 
-            // Gestione copia
-            copyBtn.addEventListener('click', async () => {
+            // Funzione helper per la copia
+            async function copyToClipboard(text, buttonTextElement) {
                 try {
-                    await navigator.clipboard.writeText(promptOutput.value);
-                    copyText.textContent = 'Copiato!';
-                    setTimeout(() => {
-                        copyText.textContent = 'Copia';
-                    }, 2000);
+                    await navigator.clipboard.writeText(text);
                 } catch (err) {
-                    promptOutput.select();
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
                     document.execCommand('copy');
-                    copyText.textContent = 'Copiato!';
-                    setTimeout(() => {
-                        copyText.textContent = 'Copia';
-                    }, 2000);
+                    document.body.removeChild(textArea);
                 }
-            });
+                const originalText = buttonTextElement.textContent;
+                buttonTextElement.textContent = 'Copiato!';
+                setTimeout(() => {
+                    buttonTextElement.textContent = originalText;
+                }, 2000);
+            }
 
-            // Generazione prompt
+            // Listeners per i bottoni di copia
+            copyBtn.addEventListener('click', () => copyToClipboard(promptOutput.value, copyText));
+            copyImageBtn.addEventListener('click', () => copyToClipboard(imagePromptOutput.value, copyImageText));
+
+            // GENERAZIONE PROMPT (EVENTO PRINCIPALE)
             generateBtn.addEventListener('click', () => {
+                // Lettura di tutti i valori dai campi
                 const argomento = document.getElementById('argomento').value.trim();
                 const materia = document.getElementById('materia').value.trim();
                 const classe = document.getElementById('classe').value.trim();
                 const testoIntroduttivo = document.getElementById('testo-introduttivo').value.trim();
                 const indicazioniAggiuntive = document.getElementById('indicazioni-aggiuntive').value.trim();
-                
                 const totalModules = parseInt(document.getElementById('total-modules').value, 10);
                 const questionsPerModule = parseInt(document.getElementById('questions-per-module').value, 10);
                 
@@ -576,44 +621,102 @@
                     return;
                 }
 
+                // Gestione percentuali (se attivate)
                 let percentages = null;
                 if (enablePercentagesCheckbox.checked) {
                     percentages = {};
                     let totalPercentage = 0;
                     sliders.forEach(slider => {
                         const value = parseInt(slider.value, 10);
-                        if (value > 0) {
-                            percentages[slider.dataset.type] = value;
-                        }
+                        if (value > 0) percentages[slider.dataset.type] = value;
                         totalPercentage += value;
                     });
-                    
                     if (totalPercentage !== 100) {
                         alert(`La somma delle percentuali deve essere 100%, attualmente è ${totalPercentage}%.`);
                         return;
                     }
                 }
 
-                const fonti = {
-                    testo: document.getElementById('fonte-testo').checked,
-                    file: document.getElementById('fonte-file').checked,
-                    web: document.getElementById('fonte-web').checked
-                };
-                
-                let fontiSelezionate = [];
-                if(fonti.testo) fontiSelezionate.push("il testo introduttivo fornito");
-                if(fonti.file) fontiSelezionate.push("i file che verranno allegati");
-                if(fonti.web) fontiSelezionate.push("una ricerca web su fonti attendibili");
+                // Gestione fonti
+                const fontiSelezionate = ['testo', 'file', 'web']
+                    .filter(id => document.getElementById(`fonte-${id}`).checked)
+                    .map(id => {
+                        if (id === 'testo') return "il testo introduttivo fornito";
+                        if (id === 'file') return "i file che verranno allegati";
+                        return "una ricerca web su fonti attendibili";
+                    });
 
-                const prompt = generaPrompt(argomento, materia, classe, totalModules, questionsPerModule, percentages, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive);
-                
-                promptOutput.value = prompt;
+                // Genera e mostra il prompt JSON
+                const jsonPrompt = generaPromptJson(argomento, materia, classe, totalModules, questionsPerModule, percentages, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive);
+                promptOutput.value = jsonPrompt;
                 resultContainer.classList.remove('hidden');
+
+                // Genera e mostra il prompt per l'immagine (se richiesto)
+                if (enableImagePromptCheckbox.checked) {
+                    const argomentoPerImmagine = testoIntroduttivo || argomento;
+                    const isArgomentoDaTesto = !!testoIntroduttivo;
+                    const selectedFormat = document.querySelector('input[name="image-format"]:checked').value;
+                    const imagePrompt = generaPromptImmagine(argomentoPerImmagine, isArgomentoDaTesto, classe, selectedFormat);
+                    imagePromptOutput.value = imagePrompt;
+                    imageResultContainer.classList.remove('hidden');
+                } else {
+                    imageResultContainer.classList.add('hidden');
+                }
+                
                 resultContainer.scrollIntoView({ behavior: 'smooth' });
             });
+            
+            // --- FUNZIONE PER PROMPT IMMAGINE (AGGIORNATA CON DIRETTIVA CRITICA) ---
+            function generaPromptImmagine(soggetto, isSoggettoDaTesto, classe, formato) {
+                let direttivaTecnicaCritica;
+                let formatoOutput;
+                
+                if (formato === 'quadrato') {
+                    direttivaTecnicaCritica = `[DIRETTIVA TECNICA CRITICA E NON NEGOZIABILE - MASSIMA PRIORITÀ]
+L'output di questa immagine DEVE, senza alcuna eccezione, avere un aspect ratio ESATTO di 1:1 (quadrato).
+Le dimensioni del file DEBBONO essere precisamente 800 pixel di larghezza per 800 pixel di altezza.
+QUALSIASI SCARTO da questo formato o aspect ratio sarà considerato un FALLIMENTO DEL COMPITO.
+[FINE DIRETTIVA CRITICA]`;
+                    formatoOutput = `* **Aspect Ratio:** 1:1 (quadrato).
+* **Dimensioni Esatte:** 800x800 pixel (72 dpi).`;
+                } else { // orizzontale
+                    direttivaTecnicaCritica = `[DIRETTIVA TECNICA CRITICA E NON NEGOZIABILE - MASSIMA PRIORITÀ]
+L'output di questa immagine DEVE, senza alcuna eccezione, avere un aspect ratio ESATTO di 25:7 (panoramico orizzontale).
+Le dimensioni del file DEBBONO essere precisamente 2000 pixel di larghezza per 560 pixel di altezza.
+QUALSIASI SCARTO da questo formato o aspect ratio sarà considerato un FALLIMENTO DEL COMPITO.
+[FINE DIRETTIVA CRITICA]`;
+                    formatoOutput = `* **Aspect Ratio:** 25:7 (panoramico orizzontale).
+* **Dimensioni Esatte:** 2000x560 pixel (72 dpi).`;
+                }
 
-            // --- FUNZIONE PRINCIPALE AGGIORNATA ---
-            function generaPrompt(argomento, materia, classe, totalModules, questionsPerModule, percentages, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive) {
+                const temaCentraleInstruction = isSoggettoDaTesto
+                    ? `* **Tema Centrale:** L'immagine deve rappresentare il concetto chiave estratto dal seguente testo:\n"""\n${soggetto}\n"""`
+                    : `* **Tema Centrale:** L'immagine deve essere una rappresentazione simbolica e chiara di "${soggetto}".`;
+
+                return `${direttivaTecnicaCritica}
+
+Agisci come un illustratore di libri di testo scolastici specializzato in grafica educativa per ragazzi.
+
+**Compito:**
+Crea un'illustrazione digitale per un test scolastico destinato a studenti della classe "${classe}".
+
+**Soggetto dell'Illustrazione:**
+${temaCentraleInstruction}
+* **Focus Concettuale:** L'illustrazione deve comunicare un'idea positiva e costruttiva. Se il tema è un evento storico, concentrati sugli ideali o sui risultati positivi piuttosto che sul conflitto. Se è un concetto scientifico, illustra il principio in azione in modo semplice.
+* **Atmosfera:** L'immagine deve essere assolutamente positiva, serena e incoraggiante. Evita qualsiasi elemento legato a violenza, conflitto, paura o drammaticità.
+
+**Stile e Dettagli Visivi:**
+* **Tecnica:** Line art pulita, chiara e minimalista.
+* **Colori:** Esclusivamente bianco e nero, con poche e leggere sfumature di grigio per dare profondità.
+* **Sfondo:** Uniforme, semplice e pulito per non distrarre.
+
+**Formato di Output (Riepilogo Obbligatorio - Non Sostituisce la Direttiva Critica Iniziale):**
+${formatoOutput}
+* **Importante:** Il rispetto dei parametri tecnici indicati all'inizio del prompt è il requisito più importante.`;
+            }
+
+            // --- FUNZIONE PRINCIPALE PER PROMPT JSON (invariata) ---
+            function generaPromptJson(argomento, materia, classe, totalModules, questionsPerModule, percentages, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive) {
                 let distributionInstructions;
                 if (percentages && Object.keys(percentages).length > 0) {
                     const percentageString = Object.entries(percentages).map(([key, value]) => `"${key}": ${value}%`).join(', ');
