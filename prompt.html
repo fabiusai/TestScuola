@@ -433,8 +433,8 @@
                     <label class="form-label">Formato Immagine *</label>
                     <div class="form-group" style="margin-bottom: 0;">
                          <div class="checkbox-item-simple" style="padding-top: 0;">
-                            <input type="radio" id="formato-quadrato" name="image-format" value="quadrato" checked>
-                            <label for="formato-quadrato" style="font-weight: normal;">Quadrato (1:1)</label>
+                             <input type="radio" id="formato-quadrato" name="image-format" value="quadrato" checked>
+                             <label for="formato-quadrato" style="font-weight: normal;">Quadrato (1:1)</label>
                          </div>
                          <div class="checkbox-item-simple" style="padding-top: 0;">
                              <input type="radio" id="formato-panoramico" name="image-format" value="panoramico">
@@ -662,9 +662,9 @@
                     const totalModules = parseInt(document.getElementById('total-modules').value, 10);
                     const questionsPerModule = parseInt(document.getElementById('questions-per-module').value, 10);
                      if (isNaN(totalModules) || totalModules <= 0 || isNaN(questionsPerModule) || questionsPerModule <= 0) {
-                        alert('Per generare il test, compila i campi "Numero totale di moduli" e "Domande per ogni modulo".');
-                        return;
-                    }
+                         alert('Per generare il test, compila i campi "Numero totale di moduli" e "Domande per ogni modulo".');
+                         return;
+                     }
                     
                     const indicazioniAggiuntive = document.getElementById('indicazioni-aggiuntive').value.trim();
                     let percentages = null;
@@ -773,6 +773,20 @@ Puoi usare tag HTML: \`<b>\`, \`<i>\`, \`<u>\`. NON usare Markdown.
 
 ### SPECIFICHE DETTAGLIATE DEI MODULI
 Crea ${totalModules} moduli, ognuno con ${questionsPerModule} domande/righe.
+
+**Struttura Base Obbligatoria per TUTTI i moduli di esercizi:**
+Per ogni modulo generato (ad eccezione di 'testo-introduttivo'), la struttura dell'oggetto JSON **deve** includere le seguenti chiavi:
+\`\`\`json
+{
+  "id": "string",
+  "type": "string",
+  "title": "string",
+  "instructions": "string",
+  "rows": [ /* ... */ ]
+}
+\`\`\`
+- **\`title\`**: Assegna un titolo breve ma descrittivo per ogni modulo, basato sul suo contenuto specifico (es. 'Vero o Falso', 'Analisi dei personaggi', 'Completa le frasi').
+- **\`instructions\`**: Fornisci istruzioni chiare e concise per lo studente su come completare l'esercizio.
 
 **1. Modulo: 'testo-introduttivo'**
 * **Struttura**: \`{ "id": "...", "type": "testo-introduttivo", "text": "...", "rows": [] }\` (altri campi opzionali)
