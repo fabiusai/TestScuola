@@ -375,7 +375,6 @@
 <body>
     <div class="main-container">
         
-        <!-- Colonna Sinistra: Form -->
         <div class="form-column">
             <header>
                  <h1 class="text-2xl font-bold text-gray-800">Generatore di Prompt AI</h1>
@@ -439,7 +438,7 @@
                          </div>
                          <div class="checkbox-item-simple" style="padding-top: 0;">
                              <input type="radio" id="formato-panoramico" name="image-format" value="panoramico">
-                             <label for="formato-panoramico" style="font-weight: normal;">Panoramico (8:2)</label>
+                             <label for="formato-panoramico" style="font-weight: normal;">Panoramico (8:3)</label>
                          </div>
                     </div>
                 </div>
@@ -508,7 +507,6 @@
             </div>
         </div>
 
-        <!-- Colonna Destra: Output -->
         <div class="output-column">
             <div class="output-wrapper">
                 <div class="header" style="padding: 1.5rem 1.5rem 0 1.5rem;">
@@ -705,19 +703,27 @@
             });
             
             function generaPromptImmagine(soggetto, formato, testoIntroduttivo) {
-                let soggettoCompleto = `**${soggetto}**`;
-
+                let cosaRappresentare = `COSA DEVE RAPPRESENTARE: ${soggetto}`;
                 if (testoIntroduttivo && testoIntroduttivo.trim().length > 0) {
-                    soggettoCompleto += `, basata sul seguente testo:\n\n"""\n${testoIntroduttivo}\n"""`;
+                    cosaRappresentare += `\n\nTieni conto anche del seguente testo per definire la scena:\n"""\n${testoIntroduttivo}\n"""`;
                 }
 
-                const modelloBase = `Illustrazione per libro scolastico di ${soggettoCompleto}, stile disegno a inchiostro dettagliato con linee pulite e definite. L'estetica deve essere semplice ma realistica, non eccessivamente fumettistica. Utilizza ombreggiature nette e campiture di un'unica tonalità di grigio piatto per creare profondità, volume e distinguere gli elementi. L'immagine deve essere rigorosamente monocromatica (bianco, nero e un solo tipo di grigio), con aree di colore piene e ben delineate, senza alcuna sfumatura o gradiente, per garantire massima chiarezza e facilità di stampa e fotocopia. Sfondo bianco e pulito.`;
+                const aspectRatioText = (formato === 'quadrato')
+                    ? "L'immagine deve avere tassativamente un formato quadrato 1:1."
+                    : "L'immagine deve avere tassativamente un formato landscape orizzontale di 8:3.";
 
-                if (formato === 'quadrato') {
-                    return `${modelloBase} **Formato quadrato, aspect ratio 1:1.**`;
-                } else { 
-                    return `${modelloBase} **Formato panoramico, aspect ratio 8:2.**`;
-                }
+                const promptTemplate = `ILLUSTRAZIONE STILIZZATA IN BIANCO, NERO E GRIGIO PER ADOLESCENTI
+Crea un'illustrazione lineare e chiara, destinata a un pubblico di adolescenti (13-18 anni). Lo stile deve essere pulito e definito, con contorni netti e decisi che evitano qualsiasi richiamo a illustrazioni infantili, grottesche o satiriche. La quantità di dettagli deve essere considerevole per aggiungere interesse visivo, ma sempre in modo armonioso e bilanciato, senza appesantire la composizione generale.
+
+ASPECT RATIO: ${aspectRatioText}
+
+PALETTE CROMATICA: Utilizza esclusivamente bianco, nero e una singola tonalità di grigio. Il grigio deve essere impiegato con moderazione e precisione, principalmente per creare ombreggiature sottili, conferire profondità e suggerire texture, contribuendo a un senso di volume senza saturare l'immagine.
+
+ATMOSFERA E COMPOSIZIONE: L'atmosfera generale deve essere equilibrata e coinvolgente. Presta particolare attenzione alla composizione dinamica e all'espressività dei personaggi o degli elementi raffigurati, mantenendo un'estetica elegante e matura.
+
+${cosaRappresentare}`;
+
+                return promptTemplate;
             }
 
             function generaPromptJson(argomento, materia, classe, totalModules, questionsPerModule, percentages, fontiSelezionate, testoIntroduttivo, indicazioniAggiuntive) {
@@ -799,5 +805,3 @@ Procedi con la generazione del JSON completo e valido.`;
     </script>
 </body>
 </html>
-
-
