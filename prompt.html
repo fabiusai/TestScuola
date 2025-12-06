@@ -743,6 +743,7 @@ ${cosaRappresentare}`;
 2.  **NESSUN TESTO AGGIUNTIVO**: Non includere spiegazioni, commenti o testo prima o dopo il blocco di codice JSON (nemmeno \`\`\`json). L'output deve iniziare con \`{\` e finire con \`}\`.
 3.  **RISPETTO DELLA STRUTTURA**: Aderisci scrupolosamente alla struttura, alle chiavi e ai tipi di dato specificati di seguito. I booleani devono essere \`true\` o \`false\`, non stringhe.
 4.  **ID UNICI**: Genera ID univoci per ogni modulo e per ogni riga/domanda (es: "mod_12345", "row_67890").
+5.  **RISPOSTE ESATTE**: Per le domande a risposta chiusa (vero-falso, scelta multipla, scegli-funzione), devi SEMPRE generare la soluzione corretta nel campo appropriato. Questo serve per generare il foglio delle soluzioni per il docente.
 
 ### SPECIFICHE DEL TEST DA CREARE
 * **Argomento Principale**: ${argomento}
@@ -792,15 +793,17 @@ Per ogni modulo generato (ad eccezione di 'testo-introduttivo'), la struttura de
 * **Struttura**: \`{ "id": "...", "type": "testo-introduttivo", "text": "...", "rows": [] }\` (altri campi opzionali)
 
 **2. Modulo: 'vero-falso'**
-* **Struttura Riga**: \`{ "id": "...", "text": "..." }\`
+* **Struttura Riga**: \`{ "id": "...", "text": "...", "correctAnswer": boolean }\`
+* **Importante**: "correctAnswer" deve essere \`true\` se la frase è vera, \`false\` se è falsa.
 
 **3. Modulo: 'risposta-multipla'**
 * **Struttura Riga**: \`{ "id": "...", "text": "...", "answers": [{ "id": "...", "text": "...", "isCorrect": boolean }] }\`
-* **Regola**: Una sola risposta con \`"isCorrect": true\`.
+* **Regola**: Una sola risposta DEVE avere \`"isCorrect": true\`.
 
 **4. Modulo: 'scegli-funzione'**
 * **Struttura Modulo**: \`{ ..., "options": ["Opz1", "Opz2"], "rows": [...] }\`
-* **Struttura Riga**: \`{ "id": "...", "text": "..." }\`
+* **Struttura Riga**: \`{ "id": "...", "text": "...", "correctAnswer": "string" }\`
+* **Importante**: "correctAnswer" deve coincidere esattamente con una delle stringhe presenti nell'array "options".
 * **REGOLA OPZIONI**: Se un'opzione > 7 caratteri, usa sigle in \`options\` e spiegane il significato in \`instructions\`.
 
 **5. Modulo: 'tre-parti'**
@@ -812,6 +815,7 @@ Per ogni modulo generato (ad eccezione di 'testo-introduttivo'), la struttura de
 
 **7. Modulo: 'libero'**
 * **Struttura Riga**: \`{ "id": "...", "text": "..." }\`
+* **Nota**: Per questo modulo NON è necessaria una risposta esatta nel JSON.
 
 Procedi con la generazione del JSON completo e valido.`;
             }
